@@ -1,0 +1,108 @@
+/* body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+} */
+
+body {
+  font-family: "Wix Madefor Display", sans-serif;
+}
+/* h1 {
+  font-family: 'Tektur', sans-serif;
+  font-weight: 700; 
+} */
+
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+@font-face {
+  font-family: "Tektur";
+  src: url('../assets/fonts/static/Tektur_Condensed-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: condensed;
+}
+
+
+
+/* Wix Madefor Display */
+@font-face {
+  font-family: "Wix Madefor Display";
+  src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Display";
+  src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Display";
+  src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Display";
+  src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Display";
+  src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}

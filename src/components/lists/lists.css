@@ -1,0 +1,85 @@
+/* селектор городов */
+.town-select__single-value { 
+  font-size: 24px;
+  color: #000000;
+  font-weight: 500;
+}
+.town-select__placeholder {
+  font-size: 24px !important;
+  color: #000000 !important;
+  font-weight: 500;
+}
+/* выпадающий список */
+.town-select__option {
+  font-size: 24px !important;
+  color: #000000;
+  font-weight: 500;
+  min-width: auto !important;
+  width: auto !important;
+}
+/* вводимый текст инпута */
+.town-select__control {
+  border: none !important;
+  width: 100% !important; 
+  min-width: auto !important;
+  max-width: 200px !important; 
+  padding: 0 20px !important;
+}
+.town-select__input {
+  font-size: 24px !important;
+  color: #000000 !important;
+  font-weight: 500 !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: left !important; /* Добавлено */
+  overflow: visible !important;
+}
+
+.town-select__indicator-separator {
+  display: none !important;
+}
+.town-select__dropdown-indicator {
+  padding: 0 !important;
+}
+.town-select__value-container {
+  padding: 0 !important;
+  width: 100% !important;
+}
+.town-select__option--is-focused,
+.town-select__option--is-selected {
+  background-color: #FFE5CC !important; /* подсветка выделенного элемента */
+}
+/* выпадающий список */
+.town-select__menu {
+  min-width: auto !important;
+  width: auto !important;
+  white-space: nowrap !important;
+}
+.town-select__menu-list {
+  min-width: 100% !important;
+  width: auto !important;
+}
+/* стрелка справа от селектора */
+.town-select__dropdown-indicator svg {
+  fill: #000000 !important;
+  color: #000000 !important;
+  cursor: pointer;
+}
+/* удаление текста при нажатии на стрелочку */
+.town-select__value-container {
+  padding: 0 !important;
+  width: 100% !important;
+  overflow: visible !important;
+}
+/* стиль для надписи "No options" */
+.town-select__menu-notice {
+  font-size: 24px !important;
+  color: #000000 !important;
+  font-weight: 500 !important;
+  
+}
+
+
+
+
