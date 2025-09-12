@@ -8,12 +8,14 @@ const options = [
 ];
 
 const DropdownIndicator = (props) => {
+  const { innerProps } = props;
   return (
-    <div {...props}>
+    <div {...innerProps}>
       <span style={{ border: 'solid black', borderWidth: '0 2px 2px 0', display: 'inline-block', padding: '3px', transform: 'rotate(45deg)' }} />
     </div>
   );
 };
+
 
 const customStyles = {
   control: (baseStyles, state) => ({

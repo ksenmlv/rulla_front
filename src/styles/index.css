@@ -23,7 +23,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-Black.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-Black.ttf') format('truetype');
   font-weight: 900;
   font-style: normal;
   font-stretch: condensed;
@@ -31,7 +31,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-Bold.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-stretch: condensed;
@@ -39,7 +39,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-ExtraBold.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-ExtraBold.ttf') format('truetype');
   font-weight: 800;
   font-style: normal;
   font-stretch: condensed;
@@ -47,7 +47,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-Medium.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-stretch: condensed;
@@ -55,7 +55,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-Regular.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-stretch: condensed;
@@ -63,7 +63,7 @@ body {
 
 @font-face {
   font-family: "Tektur";
-  src: url('../assets/fonts/static/Tektur_Condensed-SemiBold.ttf') format('truetype');
+  src: url('../assets/fonts/Tektur/static/Tektur_Condensed-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-stretch: condensed;
@@ -105,4 +105,76 @@ body {
   src: url('../assets/fonts/Wix_Madefor_Display/static/WixMadeforDisplay-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
+}
+
+
+/* Wix Madefor Text */
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-ExtraBoldItalic.ttf') format('truetype');
+  font-weight: 800;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-MediumItalic.ttf') format('truetype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Wix Madefor Text";
+  src: url('../assets/fonts/Wix_Madefor_Text/static/WixMadeforText-SemiBoldItalic.ttf') format('truetype');
+  font-weight: 600;
+  font-style: italic;
 }
