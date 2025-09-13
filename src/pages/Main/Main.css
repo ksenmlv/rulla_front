@@ -106,8 +106,7 @@
     position: absolute;
     left: 0;
     right: 0;
-    /* width: 100vw;   из-за этой строчки появляется гор прокрут!!! */
-    overflow: hidden;
+    width: 100%;
 }
 
 
@@ -303,6 +302,7 @@
     padding-left: 28px;
     padding-top: 28px;
     position: relative;
+    width: 430px;
 
     h3 {
        font-size: 32px;
@@ -336,5 +336,117 @@
         font-size: 24px;
         font-weight: 500;
         margin-top: 138px;
+    }
+}
+
+
+/* блок связи с менеджером */
+.manager-connect {
+    width: 100%;
+    height: 163px;
+    background-image: url('../../assets/Main/rect-orange.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 105px;
+
+    .manager-connect__icon {
+        text-align: left;
+        margin-left: 31px;
+        margin-top: 46px;
+    }
+
+    .manager-connect__text {
+        font-family: 'Wix Madefor Text', sans-serif;
+        color: #ffffff;
+        margin-left: 16px;
+        text-align: left;
+
+
+        h3 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 0;
+            margin-top: 37px;
+        }
+
+        p {
+            font-size: 24px;
+            margin-top: 5px;
+        }
+    }
+
+    .manager-connect__pics {
+
+
+        .gear2 {
+            vertical-align: top;
+            margin-right: -40px;
+        }
+        .gear3 {
+            margin-top: 25px;
+        }
+    }
+
+    button {
+        width: 393px;
+        height: 73px;
+        background: #ffffff;
+        color: #873417;
+        border: none;
+        border-radius: 5px;
+        font-size: 24px;
+        font-weight: 600;
+        align-self: center;
+        margin-right: 50px;
+        margin-left: 34px;
+    }
+}
+
+
+/* блок оставления заявки */
+.request {
+    background-image: url('../../assets/Main/rect-blue-long.jpg');
+    height: 453px;
+    width: 100%;
+    padding-left: 38px;
+    padding-top: 45px;
+    margin-bottom: 105px;
+    position: relative;
+
+    h2 {
+        font-size: 56px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-left: 0;
+        margin-bottom: 0;
+        text-align: left;
+    }
+    p {
+        font-size: 36px;
+        font-weight: 500;
+        color: #ffffff;
+        text-align: left;
+    }
+
+    button {
+        width: 986px;
+        height: 101px;
+        background: #F1EEEE;
+        color: #02283D;
+        font-size: 36px;
+        font-weight: 600;
+        border: none;
+        border-radius: 5px;
+        margin-top: 135px;
+    }
+
+    img {
+        position: absolute;
+        top: 5px;
+        right: -30px;
     }
 }
