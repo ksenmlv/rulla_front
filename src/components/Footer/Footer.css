@@ -1,0 +1,134 @@
+.footer {
+    position: relative;
+    height: 762px;
+    width: 100%;
+    display: flex;
+    overflow: hidden;
+}
+
+
+
+.black-block {
+    height: 100%;
+    width: 100%;
+    background: #151515;
+    padding-left: 70px;
+    padding-top: 79px;
+}
+
+.black-block__title {
+    color: #ffffff;
+    font-size: 32px;
+    font-weight: 500;
+    display: flex;
+    gap: 38px;
+    align-items: baseline;
+
+    p {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+}
+
+.three-columns {
+    margin-top: 65px;
+}
+
+.first-column {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Wix Madefor Text', sans-serif;
+    font-size: 32px;
+    color: #ffffff;
+    text-align: left;
+    line-height: 1.7;
+
+
+    p {
+        font-family: 'Wix Madefor Display', sans-serif;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+}
+
+.second-column {
+    display: flex;
+    flex-direction: column;
+    margin-left: 114px;
+
+    p {
+        font-size: 32px;
+        font-weight: 600;
+        color: #ffffff;
+        text-align: left;
+        margin-bottom: 0;
+    }
+
+    .btn-white {
+        width: 275px;
+        height: 56px;
+        border: none;
+        border-radius: 5px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #151515;
+        background: #ffffff;
+        margin-top: 25px;
+    }
+
+    .btn-black {
+        width: 275px;
+        height: 56px;
+        border: 2px solid #ffffff;
+        background-color: #151515;
+        border-radius: 5px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #ffffff;
+        margin-top: 14px;
+    }
+}
+
+.third-column {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-left: 175px;
+
+    p {
+        font-size: 32px;
+        font-weight: 600;
+        color: #ffffff;
+        text-align: left;
+        margin-bottom: 0;
+    }
+
+    .btn-support {
+        width: 397px;
+        height: 56px;
+        border: none;
+        border-radius: 5px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #151515;
+        margin-top: 25px;
+    }
+
+    .btn-soc-network {
+        background: #ffffff;
+        width: 63px;
+        height: 63px;
+        border: none;
+        border-radius: 5px;
+        margin-right: 12px;
+        margin-top: 69px;
+    }
+}
+
+.img-gear {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}

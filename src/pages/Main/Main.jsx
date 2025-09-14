@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from '../../components/Header/Header'
+import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
 import back from '../../assets/Main/background_top.png'
 import icon_connection from '../../assets/Main/icon_connection.svg'
@@ -28,191 +29,198 @@ import hammer2 from '../../assets/Main/hammer2.svg'
 
 function Main() {
   return (
-    <div className='full-container'>
+    <>
         <Header />
 
-        <div className='main-container'>
-            {/* первый блок до разделителя */}
-            <div className='first-block'>
-                <img src={back} alt='background' className='back_on_top'/>
-                <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
-                <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
+        <div className='full-container'>
 
-                
-                <button className='icon_conn'>
-                    <img src={icon_connection} alt='connection' />
-                </button>
+            <div className='main-container'>
+                {/* первый блок до разделителя */}
+                <div className='first-block'>
+                    <img src={back} alt='background' className='back_on_top'/>
+                    <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
+                    <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
 
-                <div className='search-container'>
-                    <input type='text' placeholder='Найти специалиста или услугу' className='search-input'/>
-                    <img src={icon_search} alt='search' className='search-icon'/>
-                    <button className='clear-button' style={{ display: 'none' }}>×</button>
+                    
+                    <button className='icon_conn'>
+                        <img src={icon_connection} alt='connection' />
+                    </button>
+
+                    <div className='search-container'>
+                        <input type='text' placeholder='Найти специалиста или услугу' className='search-input'/>
+                        <img src={icon_search} alt='search' className='search-icon'/>
+                        <button className='clear-button' style={{ display: 'none' }}>×</button>
+                    </div>
+
+                    <button className='btn-search'>Найти</button>
                 </div>
 
-                <button className='btn-search'>Найти</button>
-            </div>
+                <img src={separator} alt='separator' className='separator'/>
 
-            <img src={separator} alt='separator' className='separator'/>
+                {/* второй блок после разделителя */}
+                <div className='second-block'>
 
-            {/* второй блок после разделителя */}
-            <div className='second-block'>
+                    {/* блок "готовое решение" */}
+                    <div className='ready-solution'>
+                        <div className='ready-solution__content'>
 
-                {/* блок "готовое решение" */}
-                <div className='ready-solution'>
-                    <div className='ready-solution__content'>
-
-                        <div className='ready-solution__header'>
-                            <div className='ready-solution__icon'>
-                                <img src={checkmark} alt='checkmark' />
+                            <div className='ready-solution__header'>
+                                <div className='ready-solution__icon'>
+                                    <img src={checkmark} alt='checkmark' />
+                                </div>
+                                <div className='ready-solution__title'>
+                                    <p>Готовое решение</p>
+                                </div>
                             </div>
-                            <div className='ready-solution__title'>
-                                <p>Готовое решение</p>
+                            
+                            <div className='ready-solution__text'>
+                                <p>Вам больше не нужно искать специалистов для ремонта по разным местам — мы все сделали за вас!</p>
                             </div>
                         </div>
                         
-                        <div className='ready-solution__text'>
-                            <p>Вам больше не нужно искать специалистов для ремонта по разным местам — мы все сделали за вас!</p>
+                        <button className='ready-solution__button'>Создать заказ</button>
+                    </div> 
+
+                </div>
+
+                {/* блок "быстро бесплатно безопасно" */}
+                <div className='fast-free-safe'>
+                    <div className='fast'>
+                        <img src={rect_blue} alt='rectangle' />
+                        <img src={gear1} alt='gear wheel' className='fast__img'/>
+                        <div className='fast__text'>
+                            <h3>Быстро</h3>
+                            <p>Создайте заявку и получите первые отклики от подрядчиков в течение 10 минут</p>
                         </div>
                     </div>
-                    
-                    <button className='ready-solution__button'>Создать заказ</button>
-                </div> 
 
-            </div>
+                    <div className='free'>
+                        <img src={rect_blue} alt='rectangle' />
+                        <img src={hammer1} alt='hammer' className='free__img'/>
+                        <div className='free__text'>
+                            <h3>Бесплатно</h3>
+                            <p>Размещайте неограниченное количество заказов и получайте контакты мастеров без посредников</p>
+                        </div>
+                    </div>
 
-            {/* блок "быстро бесплатно безопасно" */}
-            <div className='fast-free-safe'>
-                <div className='fast'>
-                    <img src={rect_blue} alt='rectangle' />
-                    <img src={gear1} alt='gear wheel' className='fast__img'/>
-                    <div className='fast__text'>
-                        <h3>Быстро</h3>
-                        <p>Создайте заявку и получите первые отклики от подрядчиков в течение 10 минут</p>
+                    <div className='safe'>
+                        <img src={rect_blue} alt='rectangle' />
+                        <img src={wrench1} alt='wrench' className='safe__img'/>
+                        <div className='safet__text'>
+                            <h3>Безопасно</h3>
+                            <p>Все исполнители проходят тщательную проверку от сервиса перед тем, как вы увидите их предложения</p>
+                        </div>
                     </div>
                 </div>
 
-                <div className='free'>
-                    <img src={rect_blue} alt='rectangle' />
-                    <img src={hammer1} alt='hammer' className='free__img'/>
-                    <div className='free__text'>
-                        <h3>Бесплатно</h3>
-                        <p>Размещайте неограниченное количество заказов и получайте контакты мастеров без посредников</p>
+
+                {/* блок "что нужно сделать?" */}
+                <div className='work-options'>
+                    <h1>Что нужно сделать?</h1>
+
+                    <div className='block-large'>
+                        <div>
+                            <h2>Ремонт “Под ключ”</h2>
+                            <p>Посмотреть <img src={arrow_r} alt='arrow' /></p>
+                        </div>
+                        <img src={block_house} alt='house' className='img-house'/>
+                    </div>
+
+                    <div className='blocks'>
+                        <div className='block'>
+                            <h3>Дизайн интерьеров</h3>
+                            <img src={block_armchair} alt='armchair' className='img-block' />
+                        </div>
+                        
+                        <div className='block'>
+                            <h3>Сантехника</h3>
+                            <img src={block_tap} alt='tap' className='img-block' />
+                        </div>
+                        
+                        <div className='block'>
+                            <h3>Отделка</h3>
+                            <p>Стены/потолки/полы</p>
+                            <img src={block_roller} alt='roller' className='img-block' />
+                        </div>
+                        
+                        <div className='block'>
+                            <h3>Электрика</h3>
+                            <img src={block_power_socket} alt='power_socket' style={{ bottom:'20px' }} className='img-block'/>
+                        </div>
+
+                        <div className='block'>
+                            <h3>Ремонт коммерческих помещений</h3>
+                            <img src={block_table} alt='table' style={{ bottom:'7px' }} className='img-block' />
+                        </div>
+                        
+                        <div className='block'>
+                            <h3>Плиточные работы</h3>
+                            <img src={block_tile} alt='tile' className='img-block' width={430}/>
+                        </div>
+                        
+                        <div className='block'>
+                            <h3 style={{ width:'277px' }}>Сборка и ремонт мебели</h3>
+                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block' />
+                        </div>
+                        
+                        <div className='block dark'>
+                            <h3>Другое</h3>
+                            <p>Перейти <img src={arrow_r_white} alt='arrow' /></p>
+                        </div>
+
                     </div>
                 </div>
 
-                <div className='safe'>
-                    <img src={rect_blue} alt='rectangle' />
-                    <img src={wrench1} alt='wrench' className='safe__img'/>
-                    <div className='safet__text'>
-                        <h3>Безопасно</h3>
-                        <p>Все исполнители проходят тщательную проверку от сервиса перед тем, как вы увидите их предложения</p>
+
+                {/* блок "как это работает?" */}
+
+                {/* блок "возникли сложности?" */}
+                <div className='manager-connect'>
+                    <div className='d-flex flex-row'>
+                        <div className='manager-connect__icon'>
+                            <img src={icon_con_manager} alt='icon connect' />
+                        </div>
+
+                        <div className='manager-connect__text'>
+                            <h3>Возникли сложности?</h3>
+                            <p>Воспользуйтесь помощью менеджера</p>
+                        </div>
                     </div>
+
+                    <div className='d-flex flex-row'>
+                        <div className='manager-connect__pics'>
+                            <img src={gear2} alt='gear' className='gear2'/>
+                            <img src={gear3} alt='gear' className='gear3'/>
+                        </div>
+
+                        <button>Связаться с менеджером</button>
+                    </div>
+
                 </div>
-            </div>
 
 
-            {/* блок "что нужно сделать?" */}
-            <div className='work-options'>
-                <h1>Что нужно сделать?</h1>
-
-                <div className='block-large'>
+                {/* блок "оставьте заявку" */}
+                <div className='request d-flex flex-column'>
                     <div>
-                        <h2>Ремонт “Под ключ”</h2>
-                        <p>Посмотреть <img src={arrow_r} alt='arrow' /></p>
+                        <h2>Оставьте заявку прямо сейчас,</h2>
+                        <p>чтобы найти проверенного специалиста уже сегодня! </p>
                     </div>
-                    <img src={block_house} alt='house' className='img-house'/>
+                    <div className='d-flex justify-content-start'>
+                        <button>Оставить заявку</button>
+                    </div>
+                    <img src={hammer2} alt='hammer' />
                 </div>
-
-                <div className='blocks'>
-                    <div className='block'>
-                        <h3>Дизайн интерьеров</h3>
-                        <img src={block_armchair} alt='armchair' className='img-block' />
-                    </div>
-                    
-                    <div className='block'>
-                        <h3>Сантехника</h3>
-                        <img src={block_tap} alt='tap' className='img-block' />
-                    </div>
-                    
-                    <div className='block'>
-                        <h3>Отделка</h3>
-                        <p>Стены/потолки/полы</p>
-                        <img src={block_roller} alt='roller' className='img-block' />
-                    </div>
-                    
-                    <div className='block'>
-                        <h3>Электрика</h3>
-                        <img src={block_power_socket} alt='power_socket' style={{ bottom:'20px' }} className='img-block'/>
-                    </div>
-
-                    <div className='block'>
-                        <h3>Ремонт коммерческих помещений</h3>
-                        <img src={block_table} alt='table' style={{ bottom:'7px' }} className='img-block' />
-                    </div>
-                    
-                    <div className='block'>
-                        <h3>Плиточные работы</h3>
-                        <img src={block_tile} alt='tile' className='img-block' width={430}/>
-                    </div>
-                    
-                    <div className='block'>
-                        <h3 style={{ width:'277px' }}>Сборка и ремонт мебели</h3>
-                        <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block' />
-                    </div>
-                    
-                    <div className='block dark'>
-                        <h3>Другое</h3>
-                        <p>Перейти <img src={arrow_r_white} alt='arrow' /></p>
-                    </div>
-
-                </div>
+                
             </div>
-
-
-            {/* блок "как это работает?" */}
-
-            {/* блок "возникли сложности?" */}
-            <div className='manager-connect'>
-                <div className='d-flex flex-row'>
-                    <div className='manager-connect__icon'>
-                        <img src={icon_con_manager} alt='icon connect' />
-                    </div>
-
-                    <div className='manager-connect__text'>
-                        <h3>Возникли сложности?</h3>
-                        <p>Воспользуйтесь помощью менеджера</p>
-                    </div>
-                </div>
-
-                <div className='d-flex flex-row'>
-                    <div className='manager-connect__pics'>
-                        <img src={gear2} alt='gear' className='gear2'/>
-                        <img src={gear3} alt='gear' className='gear3'/>
-                    </div>
-
-                    <button>Связаться с менеджером</button>
-                </div>
-
-            </div>
-
-
-            {/* блок "оставьте заявку" */}
-            <div className='request d-flex flex-column'>
-                <div>
-                    <h2>Оставьте заявку прямо сейчас,</h2>
-                    <p>чтобы найти проверенного специалиста уже сегодня! </p>
-                </div>
-                <div className='d-flex justify-content-start'>
-                    <button>Оставить заявку</button>
-                </div>
-                <img src={hammer2} alt='hammer' />
-            </div>
-
-
-
 
         </div>
-    </div>
+
+        <Footer />
+    </>
+    
+
+
+
   )
 }
 
