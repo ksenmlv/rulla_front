@@ -25,6 +25,7 @@ import icon_con_manager from '../../assets/Main/icon_connect_manager.svg'
 import gear2 from '../../assets/Main/gear2.svg'
 import gear3 from '../../assets/Main/gear3.svg'
 import hammer2 from '../../assets/Main/hammer2.svg'
+import stages from '../../assets/Main/line_of_stages.svg'
 
 
 function Main() {
@@ -35,6 +36,7 @@ function Main() {
         <div className='full-container'>
 
             <div className='main-container'>
+                
                 {/* первый блок до разделителя */}
                 <div className='first-block'>
                     <img src={back} alt='background' className='back_on_top'/>
@@ -66,7 +68,7 @@ function Main() {
 
                             <div className='ready-solution__header'>
                                 <div className='ready-solution__icon'>
-                                    <img src={checkmark} alt='checkmark' />
+                                    <img src={checkmark} alt='checkmark' className='checkmark'/>
                                 </div>
                                 <div className='ready-solution__title'>
                                     <p>Готовое решение</p>
@@ -172,7 +174,29 @@ function Main() {
                 </div>
 
 
-                {/* блок "как это работает?" */}
+                {/* блок этапов работы */}
+                <div className='work-stages'>
+                    <h1>Как это работает?</h1>
+                    <img src={stages} alt='line of stages'/>
+
+                    <div className='stages-text'>
+
+                        <div style={{ width:'435px', marginRight:'-15px'}}>
+                            <h3>Оставьте заявку</h3>
+                            <p>Укажите вид работ, сроки и все детали, чтобы исполнители знали, что нужно делать</p>
+                        </div>
+                        <div style={{width:'418px'}}>
+                            <h3>Получите предложения</h3>
+                            <p style={{width:'409px'}}>Мастера будут оставлять отклики, которые вы увидите в разделе «Мои заказы»</p>
+                        </div>
+                        <div style={{width:'498px', marginRight:'15px'}}>
+                            <h3>Выберите лучшего</h3>
+                            <p>Сравните предложенные варианты и свяжитесь с понравившимся мастером напрямую, чтобы обсудить подробности</p>
+                        </div>
+
+                    </div>
+                </div>
+
 
                 {/* блок "возникли сложности?" */}
                 <div className='manager-connect'>

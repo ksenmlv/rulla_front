@@ -11,7 +11,17 @@
     padding-right: 70px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+}
 
+.header-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.header-logo {
+    margin-right: auto;
 }
 
 .header-items {
@@ -23,6 +33,24 @@
     color: #151515;
 }
 
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.location-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.location-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
 .btn-orange {
     width: 280px;
     height: 61px;
@@ -30,8 +58,9 @@
     color: white;
     border: none;
     border-radius: 10px;
-    font-size: 24PX;
+    font-size: 24px;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 /* скрываем кнопку меню на десктопе */
@@ -43,48 +72,40 @@
     cursor: pointer;
 }
 
-
-@media (max-width: 320px) {
+/* Мобильная версия 320px */
+@media (max-width: 767px) {
     .headerContainer {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 1000;
-        background: white;
-        padding: 10px;
-        height: auto;
-        min-height: 60px;
-        display: flex;
-        flex-wrap: wrap;
+        padding: 10px 15px !important;
+        flex-wrap: nowrap;
         align-items: center;
+        height: 60px;
+        justify-content: space-between;
+    }
+
+    .header-left {
+        flex: 0 0 auto;
     }
 
     .header-logo {
-        width: 40px;
+        width: 50px;
         height: auto;
-        margin-right: auto;
-    }
-
-    .mobile-menu-btn {
-        display: block;
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        z-index: 1001;
+        margin-right: 0;
     }
 
     .header-items {
         display: none;
         position: absolute;
-        top: 60px;
-        left: 0;
-        right: 0;
+        top: 100%;
+        right: 15px; 
+        left: auto;
+        width: 110px; 
         background: white;
         flex-direction: column;
-        padding: 10px;
+        padding: 5px; 
         box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
         z-index: 1000;
+        gap: 0; 
+        border-radius: 5px; 
     }
 
     .header-items.mobile-open {
@@ -92,27 +113,49 @@
     }
 
     .header-items a {
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-        font-size: 14px;
+        padding: 3px 10px;
+        font-size: 12px;
+    }
+
+    .header-items a:not(:last-child) {
+        border-bottom: 1px solid #eee; /* Граница снизу у всех, кроме последнего */
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
     }
 
     .location-wrapper {
-        display: flex;
-        align-items: center;
-        margin-left: 10px;
-        font-size: 5px;
+        display: none; 
     }
 
-    .town-select {
-        font-size: 5px;
+    .location-icon {
+        width: 16px !important;
+        height: 16px !important;
     }
 
     .btn-orange {
-        display: none; /* Скрываем кнопку на маленьком экране */
-        width: calc(100% - 20px);
-        margin: 10px;
-        padding: 8px;
-        font-size: 14px;
+        display: block !important; 
+        width: 70px !important;
+        height: 30px !important;
+        font-size: 12px !important;
+        margin: 0 !important;
+        padding: 5px !important;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        font-size: 20px;
+        margin-left: 10px;
+        order: 2;
+    }
+
+    /* Скрываем десктопный контент */
+    .header-items:not(.mobile-open) {
+        display: none;
     }
 }
+
