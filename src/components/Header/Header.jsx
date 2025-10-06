@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import logo from '../../assets/Header/logo.png'
 import icon_location from '../../assets/Header/icon_location.png'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 import './Header.css'
-import TownSelect from '../lists/TownSelect';
+import TownSelect from '../lists/TownSelect'
+import { citiesApi } from '../../api/citiesApi.ts'
 
 
 
-function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+ function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -29,10 +30,12 @@ function Header() {
         {/* правая часть: локация и кнопка войти */}
         <div className='d-flex align-items-center'>
 
-            <div className='location-wrapper d-none d-md-flex align-items-center'>
+            <div className='location-wrapper  d-md-flex align-items-center'>
                 <img src={icon_location} alt='location' className='location-icon'/>
                 <TownSelect className='town-select'/>
             </div>
+
+
 
             <button className='btn-orange ms-5'>Войти</button>
             <button className='mobile-menu-btn' onClick={toggleMenu}>☰</button>
@@ -42,3 +45,13 @@ function Header() {
 }
 
 export default Header
+
+
+
+
+
+
+
+
+
+

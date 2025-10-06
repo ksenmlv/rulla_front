@@ -2,8 +2,8 @@ import React from 'react'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
-import back from '../../assets/Main/background_top.png'
-import icon_connection from '../../assets/Main/icon_connection.svg'
+import back from '../../assets/Main/background.png'
+import icon_connection from '../../assets/Main/icon_connection.png'
 import icon_search from '../../assets/Main/icon_search.svg'
 import separator from '../../assets/Main/bw_separator.svg'
 import checkmark from '../../assets/Main/icon_checkmark.svg'
@@ -39,7 +39,7 @@ function Main() {
                 
                 {/* первый блок до разделителя */}
                 <div className='first-block'>
-                    <img src={back} alt='background' className='back_on_top'/>
+                    <img src={back} alt='background' className='back_on_top' />
                     <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
                     <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
 
@@ -136,7 +136,7 @@ function Main() {
                         
                         <div className='block'>
                             <h3>Сантехника</h3>
-                            <img src={block_tap} alt='tap' className='img-block' />
+                            <img src={block_tap} alt='tap' className='img-block' width={217}/>
                         </div>
                         
                         <div className='block'>
@@ -157,12 +157,12 @@ function Main() {
                         
                         <div className='block'>
                             <h3>Плиточные работы</h3>
-                            <img src={block_tile} alt='tile' className='img-block' width={430}/>
+                            <img src={block_tile} alt='tile' className='img-block' width={411}/>
                         </div>
                         
                         <div className='block'>
                             <h3 style={{ width:'277px' }}>Сборка и ремонт мебели</h3>
-                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block' />
+                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block' width={283}/>
                         </div>
                         
                         <div className='block dark'>

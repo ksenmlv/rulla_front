@@ -7,8 +7,8 @@
     background: white;
     padding-top: 39px;
     padding-bottom: 20px;
-    padding-left: 70px;
-    padding-right: 70px;
+    padding-left: 110px;
+    padding-right: 110px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -129,7 +129,9 @@
     }
 
     .location-wrapper {
-        display: none; 
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     .location-icon {
@@ -156,6 +158,11 @@
     /* Скрываем десктопный контент */
     .header-items:not(.mobile-open) {
         display: none;
+    }
+
+    .location-icon {
+        width: 10px;
+        height: 10px;
     }
 }
 
