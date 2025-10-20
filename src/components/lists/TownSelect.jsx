@@ -174,9 +174,9 @@ const customStyles = {
   option: (baseStyles, state) => ({
     ...baseStyles,
     fontSize: '20px',
-    fontWeight: '500',
+    fontWeight: state.isSelected ? '800' : '500',
     cursor: 'pointer',
-    backgroundColor: state.isFocused ? '#F0DED7' : 'white',
+    backgroundColor: state.isFocused ? '#DE5A2B99' : 'white',
     color: state.isSelected ? '#DE5A2B' : '#000',
     whiteSpace: 'normal',
     wordWrap: 'break-word',
@@ -188,7 +188,7 @@ const customStyles = {
     margin: '2px 7px 2px 15px',
     width: '398px', // Фиксированная ширина, как у поля ввода
     ':active': {
-      backgroundColor: '#F0DED7',
+      backgroundColor: '#DE5A2B',
       borderRadius: '7px',
     },
     ':last-child': {
