@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
@@ -26,9 +27,17 @@ import gear2 from '../../assets/Main/gear2.svg'
 import gear3 from '../../assets/Main/gear3.svg'
 import hammer2 from '../../assets/Main/hammer2.svg'
 import stages from '../../assets/Main/line_of_stages.svg'
+import stage1 from '../../assets/Main/stage1.svg'
+import stage2 from '../../assets/Main/stage2.svg'
+import stage3 from '../../assets/Main/stage3.svg'
+import stage_final from '../../assets/Main/stage_final.jpg'
+
 
 
 function Main() {
+  const navigate = useNavigate()
+
+
   return (
     <>
         <Header />
@@ -177,11 +186,20 @@ function Main() {
                 {/* блок этапов работы */}
                 <div className='work-stages'>
                     <h1>Как это работает?</h1>
-                    <img src={stages} alt='line of stages'/>
 
+                    <div>
+                        <img src={stages} alt='line of stages' className='line-of-stages' />
+                        <div className='stages-numbers'>
+                            <img src={stage1} alt='stage 1' className='stage1' />
+                            <img src={stage2} alt='stage 2' className='stage2' style={{marginLeft:'9%'}} />
+                            <img src={stage3} alt='stage 3' className='stage3' style={{marginLeft:'8%'}}/>
+                            <img src={stage_final} alt='stage final' className='stage-final' />
+                        </div>
+
+                    </div>
+                
                     <div className='stages-text'>
-
-                        <div style={{ width:'435px', marginRight:'-15px'}}>
+                        <div style={{ width:'435px', marginLeft:'5px'}}>
                             <h3>Оставьте заявку</h3>
                             <p>Укажите вид работ, сроки и все детали, чтобы исполнители знали, что нужно делать</p>
                         </div>
@@ -193,7 +211,6 @@ function Main() {
                             <h3>Выберите лучшего</h3>
                             <p>Сравните предложенные варианты и свяжитесь с понравившимся мастером напрямую, чтобы обсудить подробности</p>
                         </div>
-
                     </div>
                 </div>
 

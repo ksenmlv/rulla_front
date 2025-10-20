@@ -1,6 +1,7 @@
 import React from 'react'
-import separator from '../../assets/Main/bw_separator.svg'
+import { useAppContext } from '../../contexts/AppContext'
 import  './Footer.css'
+import separator from '../../assets/Main/bw_separator.svg'
 import logo from '../../assets/Main/logo_footer.svg'
 import icon_location from '../../assets/Main/icon_location.svg'
 import icon_vk from '../../assets/Main/icon_vk.svg'
@@ -10,6 +11,8 @@ import gear4 from '../../assets/Main/gear4.svg'
 
 
 function Footer() {
+  const { selectedCity } = useAppContext()
+
   return (
     <div className='footer'>
         <img src={separator} alt='separator' className='separator'/>
@@ -19,7 +22,9 @@ function Footer() {
             {/* иконка и гео */}
             <div className='black-block__title'>
                 <img src={logo} alt='logo' />
-                <p><img src={icon_location} alt='icon of location'/>Москва</p>
+                <p><img src={icon_location} alt='icon of location'/>
+                    {selectedCity ? selectedCity.label.split(',')[0].trim() : 'Москва'}
+                </p>
             </div>
 
             {/* 3 колонки */}

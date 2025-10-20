@@ -5,14 +5,20 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './Header.css'
 import TownSelect from '../lists/TownSelect'
 import { citiesApi } from '../../api/citiesApi.ts'
+import { useNavigate } from 'react-router-dom'
 
 
 
- function Header() {
+ function Header({ hideElements = false }) {
+  const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+  }
+
+  const handleEnterClick = () => {
+    navigate('/enter')
   }
 
 
@@ -28,18 +34,19 @@ import { citiesApi } from '../../api/citiesApi.ts'
         </div>
 
         {/* правая часть: локация и кнопка войти */}
-        <div className='d-flex align-items-center'>
+        {!hideElements && (
+          <div className='d-flex align-items-center'>
 
             <div className='location-wrapper  d-md-flex align-items-center'>
                 <img src={icon_location} alt='location' className='location-icon'/>
                 <TownSelect className='town-select'/>
             </div>
 
-
-
-            <button className='btn-orange ms-5'>Войти</button>
+            <button className='btn-orange ms-5' onClick={handleEnterClick}>Войти</button>
             <button className='mobile-menu-btn' onClick={toggleMenu}>☰</button>
-        </div>
+          </div>
+        )}
+
     </div>
   )
 }
