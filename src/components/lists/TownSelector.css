@@ -1,0 +1,73 @@
+/* Кастомные стили для SimpleBar */
+.simplebar-scrollbar::before {
+  background: #ECA288 !important;
+  border-radius: 4px !important;
+  width: 8px !important;
+  right: 0 !important;
+  left: 0 !important;
+  opacity: 1 !important;
+}
+
+.simplebar-scrollbar.simplebar-visible::before {
+  opacity: 1 !important;
+}
+
+.simplebar-track.simplebar-vertical {
+  width: 8px !important;
+  background: rgba(236, 162, 136, 0.2) !important; /* Полупрозрачный цвет дорожки */
+  border-radius: 4px !important;
+  right: 15px !important;
+  top: 15px !important;
+  bottom: 15px !important;
+  border: none !important;
+}
+
+.simplebar-track.simplebar-vertical .simplebar-scrollbar {
+  right: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Цвет ползунка при наведении */
+.simplebar-scrollbar.simplebar-hover::before,
+.simplebar-scrollbar.simplebar-dragging::before {
+  background: #C44A24 !important; /* Цвет при наведении и нажатии */
+}
+
+/* Убираем стандартный скроллбар */
+.simplebar-content-wrapper {
+  scrollbar-width: none !important;
+}
+
+.simplebar-content-wrapper::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Убираем горизонтальный скроллбар */
+.simplebar-track.simplebar-horizontal {
+  display: none !important;
+}
+
+/* Дополнительные стили для лучшего внешнего вида */
+.simplebar-track {
+  transition: background-color 0.2s ease !important;
+}
+
+.simplebar-track:hover {
+  background: rgba(236, 162, 136, 0.4) !important; /* Немного менее прозрачный при наведении */
+}
+
+/* Минимальная высота ползунка */
+.simplebar-scrollbar {
+  min-height: 50px !important;
+}
+
+/* Убираем лишние отступы */
+.simplebar-content {
+  padding-right: 5px !important;
+}
+
+/* Убираем лишние псевдоэлементы */
+.simplebar-track.simplebar-vertical::before {
+  display: none !important;
+}
