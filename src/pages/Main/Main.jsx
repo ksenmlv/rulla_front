@@ -31,6 +31,8 @@ import stage1 from '../../assets/Main/stage1.svg'
 import stage2 from '../../assets/Main/stage2.svg'
 import stage3 from '../../assets/Main/stage3.svg'
 import stage_final from '../../assets/Main/stage_final.jpg'
+import black_sep from '../../assets/Main/black_part_separator.svg'
+import white_sep from '../../assets/Main/white_part_separator.svg'
 
 
 
@@ -67,6 +69,31 @@ function Main() {
                 </div>
 
                 <img src={separator} alt='separator' className='separator'/>
+
+                {/* <div className="separator2">
+                    {Array.from({ length: Math.ceil(100 / 6) }).map((_, i) => (
+                        <svg
+                            key={i}
+                            viewBox="0 0 120 39"
+                            preserveAspectRatio="none"
+                        >
+                            <polygon
+                                points="0,0 100,0 120,39 20,39"
+                                fill={i % 2 === 0 ? "#000000" : "#FFFFFF"}
+                            />
+                        </svg>
+                    ))}
+                </div> */}
+
+
+
+
+
+
+
+
+
+
 
                 {/* второй блок после разделителя */}
                 <div className='second-block'>

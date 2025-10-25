@@ -1,73 +1,40 @@
-/* Кастомные стили для SimpleBar */
-.simplebar-scrollbar::before {
-  background: #ECA288 !important;
-  border-radius: 4px !important;
-  width: 8px !important;
-  right: 0 !important;
-  left: 0 !important;
-  opacity: 1 !important;
+/* Стили для контейнера SimpleBar */
+.TownSelector__content .simplebar-track.simplebar-vertical {
+  width: 6px;
+  right: 15px;
+  top: 15px;
+  bottom: 10px;
+  background-color: transparent;
 }
 
-.simplebar-scrollbar.simplebar-visible::before {
-  opacity: 1 !important;
+/* Стили для линии (шкалы) */
+.TownSelector__content .simplebar-track.simplebar-vertical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 1px;
+  bottom: 0;
+  width: 6px;
+  background-color: #ECA28880;
+  border-radius: 3px;
 }
 
-.simplebar-track.simplebar-vertical {
-  width: 8px !important;
-  background: rgba(236, 162, 136, 0.2) !important; /* Полупрозрачный цвет дорожки */
-  border-radius: 4px !important;
-  right: 15px !important;
-  top: 15px !important;
-  bottom: 15px !important;
-  border: none !important;
+/* Стили для ползунка */
+.TownSelector__content .simplebar-scrollbar.simplebar-visible::before {
+  opacity: 4;
+  visibility: visible;
+  background-color: #ECA288;
+  height: 30px;
 }
 
-.simplebar-track.simplebar-vertical .simplebar-scrollbar {
-  right: 0 !important;
-  width: 100% !important;
-  height: auto !important;
+.TownSelector__content .simplebar-scrollbar .simplebar-scrollbar-thumb {
+  background-color: #ECA288;
+  border-radius: 10px;
+  width: 100%;
 }
 
-/* Цвет ползунка при наведении */
-.simplebar-scrollbar.simplebar-hover::before,
-.simplebar-scrollbar.simplebar-dragging::before {
-  background: #C44A24 !important; /* Цвет при наведении и нажатии */
-}
-
-/* Убираем стандартный скроллбар */
-.simplebar-content-wrapper {
-  scrollbar-width: none !important;
-}
-
-.simplebar-content-wrapper::-webkit-scrollbar {
-  display: none !important;
-}
-
-/* Убираем горизонтальный скроллбар */
-.simplebar-track.simplebar-horizontal {
-  display: none !important;
-}
-
-/* Дополнительные стили для лучшего внешнего вида */
-.simplebar-track {
-  transition: background-color 0.2s ease !important;
-}
-
-.simplebar-track:hover {
-  background: rgba(236, 162, 136, 0.4) !important; /* Немного менее прозрачный при наведении */
-}
-
-/* Минимальная высота ползунка */
-.simplebar-scrollbar {
-  min-height: 50px !important;
-}
-
-/* Убираем лишние отступы */
-.simplebar-content {
-  padding-right: 5px !important;
-}
-
-/* Убираем лишние псевдоэлементы */
-.simplebar-track.simplebar-vertical::before {
-  display: none !important;
+/* Убедитесь, что ползунок всегда виден */
+.TownSelector__content .simplebar-scrollbar {
+  width: 6px;
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppContext } from '../../contexts/AppContext'
 import  './Footer.css'
-import separator from '../../assets/Main/bw_separator.svg'
+import separator from '../../assets/Main/bw_separator2.svg'
 import logo from '../../assets/Main/logo_footer.svg'
 import icon_location from '../../assets/Main/icon_location.svg'
 import icon_vk from '../../assets/Main/icon_vk.svg'
@@ -15,7 +15,7 @@ function Footer() {
 
   return (
     <div className='footer'>
-        <img src={separator} alt='separator' className='separator'/>
+        <img src={separator} alt='separator' className='separator' />
 
         <div className='black-block'>
 

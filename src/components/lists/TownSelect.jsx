@@ -15,6 +15,9 @@ const CustomSelector = () => {
   const { selectedCity, setSelectedCity } = useAppContext();
   const menuRef = useRef(null);
   const inputRef = useRef(null);
+  const listRef = useRef(null);
+  const simpleBarRef = useRef(null);
+
 
   // Форматирование названия города
   const formatCityName = (cityName) => {
@@ -49,7 +52,7 @@ const CustomSelector = () => {
   useEffect(() => {
     if (inputValue) {
       const filtered = cities.filter(city =>
-        city.label.toLowerCase().includes(inputValue.toLowerCase())
+        city.label.toLowerCase().startsWith(inputValue.toLowerCase())
       );
       setFilteredCities(filtered);
       setHighlightedIndex(-1);
@@ -109,12 +112,23 @@ const CustomSelector = () => {
     };
   }, []);
 
-  // Сброс highlightedIndex при открытии/закрытии
+
+
+  // Логика для прокрутки при открытии меню
   useEffect(() => {
-    if (!isOpen) {
-      setHighlightedIndex(-1);
+    if (isOpen && simpleBarRef.current && selectedCity) {
+      const selectedIndex = filteredCities.findIndex(city => city.value === selectedCity.value);
+      if (selectedIndex !== -1) {
+        const listNode = listRef.current;
+        const selectedNode = listNode.children[selectedIndex];
+        if (selectedNode) {
+          simpleBarRef.current.getScrollElement().scrollTop = selectedNode.offsetTop - listNode.offsetTop;
+        }
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, selectedCity, filteredCities]);
+
+
 
   return (
     <div
@@ -203,6 +217,8 @@ const CustomSelector = () => {
           }}
         >
           <SimpleBar 
+            className="TownSelector__content"
+            ref={simpleBarRef}
             style={{ 
               maxHeight: '350px',
               height: '100%',
@@ -270,6 +286,7 @@ const CustomSelector = () => {
 
             {/* Список городов */}
             <div
+              ref={listRef}
               style={{
                 paddingTop: '5px',
                 paddingBottom: '5px',
