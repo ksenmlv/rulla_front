@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppContext } from '../../contexts/AppContext'
 import  './Footer.css'
-import separator from '../../assets/Main/bw_separator2.svg'
+import separator from '../../assets/Main/bw_separator.svg'
 import logo from '../../assets/Main/logo_footer.svg'
 import icon_location from '../../assets/Main/icon_location.svg'
 import icon_vk from '../../assets/Main/icon_vk.svg'
@@ -10,11 +10,11 @@ import icon_tg from '../../assets/Main/icon_tg.svg'
 import gear4 from '../../assets/Main/gear4.svg'
 
 
-function Footer() {
+function Footer({ className }) {
   const { selectedCity } = useAppContext()
 
   return (
-    <div className='footer'>
+    <div className={`footer ${className || ''}`}>
         <img src={separator} alt='separator' className='separator' />
 
         <div className='black-block'>
