@@ -7,10 +7,10 @@
 
 .enter-container {
   padding-top: 150px; 
-  margin-bottom: 171px;
+  margin-bottom: 158px;
   flex: 1; 
   display: flex;
-  min-height: calc(100vh - 171px - 707px);
+  min-height: calc(100vh - 920px);
 }
 
 .login-container {

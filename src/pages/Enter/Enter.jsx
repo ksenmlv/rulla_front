@@ -5,7 +5,7 @@ import '../Enter/Enter.css'
 import arrow from '../../assets/Main/arrow_left.svg'
 import { PhoneInput } from 'react-international-phone'
 import 'react-international-phone/style.css'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function Enter() {
   const navigate = useNavigate()
@@ -97,6 +97,7 @@ function Enter() {
       navigate('/')
     }
   }
+
 
 
   return (
@@ -206,7 +207,7 @@ function Enter() {
 
 
           <div className="register-link">
-            У вас еще нет аккаунта? <a href="#" className="register-here">Зарегистрироваться</a>
+            У вас еще нет аккаунта? <Link to="/simplified_registration_step1" className="register-here">Зарегистрироваться</Link>
           </div>
           
 
