@@ -21,12 +21,16 @@ import { useNavigate } from 'react-router-dom'
     navigate('/enter')
   }
 
+  const handleLogoClick = () => {
+    navigate('/')
+  }
+
 
   return (
     <div className='headerContainer'>
         {/* левая часть: лого и пункты меню */}
         <div className='d-flex align-items-center'>
-            <img src={logo} alt='logo' width={141} height={44} className='header-logo'/>
+            <img src={logo} alt='logo' width={141} height={44} className='header-logo' onClick={handleLogoClick}/>
             <div className={`header-items ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <a className='text-decoration-none text-dark'>О платформе</a>
                 <a className='text-decoration-none text-dark'>Каталог исполнителей</a>

@@ -87,6 +87,7 @@
 }
 
 
+
 /* инпут номера телефона */
 .form-group {
   margin-bottom: 50px;
@@ -100,20 +101,54 @@
   color: #000000;
 }
 
-.form-input {
-  width: 100%;
-  height: 55px;
-  padding: 15px 25px;
-  border: 1px solid #ECA288;
-  border-radius: 10px;
-  font-size: 20px;
-  background-color: #F3F3F3;
+/* инпут номера телефона */
+.custom-phone-input {
+  height: 55px !important;
+  background-color: #F3F3F3 !important;
+  border: 1px solid #ECA288 !important;
+  border-radius: 10px !important;
+  padding: 0 16px !important;
+  width: 100% !important;
+  font-size: 20px !important;
+  outline: none !important;
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: #ff6b35;
+.country-selector-button {
+  background-color: #F3F3F3 !important;
+  border: none !important;
+  height: 53px !important;
+  margin-right: 5px !important;
 }
+
+/* выпадающий список стран */
+.PhoneInputCountrySelect {
+  background-color: #F3F3F3 !important;
+  border: 1px solid #ECA288 !important;
+}
+
+.PhoneInputCountryOption {
+  background-color: #F3F3F3 !important;
+  color: #333 !important;
+}
+
+
+/* поле ввода */
+.PhoneInputInput {
+  background-color: #F3F3F3 !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 20px !important;
+  color: #000000 !important;
+}
+
+.custom-phone-input:focus,
+.custom-phone-input:focus-within {
+  border-color: #ECA288 !important;
+  box-shadow: 0 0 0 2px rgba(236, 162, 136, 0.2) !important;
+}
+
+
+
 
 /* кнопка "Продолжить" */
 .continue-button {
@@ -144,7 +179,88 @@
 }
 
 .register-here:hover {
-  /* text-decoration: underline; */
+  color: #db0707;
 }
 
  
+/* Форма ввода кода */
+/* Сообщение об ошибке */
+.error-message {
+  color: #ff4444;
+  font-size: 16px;
+  margin-top: 5px;
+}
+
+/* Кнопка продолжить в disabled состоянии */
+.continue-button.disabled {
+  background-color: #ECA288;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Превью номера телефона */
+.phone-preview {
+  font-size: 16px;
+  color: #666;
+  margin-top: 5px;
+  font-weight: normal;
+}
+
+/* Поля для ввода кода */
+.code-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.code-input {
+  width: 163px;
+  height: 66px;
+  text-align: center;
+  font-size: 24px;
+  border: 1px solid #ECA288;
+  border-radius: 10px;
+  background-color: #F3F3F3;
+}
+
+.code-input:focus {
+  border-color: #e78764;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(236, 162, 136, 0.2);
+}
+
+/* Повторная отправка кода */
+.resend-code {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 20px;
+}
+
+.resend-link {
+  background: none;
+  border: none;
+  color: #000000B2;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.resend-link:hover {
+  color: #000000;
+}
+
+/* Анимация появления */
+.login-form {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
