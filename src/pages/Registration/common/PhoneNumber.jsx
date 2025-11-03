@@ -48,11 +48,6 @@ export default function PhoneNumber() {
                 showDisabledDialCodeAndPrefix={false}
                 forceDialCode={true}
             />
-            {/* {phone && !isValidPhone && (
-                <div className="error-message">
-                Введите корректный номер телефона
-                </div>
-            )} */}
         </div>
         <button 
                 type="submit" 

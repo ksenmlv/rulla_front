@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import './Header.css'
 import TownSelect from '../lists/TownSelect'
 import { citiesApi } from '../../api/citiesApi.ts'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 
 
@@ -21,16 +21,17 @@ import { useNavigate } from 'react-router-dom'
     navigate('/enter')
   }
 
-  const handleLogoClick = () => {
-    navigate('/')
-  }
+  // const handleLogoClick = () => {
+  //   navigate('/')
+  // }
 
 
   return (
     <div className='headerContainer'>
         {/* левая часть: лого и пункты меню */}
         <div className='d-flex align-items-center'>
-            <img src={logo} alt='logo' width={141} height={44} className='header-logo' onClick={handleLogoClick}/>
+            <Link to='/'>  <img src={logo} alt='logo' width={141} height={44} className='header-logo'/>  </Link>
+
             <div className={`header-items ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <a className='text-decoration-none text-dark'>О платформе</a>
                 <a className='text-decoration-none text-dark'>Каталог исполнителей</a>

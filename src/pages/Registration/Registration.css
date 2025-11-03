@@ -3,14 +3,12 @@
     width: 100%;
     bottom: 0;
 }
-
-.full-reg-container {
+.reg-container {
   padding-top: 150px; 
   margin-bottom: 158px;
   flex: 1; 
   display: flex;
   min-height: calc(100vh - 920px);
-  
 }
 
 .registr-container {
@@ -98,4 +96,114 @@
   font-weight: 600;
   cursor: pointer;
   margin-bottom: 30px;
+}
+
+
+/* поля ввода */
+.input-fields {
+  h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 15px;
+  }
+
+  input {
+    height: 55px;
+    width: 100%;
+    border: 1px solid #ECA288;
+    border-radius: 10px;
+    padding: 0 25px 0 25px;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000;
+  }
+
+  input::placeholder{
+    font-size: 20px;
+  }
+
+  input:focus {
+    border-color: #ECA288 !important;
+    box-shadow: 0 0 0 2px rgba(236, 162, 136, 0.2) !important;
+    outline: none;
+  }
+}
+
+
+/* checkbox с политикой конф */
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  cursor: pointer;
+  border-radius: 6px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
+}
+
+.checkbox-wrapper:hover {
+  background-color: #f9f9f9;
+}
+
+.custom-checkbox {
+  width: 21px;
+  height: 21px;
+  border: 3px solid #919191;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.custom-checkbox.checked {
+  background: #ECA288;
+  border-color: #ECA288;
+}
+
+.checkmark {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.checkbox-text {
+  font-size: 16px;
+  color: #000000B2;
+}
+
+/* ссылка на политику конф */
+.policy-link {
+  color: inherit; 
+  text-decoration: underline;
+  text-underline-offset: 2px; 
+}
+
+.policy-link:hover {
+  opacity: 0.8;
+}
+
+
+/* шкала этапов для полной регистрации */
+.registr-scale {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  p {
+    font-size: 24px;
+    font-weight: 500;
+    color: #000000;
+  }
+
+  img {
+    margin-top: -14px;
+  }
 }

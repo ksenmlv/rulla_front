@@ -31,13 +31,14 @@
     justify-content: center;
     margin-bottom: 35px;
     position: relative;
+    color: #151515;
 }
 
 .login-title {
   text-align: center;
   font-size: 36px;
   font-weight: 600;
-  color: #333;
+  color: #151515;
   margin: 0;
 }
 

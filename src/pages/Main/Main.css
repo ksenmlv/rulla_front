@@ -47,7 +47,6 @@
 
     .back_on_top {
         width: 100%;
-        border-radius: 20px 20px 0 0;
     }
 }
 
@@ -95,7 +94,7 @@
 .search-container {
     position: absolute;
     width: 72%;
-    bottom: 2.5vh;
+    bottom: 4.5vh;
     left: 40px;
 }
 .search-input {
@@ -125,7 +124,7 @@
 
 .btn-search {
     position: absolute;
-    bottom: 2.5vh;
+    bottom: 4.5vh;
     right: 40px;
     width: 22%;
     height: 84px;
@@ -151,7 +150,6 @@
 
         .back_on_top {
             width: 100%;
-            border-radius: 20px 20px 0 0;
         }
     }
 
@@ -223,7 +221,8 @@
     left: 0;
     right: 0;
     width: 100%;
-    object-fit: cover;
+    /* height: 39px; */
+    margin-top: -17px;
 }
 
 
@@ -362,7 +361,7 @@
 .fast-free-safe {
     padding-top: 20px;
     display: flex;
-    gap: 20px;
+    gap: 19px;
     flex-wrap: wrap;
     justify-content: space-between;
 
@@ -391,6 +390,7 @@
 
     .fast {
         position: relative;
+        /* width: 553px; */
 
         .fast__img {
             position: absolute;
@@ -401,6 +401,7 @@
 
     .free {
         position: relative;
+        /* width: 555px; */
 
         .free__img {
             position: absolute;
@@ -415,6 +416,7 @@
 
     .safe {
         position: relative;
+        /* width: 552px; */
         
         .safe__img {
             position: absolute;
@@ -499,7 +501,7 @@
     padding-left: 28px;
     padding-top: 28px;
     position: relative;
-    width: 411px;
+    width: 405px;
     height: 277px;
     cursor: pointer;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -738,7 +740,7 @@
     border-radius: 10px;
     padding-left: 38px;
     padding-top: 45px;
-    margin-bottom: 105px;
+    margin-bottom: 130px;
     position: relative;
 
     h2 {

@@ -1,12 +1,12 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
 import back from '../../assets/Main/background.png'
 import icon_connection from '../../assets/Main/icon_connection.png'
 import icon_search from '../../assets/Main/icon_search.svg'
-import separator from '../../assets/Main/bw_separator3.svg'
+import separator from '../../assets/Main/bw_separator.svg'
 import checkmark from '../../assets/Main/icon_checkmark.svg'
 import rect_blue from '../../assets/Main/rect-blue.jpg'
 import gear1 from '../../assets/Main/gear1.svg'
@@ -31,8 +31,6 @@ import stage1 from '../../assets/Main/stage1.svg'
 import stage2 from '../../assets/Main/stage2.svg'
 import stage3 from '../../assets/Main/stage3.svg'
 import stage_final from '../../assets/Main/stage_final.jpg'
-import black_sep from '../../assets/Main/black_part_separator.svg'
-import white_sep from '../../assets/Main/white_part_separator.svg'
 
 
 
@@ -65,33 +63,10 @@ function Main() {
                         <button className='clear-button' style={{ display: 'none' }}>×</button>
                     </div>
 
-                    <button className='btn-search'>Найти</button>
+                    <Link to='/full_registration_step1'><button className='btn-search'>Найти</button></Link>
                 </div>
 
                 <img src={separator} alt='separator' className='separator'/>
-
-                {/* <div className="separator2">
-                    {Array.from({ length: Math.ceil(100 / 6) }).map((_, i) => (
-                        <svg
-                            key={i}
-                            viewBox="0 0 120 39"
-                            preserveAspectRatio="none"
-                        >
-                            <polygon
-                                points="0,0 100,0 120,39 20,39"
-                                fill={i % 2 === 0 ? "#000000" : "#FFFFFF"}
-                            />
-                        </svg>
-                    ))}
-                </div> */}
-
-
-
-
-
-
-
-
 
 
 
@@ -124,7 +99,7 @@ function Main() {
                 {/* блок "быстро бесплатно безопасно" */}
                 <div className='fast-free-safe'>
                     <div className='fast'>
-                        <img src={rect_blue} alt='rectangle' />
+                        <img src={rect_blue} alt='rectangle' width={530}/>
                         <img src={gear1} alt='gear wheel' className='fast__img'/>
                         <div className='fast__text'>
                             <h3>Быстро</h3>
@@ -133,7 +108,7 @@ function Main() {
                     </div>
 
                     <div className='free'>
-                        <img src={rect_blue} alt='rectangle' />
+                        <img src={rect_blue} alt='rectangle' width={530}/>
                         <img src={hammer1} alt='hammer' className='free__img'/>
                         <div className='free__text'>
                             <h3>Бесплатно</h3>
@@ -142,7 +117,7 @@ function Main() {
                     </div>
 
                     <div className='safe'>
-                        <img src={rect_blue} alt='rectangle' />
+                        <img src={rect_blue} alt='rectangle' width={530}/>
                         <img src={wrench1} alt='wrench' className='safe__img'/>
                         <div className='safet__text'>
                             <h3>Безопасно</h3>

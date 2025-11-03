@@ -19,7 +19,7 @@ export default function ShortStep1Phone() {
     <div>
         <Header hideElements={true} />
 
-        <div className='full-reg-container'>
+        <div className='reg-container'>
             <div className='registr-container' style={{height: '560px'}}>
 
                 <div className='title'>
@@ -33,7 +33,7 @@ export default function ShortStep1Phone() {
                 <PhoneNumber />
                 
                 <div className="register-link">
-                    У вас еще нет аккаунта? <Link to="/simplified_registration_step1" className="register-here">Зарегистрироваться</Link>
+                    У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
                 </div>
 
             </div>

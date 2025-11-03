@@ -17,6 +17,7 @@
   cursor: pointer; 
   font-size: 24px; 
   font-weight: 500;
+  color: #151515;
   transition: all 0.2s; /* Плавный переход */
 }
 
