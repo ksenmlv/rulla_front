@@ -1,52 +1,49 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import RoleSwitcher from '../../common/RoleSwitcher'
-import { Link, useNavigate } from 'react-router-dom'
 import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
+import { name } from 'file-loader'
 
 
 export default function ShortStep2Name() {
+  const { userName, userRegion, setUserName, setUserRegion, setPhoneNumber } = useAppContext()
   const navigate = useNavigate()
 
   const handleBack = () => {
-    navigate('/enter')
+    navigate('/simplified_registration_step1')
   }
 
   const [isChecked, setIsChecked] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    region: ''
-  })
+
 
   // проверка на заполненность полей и галочкм
-  const isFormValid = formData.name.trim() !== '' && formData.region.trim() !== '' && isChecked
+  const isFormValid = userName.trim() !== '' && userRegion.trim() !== '' && isChecked
 
   const handleNameChange = (e) => {
     const value = e.target.value
-    const onlyLetters = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
-    setFormData(prev => ({
-      ...prev,
-      name: onlyLetters
-    }))
+    const onlyLettersName = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
+    setUserName(onlyLettersName)
   }
 
   const handleRegionChange = (e) => {
     const value = e.target.value
-    const onlyLetters = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
-    setFormData(prev => ({
-      ...prev,
-      region: onlyLetters
-    }))
+    const onlyLettersRegion = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
+    setUserRegion(onlyLettersRegion)
   }
 
   // нажатие на кнопку "Зарегистрироваться"
   const handleSubmit = () => {
     if (isFormValid) {
       // Логика регистрации
-      console.log('Форма отправлена:', formData)
+      console.log('Данные для регистрации:', {name: userName, region: userRegion})
       // navigate('/next-step') // Переход на следующий шаг
+      setPhoneNumber('')
+      setUserName('')
+      setUserRegion('')
       alert('Упрощенная регистрация завершена!')
       navigate('/')
     }
@@ -71,9 +68,9 @@ export default function ShortStep2Name() {
 
             <div className='input-fields'>
               <h3>Имя</h3>
-              <input type='text' placeholder='Введите ваше имя' value={formData.name} onChange={handleNameChange}/>
+              <input type='text' placeholder='Введите ваше имя' value={userName} onChange={handleNameChange}/>
               <h3>Регион</h3>
-              <input type='text' placeholder='Укажите свой регион' value={formData.region} onChange={handleRegionChange }/>
+              <input type='text' placeholder='Укажите свой регион' value={userRegion} onChange={handleRegionChange }/>
             </div>
 
             {/* Checkbox с политикой конфиденциальности */}

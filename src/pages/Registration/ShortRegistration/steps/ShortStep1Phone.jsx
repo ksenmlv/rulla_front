@@ -1,19 +1,27 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import RoleSwitcher from '../../common/RoleSwitcher'
 import PhoneNumber from '../../common/PhoneNumber'
 import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import { Link, useNavigate } from 'react-router-dom'
+
 
 
 export default function ShortStep1Phone() {
+  const { phoneNumber } = useAppContext()
   const navigate = useNavigate()
 
   const handleBack = () => {
     navigate('/enter')
   }
+
+  const handlePhoneSubmit = () => {
+    navigate('/simplified_registration_step2')
+  }
+
 
   return (
     <div>
@@ -30,7 +38,7 @@ export default function ShortStep1Phone() {
                 </div>
 
                 <RoleSwitcher />
-                <PhoneNumber />
+                <PhoneNumber onPhoneSubmit={handlePhoneSubmit}/>
                 
                 <div className="register-link">
                     У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>

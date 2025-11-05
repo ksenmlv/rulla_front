@@ -1,25 +1,29 @@
 import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAppContext } from '../../contexts/AppContext'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
-import '../Enter/Enter.css'
-import arrow from '../../assets/Main/arrow_left.svg'
 import { PhoneInput } from 'react-international-phone'
+import arrow from '../../assets/Main/arrow_left.svg'
 import 'react-international-phone/style.css'
-import { Link, useNavigate } from 'react-router-dom'
+import '../Enter/Enter.css'
+
 
 function Enter() {
   const navigate = useNavigate()
+  const { phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
   const [activeRole, setActiveRole] = useState('executor')       // or customer
-  const [phone, setPhone] = useState('')
   const [step, setStep] = useState(1)                            // 1 - ввод телефона, 2 - ввод кода
   const [isValidPhone, setIsValidPhone] = useState(false)
-  const [code, setCode] = useState(['', '', '', ''])
   const [submitAttempted, setSubmitAttempted] = useState(false)  // попытка отправки 1 формы
+
+  // преобразование smsCode в массив для работы с инпутами
+  const codeArray = Array.isArray(smsCode) ? smsCode : (typeof smsCode === 'string' ? smsCode.split('') : ['', '', '', ''])
 
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
-    setPhone(value)
+    setPhoneNumber(value)
     const digitsOnly = value.replace(/\D/g, '')
     setIsValidPhone(digitsOnly.length > 10)
   }
@@ -33,15 +37,19 @@ function Enter() {
       
       if (isValidPhone) {
         setStep(2)
-        console.log('Номер телефона:', phone)
+        console.log('Номер телефона:', phoneNumber)
         // Здесь можно отправить запрос для получения SMS кода
 
       }
     } else if (step === 2 && isCodeComplete) {
-      console.log('Введенный код:', code.join(''))
+      console.log('Введенный код:', codeArray.join(''))
       // Обработка ввода кода подтверждения
 
-      // Здесь переход на следующую страницу или завершение входа
+      // переход на следующую страницу и завершение входа
+      setPhoneNumber('')
+      setSmsCode('')
+      alert('Успешный вход')
+      navigate('/')
     }
   }
 
@@ -49,9 +57,9 @@ function Enter() {
   // обработчик ввода кода
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) { 
-      const newCode = [...code]
+      const newCode = [...codeArray]
       newCode[index] = value
-      setCode(newCode)
+      setSmsCode(newCode)
       
       // автопереход к следующему полю
       if (value && index < 3) {
@@ -61,13 +69,13 @@ function Enter() {
   }
 
   // проверка заполненности всех полей кода
-  const isCodeComplete = code.every(digit => digit !== '')
+  const isCodeComplete = codeArray.every(digit => digit !== '')
 
   // обработчик нажатия клавиш
   const handleKeyDown = (index, e) => {
     // Backspace
     if (e.key === 'Backspace') {
-      if (!code[index] && index > 0) {
+      if (!codeArray[index] && index > 0) {
         // поле пустое и нажали Backspace - переход к предыдущему полю
         document.getElementById(`code-input-${index - 1}`)?.focus()
       }
@@ -91,7 +99,7 @@ function Enter() {
 
   const handleBack = () => {
     if (step === 2) {
-      setCode(['', '', '', ''])
+      setSmsCode(['', '', '', ''])
       setStep(1)
     } else {
       navigate('/')
@@ -139,7 +147,7 @@ function Enter() {
                 <label className="form-label">Номер телефона</label>
                 <PhoneInput
                   placeholder="Введите номер телефона"
-                  value={phone}
+                  value={phoneNumber}
                   onChange={handlePhoneChange}
                   defaultCountry="ru"
                   international
@@ -151,7 +159,7 @@ function Enter() {
                   showDisabledDialCodeAndPrefix={false}
                   forceDialCode={true}
                 />
-                {submitAttempted && phone && !isValidPhone && (
+                {submitAttempted && phoneNumber && !isValidPhone && (
                   <div className="error-message">
                     Введите корректный номер телефона
                   </div>
@@ -174,7 +182,7 @@ function Enter() {
                 <label className="form-label">
                   Код из СМС
                   <div className="phone-preview">
-                    Код отправлен на номер: {phone}
+                    Код отправлен на номер: {phoneNumber}
                   </div>
                 </label>
                 <div className="code-inputs">
@@ -184,7 +192,7 @@ function Enter() {
                       id={`code-input-${index}`}
                       type="text"
                       maxLength="1"
-                      value={code[index]}
+                      value={codeArray[index] || ''}
                       onChange={(e) => handleCodeChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       className="code-input"

@@ -320,7 +320,7 @@ const CustomSelector = () => {
                   </div>
                 ))
               ) : (
-                <div style={{ padding: '10px 130px', color: '#666', fontSize: '20px' }}>
+                <div style={{ paddingTop: '10px', color: '#666', fontSize: '20px', textAlign: 'center' }}>
                   {inputValue ? 'Нет совпадений' : 'Введите название города'}
                 </div>
               )}

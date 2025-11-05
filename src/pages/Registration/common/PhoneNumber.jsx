@@ -1,31 +1,35 @@
 import React, { useState } from 'react'
 import { PhoneInput } from 'react-international-phone'
-import 'react-international-phone/style.css'
+import { useAppContext } from '../../../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
+import 'react-international-phone/style.css'
 import '../Registration.css'
 
 
-export default function PhoneNumber() {
+export default function PhoneNumber({ onPhoneSubmit }) {
   const navigate = useNavigate()
-  const [phone, setPhone] = useState('')
+  const { phoneNumber, setPhoneNumber } = useAppContext()
   const [isValidPhone, setIsValidPhone] = useState(false)
-  const [submitAttempted, setSubmitAttempted] = useState(true)
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
-    setPhone(value)
+    setPhoneNumber(value)
     const digitsOnly = value.replace(/\D/g, '')
     setIsValidPhone(digitsOnly.length > 10)
   }
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
     
     if (isValidPhone) {
-      navigate('/simplified_registration_step2')
+      if (onPhoneSubmit) {
+        onPhoneSubmit()
+      } else {
+        navigate('/')
+      }
     } else {
-      // Уже и так показываем ошибку, так как submitAttempted = true
-      alert('Номер невалиден')
+      alert('Пожалуйста, введите корректный номер телефона')
     }
   }
 
@@ -36,7 +40,7 @@ export default function PhoneNumber() {
             <label className="form-label">Номер телефона</label>
             <PhoneInput
                 placeholder="Введите номер телефона"
-                value={phone}
+                value={phoneNumber}
                 onChange={handlePhoneChange}
                 defaultCountry="ru"
                 international

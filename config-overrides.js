@@ -64,11 +64,18 @@ module.exports = function override(config, env) {
     config.module.rules.push(scssRule);
   }
 
-  // Полифиллы для Node.js модулей
+  // Полифиллы для Node.js модулей - ДОБАВЬТЕ ЭТО
   config.resolve.fallback = {
     ...config.resolve.fallback,
-    buffer: require.resolve('buffer'),
-    stream: require.resolve('stream-browserify')
+    "path": require.resolve("path-browserify"), // ← ДОБАВЬТЕ ЭТУ СТРОЧКУ
+    "buffer": require.resolve('buffer'),
+    "stream": require.resolve('stream-browserify'),
+    "fs": false,
+    "os": false,
+    "crypto": false,
+    "http": false,
+    "https": false,
+    "zlib": false
   };
 
   // Добавление плагинов
