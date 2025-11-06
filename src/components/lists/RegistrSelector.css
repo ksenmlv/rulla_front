@@ -63,7 +63,7 @@
   left: 0;
   right: 0;
   padding: 15px 0;
-  background: white;
+  background: #F4F5F5;
   font-size: 20px;
   color: #000;
   border: 1px solid #E5E5E5;
@@ -88,7 +88,7 @@
 
 /* 🔸 Подсветка при наведении — не на всю ширину */
 .activity-option:hover {
-  background-color: #f3f3f3;
+  background-color: #a6a6a61b;
 }
 
 /* 🔸 Оранжевый шрифт у выбранного элемента (нажатого) */

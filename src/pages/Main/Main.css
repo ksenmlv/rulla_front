@@ -94,7 +94,7 @@
 .search-container {
     position: absolute;
     width: 72%;
-    bottom: 4.5vh;
+    bottom: 8%;
     left: 40px;
 }
 .search-input {
@@ -124,7 +124,7 @@
 
 .btn-search {
     position: absolute;
-    bottom: 4.5vh;
+    bottom: 8%;
     right: 40px;
     width: 22%;
     height: 84px;

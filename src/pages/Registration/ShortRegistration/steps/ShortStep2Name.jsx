@@ -55,7 +55,7 @@ export default function ShortStep2Name() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{height: '731px'}}>
+        <div className='registr-container' style={{height: '750px'}}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
@@ -75,8 +75,10 @@ export default function ShortStep2Name() {
 
             {/* Checkbox с политикой конфиденциальности */}
             <div className="checkbox-wrapper" onClick={() => setIsChecked(!isChecked)}>
-              <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
-                {isChecked && <span className="checkmark">✓</span>}
+              <div 
+                className={`custom-checkbox ${isChecked ? 'checked' : ''}`} 
+                onClick={() => setIsChecked(!isChecked)} >
+                  {isChecked && <span className="inner-square"></span>}
               </div>
               <span className="checkbox-text">Я соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и обработкой персональных данных</span>
             </div>

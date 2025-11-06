@@ -18,9 +18,9 @@
   height: 579px;
   margin: 0 auto;
   padding: 45px 65px;
-  background: #F3F3F3;
+  background: #FFFFFF;
   border-radius: 10px;
-  box-shadow: 0px 3px 6.7px 0px #0000002E;
+  border: 3px solid #DE5A2B;
   font-family: 'Wix Madefor Display', sans-serif;
 }
 
@@ -47,6 +47,7 @@
     position: absolute;
     left: 0;
     top: 5px;
+    background-color: #fff;
 }
 
 /* переключатель ролей */
@@ -56,19 +57,20 @@
   height: 69px;
   border-radius: 10px; 
   overflow: hidden; 
-  background-color: #DADADA; 
+  background-color: #F4F5F5; 
   padding: 5px; 
   margin-bottom: 35px;
 }
 
 .role-button {
   flex: 1; 
-  background: #DADADA; 
+  background: #F4F5F5; 
   border: none; 
   cursor: pointer; 
   font-size: 24px; 
   font-weight: 500;
-  transition: all 0.2s; /* Плавный переход */
+  color: #656565;
+  transition: all 0.3s; /* Плавный переход */
 }
 
 .role-button:first-child, .role-button:last-child {
@@ -77,8 +79,9 @@
 
 .role-button.active {
   background: #F3F3F3; 
-  border: 1px solid #DE5A2B !important; 
+  border: 2px solid #DE5A2B !important; 
   color: #151515; 
+  background-color: #fff;
   position: relative;
   z-index: 1; 
 }
@@ -115,7 +118,7 @@
 }
 
 .country-selector-button {
-  background-color: #F3F3F3 !important;
+  background-color: #fff !important;
   border: none !important;
   height: 53px !important;
   margin-right: 5px !important;

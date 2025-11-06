@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './RegistrSelector.css'; 
 
-const RegistrSelector = ({ subject = [], placeholder }) => {
+const RegistrSelector = ({ subject = [], placeholder, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
   const [selectedActivity, setSelectedActivity] = useState('');
@@ -42,6 +42,7 @@ const RegistrSelector = ({ subject = [], placeholder }) => {
     setSelectedActivity(activity);
     setSearchValue(activity);
     setIsOpen(false);
+    if (onSelect) onSelect(activity); 
   };
 
   const handleInputChange = (e) => {

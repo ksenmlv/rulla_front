@@ -28,7 +28,7 @@ export default function ShortStep1Phone() {
         <Header hideElements={true} />
 
         <div className='reg-container'>
-            <div className='registr-container' style={{height: '560px'}}>
+            <div className='registr-container' style={{height: '580px'}}>
 
                 <div className='title'>
                     <button className='btn-back' onClick={handleBack}>

@@ -16,9 +16,9 @@
   height: 579px;
   margin: 0 auto;
   padding: 45px 65px;
-  background: #F3F3F3;
+  background: #FFFFFF;
   border-radius: 10px;
-  box-shadow: 0px 3px 6.7px 0px #0000002E;
+  border: 3px solid #DE5A2B;
   font-family: 'Wix Madefor Display', sans-serif;
 }
 
@@ -118,6 +118,7 @@
     font-size: 20px;
     font-weight: 500;
     color: #000;
+    background-color: #F4F5F5;
   }
 
   input::placeholder{
@@ -150,21 +151,34 @@
 }
 
 .custom-checkbox {
-  width: 21px;
-  height: 21px;
-  border: 3px solid #919191;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ECA288;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  cursor: pointer;
+  transition: all 0.2s ease;
   flex-shrink: 0;
+  background-color: white;
+}
+
+.custom-checkbox:hover {
+  border-color: #DE5A2B;
 }
 
 .custom-checkbox.checked {
-  background: #ECA288;
-  border-color: #ECA288;
+  border-color: #DE5A2B;
 }
+
+.inner-square {
+  width: 10px;
+  height: 10px;
+  background-color: #DE5A2B;
+  border-radius: 2px;
+}
+
 
 .checkmark {
   color: white;
@@ -206,4 +220,147 @@
   img {
     margin-top: -14px;
   }
+}
+
+
+
+/* 3 шаг - паспорт */
+.passport-details {
+  h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #151515;
+    margin-bottom: 35px;
+  }
+
+  h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: 000000;
+  }
+}
+
+/* Стили для выбора страны */
+.country-selection {
+  margin-top: 25px;
+}
+
+.radio-option {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.radio-option input[type="radio"] {
+  margin-right: 10px;
+  width: 21px;
+  height: 21px;
+  cursor: pointer;
+  accent-color: #DE5A2B;
+}
+
+/* Кастомные стили для радиобаттона для лучшей поддержки браузеров */
+.radio-option input[type="radio"]:checked {
+  background-color: #DE5A2B;
+  border-color: #DE5A2B;
+}
+
+.radio-option label {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000000;
+  cursor: pointer;
+  margin: 0;
+}
+
+.country-input-container {
+  width: 100%;
+}
+
+.country-input {
+  width: 100%;
+  height: 97px;
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 20px;
+  color: #4B4B4B;
+  background-color: #F4F5F5;
+  border: none;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.country-input:focus {
+  outline: none;
+  border: 1px solid #cdcfcf; 
+}
+
+.country-input:disabled {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  cursor: not-allowed;
+  border-color: #e9ecef;
+}
+
+.country-input::placeholder {
+  color: #4B4B4B;
+  opacity: 0.8;
+}
+
+/* поля ввода паспортных данных */
+.passport-fields-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.passport-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.passport-field {
+    display: flex;
+    flex-direction: column;
+
+    p {
+      font-size: 16px;
+      color: #000000B2;
+      line-height: 1.2;
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+}
+
+.passport-field h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.passport-field input {
+    height: 55px;
+    width: 100%;
+    border: 1px solid #ECA288;
+    border-radius: 10px;
+    padding: 0 18px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #000;
+    background-color: #F4F5F5;
+    box-sizing: border-box;
+}
+
+.passport-field input::placeholder {
+    color: #4B4B4B;
+    opacity: 0.7;
+    font-size: 18px;
+}
+
+.passport-field input:focus {
+    border-color: #DE5A2B;
+    outline: none;
 }
