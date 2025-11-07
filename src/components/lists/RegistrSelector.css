@@ -62,17 +62,16 @@
   top: 75%;
   left: 0;
   right: 0;
-  padding: 15px 0;
   background: #F4F5F5;
-  font-size: 20px;
+  font-size: 17px;
   color: #000;
   border: 1px solid #E5E5E5;
   border-radius: 10px;
   z-index: 1000;
   margin-top: 7px;
-  height: 245px;
+  height: 215px;
   overflow-y: auto;
-  padding: 10px 15px; 
+  padding: 5px 5px; 
   box-sizing: border-box;
   margin-top: 0;
 }
@@ -109,13 +108,13 @@
 .activity-dropdown::-webkit-scrollbar-track {
   background: #ECA28880; /* вертикальная линия полупрозрачная */
   border-radius: 20px;
-  margin: 15px 0;
+  margin: 10px 0;
 }
 
 .activity-dropdown::-webkit-scrollbar-thumb {
   background: #ECA288; /* цвет ползунка */
   border-radius: 20px;
- cursor: pointer;
+  cursor: pointer;
 }
 
 .activity-dropdown::-webkit-scrollbar-thumb:hover {

@@ -159,7 +159,7 @@ export default function Step1Phone() {
 
 
                 <div className="register-link">
-                    У вас уже есть аккаунт? <Link to="/" className="register-here">Войти</Link>
+                    У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
                 </div>
 
 

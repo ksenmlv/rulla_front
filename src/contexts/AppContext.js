@@ -17,6 +17,10 @@ export const AppProvider = ({ children }) => {
   const [userActivity, setUserActivity] = useState('')
   const [userCitizenship, setUserCitizenship] = useState('')
 
+  const [userExperience, setUserExperience] = useState()
+  const [specialistsNumber, setSpecialistsNumber] = useState('')
+
+
   const [stepNumber, setStepNumber] = useState(1)
 
 
@@ -40,6 +44,11 @@ export const AppProvider = ({ children }) => {
     userCitizenship, 
     setUserCitizenship,
 
+    userExperience, 
+    setUserExperience,
+    specialistsNumber, 
+    setSpecialistsNumber,
+
   }), [
     selectedCity,
     phoneNumber,
@@ -49,6 +58,8 @@ export const AppProvider = ({ children }) => {
     stepNumber,
     userActivity,
     userCitizenship,
+    userExperience,
+    specialistsNumber,
 
   ])
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -13,6 +13,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 export default function ShortStep1Phone() {
   const { phoneNumber } = useAppContext()
   const navigate = useNavigate()
+
 
   const handleBack = () => {
     navigate('/enter')

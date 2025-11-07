@@ -55,7 +55,7 @@ export default function ShortStep2Name() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{height: '750px'}}>
+        <div className='registr-container' style={{height: '610px'}}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
@@ -63,8 +63,6 @@ export default function ShortStep2Name() {
                 </button>
                 <h2 className="login-title">Регистрация</h2>
             </div>
-
-            <RoleSwitcher />
 
             <div className='input-fields'>
               <h3>Имя</h3>

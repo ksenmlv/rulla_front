@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
@@ -41,7 +41,7 @@ export default function Step2Activity() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: '590px'}}>
+        <div className='registr-container' style={{minHeight: '630px'}}>
 
           <div className='title'>
               <button className='btn-back' onClick={handleBack}>
@@ -50,13 +50,13 @@ export default function Step2Activity() {
               <h2 className="login-title">Полная регистрация</h2>
           </div>
 
-          <div className='registr-scale'>
+          <div className='registr-scale' >
               <p>2/7</p>
               <img src={scale} alt='Registration scale' />
           </div>
 
-          <div className='input-fields'>
-              <h3>Вид деятельности</h3>
+          <div className='input-fields' style={{marginBottom:'40px'}}>
+              <h3 style={{marginBottom:'10px'}}>Вид деятельности</h3>
               <RegistrSelector 
                 placeholder={'Укажите деятельность'} 
                 subject={[ 'Название деятельности 1',
@@ -79,12 +79,14 @@ export default function Step2Activity() {
                             'Название деятельности 18',
                             'Название деятельности 19',
                             'Название деятельности 20']}
-                onSelect={handleActivitySelect} />
-              <h3>Регион</h3>
+                onSelect={handleActivitySelect}
+                style={{marginBottom:'20px'}} />
+              <h3 style={{marginBottom:'10px'}}>Регион</h3>
               <RegistrSelector 
                 placeholder={'Укажите регион'} 
                 subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
-                onSelect={handleRegionSelect}/>
+                onSelect={handleRegionSelect}
+                style={{marginBottom:'20px'}}/>
           </div>
 
           
@@ -93,7 +95,7 @@ export default function Step2Activity() {
             className={`continue-button ${!isFormComplete ? 'disabled' : ''}`} 
             disabled={!isFormComplete}
             onClick={handleForward}
-            style={{marginTop: '20px'}}
+            style={{marginTop: '50px'}}
           >
             Продолжить
           </button>

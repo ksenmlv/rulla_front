@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../contexts/AppContext'
 import Header from '../../components/Header/Header'
@@ -11,11 +11,19 @@ import '../Enter/Enter.css'
 
 function Enter() {
   const navigate = useNavigate()
+  const inputRef = useRef()
   const { phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
   const [activeRole, setActiveRole] = useState('executor')       // or customer
   const [step, setStep] = useState(1)                            // 1 - ввод телефона, 2 - ввод кода
   const [isValidPhone, setIsValidPhone] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)  // попытка отправки 1 формы
+
+  // фокус на инпут
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [])
 
   // преобразование smsCode в массив для работы с инпутами
   const codeArray = Array.isArray(smsCode) ? smsCode : (typeof smsCode === 'string' ? smsCode.split('') : ['', '', '', ''])
@@ -148,6 +156,7 @@ function Enter() {
                 <PhoneInput
                   placeholder="Введите номер телефона"
                   value={phoneNumber}
+                  ref={inputRef}
                   onChange={handlePhoneChange}
                   defaultCountry="ru"
                   international

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { PhoneInput } from 'react-international-phone'
 import { useAppContext } from '../../../contexts/AppContext'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +10,14 @@ export default function PhoneNumber({ onPhoneSubmit }) {
   const navigate = useNavigate()
   const { phoneNumber, setPhoneNumber } = useAppContext()
   const [isValidPhone, setIsValidPhone] = useState(false)
+    const inputRef = useRef()
+
+  // фокус на инпут при открытии формы
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [])
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
@@ -41,6 +49,7 @@ export default function PhoneNumber({ onPhoneSubmit }) {
             <PhoneInput
                 placeholder="Введите номер телефона"
                 value={phoneNumber}
+                ref={inputRef}
                 onChange={handlePhoneChange}
                 defaultCountry="ru"
                 international
