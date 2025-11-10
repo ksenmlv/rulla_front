@@ -2,22 +2,29 @@ import React, { useState, useRef } from 'react';
 import './Common.css';
 import file_loader from '../../../assets/Main/file_loader.svg';
 
-const FileUpload = () => {
+const FileUpload = ({ onFilesUpload, maxFiles = 1 }) => {
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
+
+  const updateFiles = (newFiles) => {
+    setFiles(newFiles);
+    if (onFilesUpload) {
+      onFilesUpload(newFiles);
+    }
+  };
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     const totalFiles = [...files, ...selectedFiles];
 
-    if (totalFiles.length > 3) {
-      alert('Можно загрузить не более 3 файлов.');
-      setFiles(totalFiles.slice(0, 3)); // оставляем только первые 3
+    if (totalFiles.length > maxFiles) {
+      alert(`Можно загрузить не более ${maxFiles} файлов.`);
+      updateFiles(totalFiles.slice(0, maxFiles));
     } else {
-      setFiles(totalFiles);
+      updateFiles(totalFiles);
     }
 
-    e.target.value = ''; // сбрасываем input, чтобы можно было выбрать тот же файл снова при необходимости
+    e.target.value = '';
   };
 
   const handleButtonClick = () => {
@@ -32,7 +39,8 @@ const FileUpload = () => {
   };
 
   const handleRemoveFile = (index) => {
-    setFiles(files.filter((_, i) => i !== index));
+    const newFiles = files.filter((_, i) => i !== index);
+    updateFiles(newFiles);
   };
 
   return (
@@ -46,6 +54,7 @@ const FileUpload = () => {
         style={{ display: 'none' }}
       />
 
+      {/* Основная кнопка загрузки */}
       <button
         type="button"
         className={`file-upload-button ${files.length > 0 ? 'uploaded' : ''}`}
@@ -54,7 +63,7 @@ const FileUpload = () => {
         {files.length === 0 ? (
           <div className="file-upload-content">
             <img src={file_loader} alt="File loader" className="file-upload-icon" />
-            <span className="file-upload-text">Загрузить файлы (до 3)</span>
+            <span className="file-upload-text">Загрузить файл</span>
           </div>
         ) : (
           <div className="file-list">
@@ -62,16 +71,24 @@ const FileUpload = () => {
               <div key={index} className="file-name" title={file.name}>
                 <span className="file-name-icon">📄</span>
                 <span className="file-name-text">{shortenFileName(file.name)}</span>
-                <button
-                  type="button"
+                {/* ЗАМЕНИТЬ button НА div с role="button" */}
+                <div
+                  role="button"
+                  tabIndex={0}
                   className="file-remove"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleRemoveFile(index);
                   }}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleRemoveFile(index);
+                    }
+                  }}
                 >
                   ✕
-                </button>
+                </div>
               </div>
             ))}
             {files.length < 3 && (

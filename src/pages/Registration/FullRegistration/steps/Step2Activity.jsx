@@ -32,6 +32,9 @@ export default function Step2Activity() {
   }
 
   const handleForward = () => {
+    setUserActivity('')
+    setUserRegion('')
+
     setStepNumber(stepNumber + 1)
     navigate('/full_registration_step3')
   }
@@ -41,7 +44,7 @@ export default function Step2Activity() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: '630px'}}>
+        <div className='registr-container' style={{minHeight: '660px'}}>
 
           <div className='title'>
               <button className='btn-back' onClick={handleBack}>

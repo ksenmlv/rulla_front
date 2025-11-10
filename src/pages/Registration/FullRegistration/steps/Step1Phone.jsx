@@ -52,7 +52,7 @@ export default function Step1Phone() {
     }
   }
 
-  const isCodeComplete = codeArray.every(digit => digit !== '')
+  const isCodeComplete = codeArray.length === 4 && codeArray.every(digit => digit !== '' && digit !== null && digit !== undefined)
 
   const handleKeyDown = (index, e) => {
     if (e.key === 'Backspace') {

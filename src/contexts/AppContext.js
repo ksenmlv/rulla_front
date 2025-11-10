@@ -15,7 +15,26 @@ export const AppProvider = ({ children }) => {
   const [userName, setUserName] = useState('')
   const [userRegion, setUserRegion] = useState('')
   const [userActivity, setUserActivity] = useState('')
-  const [userCitizenship, setUserCitizenship] = useState('')
+
+  const [passportData, setPassportData] = useState({
+      citizenship: '', // 'ru', 'chf', 'other'
+      otherCountry: '', // если citizenship === 'other' или 'chf'
+      series: '',
+      number: '',
+      issuedBy: '',
+      issueDate: '',
+      scanPages: [],
+      scanRegistration: []
+  })
+
+  const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')
+  const [individualEntrepreneurData, setIndividualEntrepreneurData] = useState({
+      FIO: '',
+      INN: '', 
+      OGRNIP: '', 
+      regustrationDate: '', 
+      extractOGRNIP: []
+  })
 
   const [userExperience, setUserExperience] = useState()
   const [specialistsNumber, setSpecialistsNumber] = useState('')
@@ -41,8 +60,13 @@ export const AppProvider = ({ children }) => {
     setStepNumber,
     userActivity, 
     setUserActivity,
-    userCitizenship, 
-    setUserCitizenship,
+    passportData, 
+    setPassportData,
+    userLawSubject, 
+    setUserLawSubject,
+    individualEntrepreneurData, 
+    setIndividualEntrepreneurData,
+
 
     userExperience, 
     setUserExperience,
@@ -57,7 +81,10 @@ export const AppProvider = ({ children }) => {
     userRegion,
     stepNumber,
     userActivity,
-    userCitizenship,
+    passportData,
+    userLawSubject,
+    individualEntrepreneurData,
+    
     userExperience,
     specialistsNumber,
 

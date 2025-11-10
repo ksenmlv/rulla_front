@@ -248,6 +248,7 @@
   color: #000000B2;
   cursor: pointer;
   text-decoration: underline;
+  text-underline-offset: 4px; 
 }
 
 .resend-link:hover {

@@ -77,7 +77,7 @@ function Enter() {
   }
 
   // проверка заполненности всех полей кода
-  const isCodeComplete = codeArray.every(digit => digit !== '')
+  const isCodeComplete = codeArray.length === 4 && codeArray.every(digit => digit !== '' && digit !== null && digit !== undefined)
 
   // обработчик нажатия клавиш
   const handleKeyDown = (index, e) => {

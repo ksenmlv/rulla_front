@@ -225,7 +225,7 @@
 
 
 
-/* 3 шаг - паспорт */
+/* 3 этап - паспорт */
 .passport-details {
   h2 {
     font-size: 32px;
@@ -308,6 +308,13 @@
   opacity: 0.8;
 }
 
+/* ошибка формата даты */
+.passport-field input.error {
+  border-color: #ff4444;
+  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.2);
+}
+
+
 /* поля ввода паспортных данных */
 .passport-fields-grid {
     display: flex;
@@ -364,4 +371,58 @@
 .passport-field input:focus {
     border-color: #DE5A2B;
     outline: none;
+}
+
+.passport-field.full-width {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+
+
+/* 4 этап */
+/* переключатель ИП/самозанятый */
+.role-switcher {
+  display: flex;
+  background: transparent;
+  position: relative;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.role-option {
+  flex: 1;
+  padding-bottom: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 20px;
+  color: #656565;
+  position: relative;
+  text-align: center;
+}
+
+.role-option.active {
+  border-bottom: 2px solid #DE5A2B;
+  color: #151515
+}
+
+.role-slider {
+  position: absolute;
+  bottom: 0;
+  height: 3px;
+  background: #DE5A2B;
+  z-index: 1;
+}
+
+/* Позиции слайдера */
+.role-switcher .role-option:nth-child(1).active ~ .role-slider {
+  left: 0;
+  width: 50%;
+}
+
+.role-switcher .role-option:nth-child(2).active ~ .role-slider {
+  left: 50%;
+  width: 50%;
 }
