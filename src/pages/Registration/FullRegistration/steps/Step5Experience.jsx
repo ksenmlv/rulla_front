@@ -26,12 +26,12 @@ export default function Step5Experience() {
 
 
   const handleBack = () => {
-    navigate('/full_registration_step1')
+    navigate('/full_registration_step4')
   }
 
   const handleForward = () => {
     setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step3')
+    navigate('/full_registration_step6')
   }
 
   return (
@@ -61,11 +61,15 @@ export default function Step5Experience() {
                 placeholder={'Укажите опыт работы'} 
                 subject={[ '1', '2']}
                 onSelect={handleExperienceSelect} />
+
               <h3>Количество специалистов в компании</h3>
               <RegistrSelector 
                 placeholder={'Укажите количество специалистов'} 
                 subject={['1', 'до 5', 'до 10', 'до 20', 'до 30', 'более 30']}
                 onSelect={handleSpecialistsNumberSelect}/>
+
+              <h3>Наличие лицензии</h3>
+              
           </div>
         
         </div>

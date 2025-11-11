@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -8,8 +8,6 @@ import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale3.svg'
 
-
-
 export default function Step3Passport() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, passportData, setPassportData } = useAppContext()
@@ -17,37 +15,89 @@ export default function Step3Passport() {
   const [isFormValid, setIsFormValid] = useState(false)
   const [dateError, setDateError] = useState('')
 
+  // Рефы для полей ввода
+  const seriesInputRef = useRef(null)
+  const countryTextareaRef = useRef(null)
+  const numberInputRef = useRef(null)
+
   // Определяем, является ли выбранное гражданство РФ
   const isRussianCitizenship = passportData.citizenship === 'Российская федерация'
+  const isNotRussian = passportData.citizenship === 'Страны СНГ' || passportData.citizenship === 'Другое'
+
+  // Автофокус на первое поле при изменении гражданства
+  useEffect(() => {
+    if (isRussianCitizenship) {
+      // Фокус на поле серии паспорта для РФ
+      setTimeout(() => {
+        seriesInputRef.current?.focus()
+      }, 100)
+    } else if (isNotRussian) {
+      // Фокус на textarea для не-РФ
+      setTimeout(() => {
+        if ((passportData.citizenship === 'Другое') || (passportData.citizenship === 'Страны СНГ')){
+          countryTextareaRef.current?.focus()
+        } else {
+          numberInputRef.current?.focus()
+        }
+      }, 100)
+    }
+  }, [passportData.citizenship, isRussianCitizenship, isNotRussian])
 
   // валидация всей формы
   useEffect(() => {
     const validateForm = () => {
-      const requiredFields = [
+      // Базовые обязательные поля для всех
+      const baseRequiredFields = [
         passportData.citizenship,
         passportData.number,
         passportData.issuedBy,
         passportData.issueDate
       ]
 
-      // Для не-РФ добавляем серию в обязательные поля
-      if (!isRussianCitizenship) {
+      let requiredFields = [...baseRequiredFields]
+
+      // Для РФ добавляем серию в обязательные поля
+      if (isRussianCitizenship) {
         requiredFields.push(passportData.series)
       }
 
+      // Проверка заполнения полей
       const areFieldsFilled = requiredFields.every(field => field && field.trim().length > 0)
+      
+      // Проверка загрузки файлов
       const hasScanMain = passportData.scanMain && passportData.scanMain.length > 0
       const hasScanRegistration = passportData.scanRegistration && passportData.scanRegistration.length > 0
       
       // Если выбрано "Другое" - проверяем поле otherCountry
       const isOtherCountryValid = passportData.citizenship !== 'Другое' || 
-                                 (passportData.otherCountry && passportData.otherCountry.trim().length > 0)
+                                (passportData.otherCountry && passportData.otherCountry.trim().length > 0)
 
-      setIsFormValid(areFieldsFilled && isOtherCountryValid && hasScanMain && hasScanRegistration)
+      // Проверка серии и номера паспорта
+      let isSeriesValid = true
+      let isNumberValid = true
+
+      if (isRussianCitizenship) {
+        // Для РФ: серия - 4 цифры, номер - 6 цифр
+        isSeriesValid = passportData.series && passportData.series.replace(/\s/g, '').length === 4
+        isNumberValid = passportData.number && passportData.number.length === 6
+      } else if (isNotRussian) {
+        // Для СНГ и "Другого": только номер (без строгой проверки длины)
+        isNumberValid = passportData.number && passportData.number.trim().length > 0
+      }
+
+      // Общая валидация
+      const isValid = areFieldsFilled && 
+                    isOtherCountryValid && 
+                    hasScanMain && 
+                    hasScanRegistration && 
+                    isSeriesValid && 
+                    isNumberValid
+
+      setIsFormValid(isValid)
     }
 
     validateForm()
-  }, [passportData, isRussianCitizenship])
+  }, [passportData, isRussianCitizenship, isNotRussian])
 
   const handlePassportChange = (field, value) => {
     setPassportData(prev => ({
@@ -85,43 +135,48 @@ export default function Step3Passport() {
 
   // обработчик заполнения номера паспорта
   const handleNumberChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '')
-    if (value.length > 6) value = value.slice(0, 6)
+    let value = e.target.value
+    if (isRussianCitizenship) {
+      // Для РФ - только цифры, максимум 6
+      value = value.replace(/\D/g, '')
+      if (value.length > 6) value = value.slice(0, 6)
+    }
+    // Для СНГ и "Другого" - любые символы
     handlePassportChange('number', value)
   }
 
   // обработчик заполнения даты выдачи паспорта
-const handleDateChange = (e) => {
-  let value = e.target.value.replace(/\D/g, '')
-  if (value.length > 6) value = value.slice(0, 6)
-  
-  // Форматирование с разделителями
-  let formattedValue = value
-  if (value.length > 4) {
-    formattedValue = value.slice(0, 2) + '.' + value.slice(2, 4) + '.' + value.slice(4)
-  } else if (value.length > 2) {
-    formattedValue = value.slice(0, 2) + '.' + value.slice(2)
-  }
-  
-  handlePassportChange('issueDate', formattedValue)
-  
-  // валидация
-  if (value.length === 6) {
-    const day = parseInt(value.slice(0, 2))
-    const month = parseInt(value.slice(2, 4))
-    const year = parseInt('20' + value.slice(4, 6))
-    const date = new Date(year, month - 1, day)
-    const today = new Date()
+  const handleDateChange = (e) => {
+    let value = e.target.value.replace(/\D/g, '')
+    if (value.length > 6) value = value.slice(0, 6)
     
-    if ((date > today) || (date.getDate() !== day || date.getMonth() !== month - 1)) {
-      setDateError('Некорректная дата')
+    // Форматирование с разделителями
+    let formattedValue = value
+    if (value.length > 4) {
+      formattedValue = value.slice(0, 2) + '.' + value.slice(2, 4) + '.' + value.slice(4)
+    } else if (value.length > 2) {
+      formattedValue = value.slice(0, 2) + '.' + value.slice(2)
+    }
+    
+    handlePassportChange('issueDate', formattedValue)
+    
+    // валидация
+    if (value.length === 6) {
+      const day = parseInt(value.slice(0, 2))
+      const month = parseInt(value.slice(2, 4))
+      const year = parseInt('20' + value.slice(4, 6))
+      const date = new Date(year, month - 1, day)
+      const today = new Date()
+      
+      if ((date > today) || (date.getDate() !== day || date.getMonth() !== month - 1)) {
+        setDateError('Некорректная дата')
+      } else {
+        setDateError('')
+      }
     } else {
       setDateError('')
     }
-  } else {
-    setDateError('')
   }
-}
 
   const handleBack = () => {
     navigate('/full_registration_step2')
@@ -140,7 +195,6 @@ const handleDateChange = (e) => {
         scanPages: [],
         scanRegistration: []
     })
-
 
     setStepNumber(stepNumber + 1)
     navigate('/full_registration_step4')
@@ -197,6 +251,7 @@ const handleDateChange = (e) => {
               {!isRussianCitizenship && (
                 <div className="country-input-container">
                   <textarea
+                    ref={countryTextareaRef}
                     className="country-input"
                     placeholder={
                       passportData.citizenship === 'Страны СНГ'
@@ -221,6 +276,7 @@ const handleDateChange = (e) => {
                     <div className='passport-field'>
                       <h3>Серия паспорта</h3>
                       <input 
+                        ref={seriesInputRef}
                         value={passportData.series || ''} 
                         placeholder='00 00' 
                         maxLength={5}
@@ -280,9 +336,10 @@ const handleDateChange = (e) => {
                     <div className='passport-field full-width'>
                       <h3>Номер документа</h3>
                       <input 
+                        ref={numberInputRef}
                         value={passportData.number || ''}
                         placeholder='Введите номер документа' 
-                        maxLength={6}
+                        maxLength={20}
                         onChange={handleNumberChange}
                       />
                     </div>

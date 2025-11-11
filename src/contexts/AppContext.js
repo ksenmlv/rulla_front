@@ -35,10 +35,23 @@ export const AppProvider = ({ children }) => {
       regustrationDate: '', 
       extractOGRNIP: []
   })
+  const [selfEmployedData, setSelfEmployedData] = useState({
+    FIO: '',
+    INN: '', 
+    regustrationDate: '',
+    registrationCertificate: []
+  })
+  const [legalEntityData, setLegalEntityData] = useState({
+    organizationName: '', 
+    INN: '', 
+    OGRN: '',
+    registrationDate: '',
+    registrationAddress: '',
+    extractEGRUL: []
+  })
 
   const [userExperience, setUserExperience] = useState()
   const [specialistsNumber, setSpecialistsNumber] = useState('')
-
 
   const [stepNumber, setStepNumber] = useState(1)
 
@@ -66,6 +79,10 @@ export const AppProvider = ({ children }) => {
     setUserLawSubject,
     individualEntrepreneurData, 
     setIndividualEntrepreneurData,
+    selfEmployedData, 
+    setSelfEmployedData,
+    legalEntityData, setLegalEntityData, 
+    setLegalEntityData,
 
 
     userExperience, 
@@ -84,6 +101,8 @@ export const AppProvider = ({ children }) => {
     passportData,
     userLawSubject,
     individualEntrepreneurData,
+    selfEmployedData,
+    legalEntityData, 
     
     userExperience,
     specialistsNumber,

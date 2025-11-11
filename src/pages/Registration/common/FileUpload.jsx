@@ -91,7 +91,8 @@ const FileUpload = ({ onFilesUpload, maxFiles = 1 }) => {
                 </div>
               </div>
             ))}
-            {files.length < 3 && (
+            {/* Показываем "Добавить ещё файл" только если файлов меньше максимального количества */}
+            {files.length < maxFiles && (
               <span className="add-more-text">Добавить ещё файл</span>
             )}
           </div>

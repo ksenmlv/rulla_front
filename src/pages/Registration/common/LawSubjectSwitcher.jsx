@@ -2,19 +2,17 @@ import React, { useState } from 'react'
 import '../common/Common.css'
 
 
-export default function LawSubjectSwitcher() {
-  const [activeRole, setActiveRole] = useState('individual')  
-
+export default function LawSubjectSwitcher({ currentSubject, onSubjectChange }) {
   return (
     <div className="role-buttons">
         <button 
-            className={`role-button ${activeRole === 'individual' ? 'active' : ''}`} 
-            onClick={() => setActiveRole('individual')}> 
+            className={`role-button ${currentSubject !== 'legal_entity' ? 'active' : ''}`} 
+            onClick={() => onSubjectChange('individual_entrepreneur')}> 
             Физическое лицо
         </button>
         <button 
-            className={`role-button ${activeRole === 'legal' ? 'active' : ''}`}
-            onClick={() => setActiveRole('legal')}>
+            className={`role-button ${currentSubject === 'legal_entity' ? 'active' : ''}`}
+            onClick={() => onSubjectChange('legal_entity')}>
             Юридическое лицо
         </button>
     </div>
