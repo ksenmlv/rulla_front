@@ -16,6 +16,7 @@ export const AppProvider = ({ children }) => {
   const [userRegion, setUserRegion] = useState('')
   const [userActivity, setUserActivity] = useState('')
 
+  // 3 этап регистрации
   const [passportData, setPassportData] = useState({
       citizenship: '', // 'ru', 'chf', 'other'
       otherCountry: '', // если citizenship === 'other' или 'chf'
@@ -27,6 +28,7 @@ export const AppProvider = ({ children }) => {
       scanRegistration: []
   })
 
+  // 4 этап регистрации
   const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')
   const [individualEntrepreneurData, setIndividualEntrepreneurData] = useState({
       FIO: '',
@@ -50,8 +52,12 @@ export const AppProvider = ({ children }) => {
     extractEGRUL: []
   })
 
+  // 5 этап регистрации
   const [userExperience, setUserExperience] = useState()
   const [specialistsNumber, setSpecialistsNumber] = useState('')
+  const [userLicense, setUserLicense] = useState([])
+  const [userEducationalDiplom, setUserEducationalDiplom] = useState([])
+  const [userCriminalRecord, setUserCriminalRecord] = useState('')
 
   const [stepNumber, setStepNumber] = useState(1)
 
@@ -83,12 +89,16 @@ export const AppProvider = ({ children }) => {
     setSelfEmployedData,
     legalEntityData, setLegalEntityData, 
     setLegalEntityData,
-
-
     userExperience, 
     setUserExperience,
     specialistsNumber, 
     setSpecialistsNumber,
+    userLicense, 
+    setUserLicense,
+    userEducationalDiplom, 
+    setUserEducationalDiplom,
+    userCriminalRecord, 
+    setUserCriminalRecord,
 
   }), [
     selectedCity,
@@ -103,9 +113,11 @@ export const AppProvider = ({ children }) => {
     individualEntrepreneurData,
     selfEmployedData,
     legalEntityData, 
-    
     userExperience,
     specialistsNumber,
+    userLicense,
+    userEducationalDiplom, 
+    userCriminalRecord, 
 
   ])
 
