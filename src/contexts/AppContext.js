@@ -55,9 +55,16 @@ export const AppProvider = ({ children }) => {
   // 5 этап регистрации
   const [userExperience, setUserExperience] = useState()
   const [specialistsNumber, setSpecialistsNumber] = useState('')
-  const [userLicense, setUserLicense] = useState([])
-  const [userEducationalDiplom, setUserEducationalDiplom] = useState([])
-  const [userCriminalRecord, setUserCriminalRecord] = useState('')
+  const [userLicense, setUserLicense] = useState({ status: '', files: [] });
+  const [userEducationalDiplom, setUserEducationalDiplom] = useState({ status: '', files: [] });
+  const [userCriminalRecord, setUserCriminalRecord] = useState({ status: '', text: '' });
+
+  // 6 этап регистрации
+  const [userService, setUserService] = useState({ name: '', price: '' })
+  const [otherTeamsInteraction, setOtherTeamsInteraction] = useState({ status: '', text: '' })
+  const [userProjects, setUserProjects] = useState({ files: [], text: '' })
+  const [reviews, setReviews] = useState({ files: [] })
+  const [certificates, setCertificates] = useState({ files: [] })
 
   const [stepNumber, setStepNumber] = useState(1)
 
@@ -99,6 +106,19 @@ export const AppProvider = ({ children }) => {
     setUserEducationalDiplom,
     userCriminalRecord, 
     setUserCriminalRecord,
+    userService, 
+    setUserService,
+    otherTeamsInteraction, 
+    setOtherTeamsInteraction,
+    userProjects, 
+    setUserProjects,
+    reviews, 
+    setReviews,
+    certificates, 
+    setCertificates,
+
+
+
 
   }), [
     selectedCity,
@@ -118,6 +138,12 @@ export const AppProvider = ({ children }) => {
     userLicense,
     userEducationalDiplom, 
     userCriminalRecord, 
+    userService,
+    otherTeamsInteraction, 
+    userProjects, 
+    reviews, 
+    certificates, 
+
 
   ])
 

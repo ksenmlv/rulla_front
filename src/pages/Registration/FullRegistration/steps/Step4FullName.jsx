@@ -1,3 +1,4 @@
+import '../../Registration.css'
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
@@ -5,7 +6,6 @@ import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
 import LawSubjectSwitcher from '../../common/LawSubjectSwitcher'
-import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale4.svg'
 
@@ -405,7 +405,7 @@ export default function Step4FullName() {
 
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
-                      <h3>ИНН <span style={{color: '#666', fontSize: '14px'}}>(10 цифр)</span></h3>
+                      <h3>ИНН</h3>
                       <input
                         value={getCurrentValue('INN')}
                         onChange={handleINNChange}
@@ -417,7 +417,7 @@ export default function Step4FullName() {
 
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
-                      <h3>ОГРН <span style={{color: '#666', fontSize: '14px'}}>(13 цифр)</span></h3>
+                      <h3>ОГРН</h3>
                       <input
                         value={getCurrentValue('OGRN')}
                         onChange={handleOGRNChange}

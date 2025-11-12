@@ -1,10 +1,10 @@
+import '../../Registration.css'
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
-import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale3.svg'
 

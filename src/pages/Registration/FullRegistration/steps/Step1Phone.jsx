@@ -1,10 +1,10 @@
+import '../../Registration.css'
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import PhoneNumber from '../../common/PhoneNumber'
-import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale.svg'
 

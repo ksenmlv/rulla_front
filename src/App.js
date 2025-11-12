@@ -13,6 +13,7 @@ const Step2Activity = lazy(() => import('./pages/Registration/FullRegistration/s
 const Step3Passport = lazy(() => import('./pages/Registration/FullRegistration/steps/Step3Passport'));
 const Step4FullName = lazy(() => import('./pages/Registration/FullRegistration/steps/Step4FullName'));
 const Step5Experience = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Experience'));
+const Step6Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Services'));
 
 function App() {
   return (
@@ -29,8 +30,8 @@ function App() {
             <Route path="/full_registration_step3" element={<Step3Passport />} />
             <Route path="/full_registration_step4" element={<Step4FullName />} />
             <Route path="/full_registration_step5" element={<Step5Experience />} /> 
-            {/* <Route path="/full_registration_step6" element={<Step6Service />} />
-            <Route path="/full_registration_step7" element={<Step7Contacts />} /> */}
+            <Route path="/full_registration_step6" element={<Step6Services />} />
+            {/*<Route path="/full_registration_step7" element={<Step7Contacts />} /> */}
           </Routes>
         </Suspense>
       </AppProvider>

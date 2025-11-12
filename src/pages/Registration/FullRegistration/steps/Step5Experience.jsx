@@ -1,3 +1,4 @@
+import '../../Registration.css'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
@@ -5,7 +6,6 @@ import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import FileUpload from '../../common/FileUpload'
-import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale5.svg'
 
@@ -21,6 +21,54 @@ export default function Step5Experience() {
     userCriminalRecord, setUserCriminalRecord
   } = useAppContext()
 
+  // Преобразуем данные для работы с радиокнопками
+  const licenseStatus = Array.isArray(userLicense) && userLicense.length > 0 ? 'yes' : 
+                      userLicense === 'no' ? 'no' : ''
+
+  const diplomStatus = Array.isArray(userEducationalDiplom) && userEducationalDiplom.length > 0 ? 'yes' : 
+                      userEducationalDiplom === 'no' ? 'no' : ''
+
+  const criminalStatus = userCriminalRecord && userCriminalRecord !== 'no' ? 'yes' : 
+                        userCriminalRecord === 'no' ? 'no' : ''
+
+  // Проверка заполненности обязательных полей
+  const isFormValid =
+    userExperience &&
+    specialistsNumber &&
+    userLicense?.status &&
+    userEducationalDiplom?.status &&
+    userCriminalRecord?.status &&
+    (userLicense.status !== 'yes' || (userLicense.files && userLicense.files.length > 0)) &&
+    (userEducationalDiplom.status !== 'yes' || (userEducationalDiplom.files && userEducationalDiplom.files.length > 0)) &&
+    (userCriminalRecord.status !== 'yes' || (userCriminalRecord.text && userCriminalRecord.text.trim()));
+
+
+
+  // Обработчики для радиокнопок
+  const handleLicenseChange = (status) => {
+    if (status === 'yes') {
+      setUserLicense({ status: 'yes', files: userLicense?.files || [] })
+    } else {
+      setUserLicense({ status: 'no', files: [] })
+    }
+  }
+
+  const handleDiplomChange = (status) => {
+    if (status === 'yes') {
+      setUserEducationalDiplom({ status: 'yes', files: userEducationalDiplom?.files || [] })
+    } else {
+      setUserEducationalDiplom({ status: 'no', files: [] })
+    }
+  }
+
+  const handleCriminalChange = (status) => {
+    if (status === 'yes') {
+      setUserCriminalRecord({ status: 'yes', text: userCriminalRecord?.text || '' })
+    } else {
+      setUserCriminalRecord({ status: 'no', text: '' })
+    }
+  }
+
   const handleBack = () => navigate('/full_registration_step4')
   const handleForward = () => {
     setStepNumber(stepNumber + 1)
@@ -31,7 +79,7 @@ export default function Step5Experience() {
     <div>
       <Header hideElements={true} />
       <div className='reg-container'>
-        <div className='registr-container' style={{ minHeight: '2124px' }}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '5px' }}>
 
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
@@ -93,11 +141,17 @@ export default function Step5Experience() {
                   />
                   <label htmlFor="license-no">Нет</label>
                 </div>
-                <FileUpload 
-                  disabled={userLicense?.status !== 'yes'} 
-                  onChange={(files) => setUserLicense({ ...userLicense, files })}
-                />
-                <p>Добавьте скан лицензии</p>
+
+                {/* показ  формы для файлоы, только при выборе "Да"*/}
+                {userLicense?.status === 'yes' && (
+                  <>
+                    <FileUpload
+                      disabled={userLicense.status !== 'yes'}
+                      onFilesUpload={(files) => setUserLicense({ ...userLicense, files })}
+                    />
+                    <p>Добавьте скан лицензии</p>
+                  </>
+                )}
             </div>
             
 
@@ -128,11 +182,17 @@ export default function Step5Experience() {
                   />
                   <label htmlFor="diplom-no">Нет</label>
                 </div>
-                <FileUpload 
-                  disabled={userEducationalDiplom?.status !== 'yes'} 
-                  onChange={(files) => setUserEducationalDiplom({ ...userEducationalDiplom, files })}
-                />
-                <p>Добавьте скан диплома</p>           
+
+                {/* показ  формы для файлоы, только при выборе "Да"*/}
+                {userEducationalDiplom?.status === 'yes' && (
+                  <>
+                    <FileUpload
+                      disabled={userEducationalDiplom.status !== 'yes'}
+                      onFilesUpload={(files) => setUserEducationalDiplom({ ...userEducationalDiplom, files })}
+                    />
+                    <p>Добавьте скан диплома</p>
+                  </>
+                )}          
             </div>
             
 
@@ -172,15 +232,15 @@ export default function Step5Experience() {
                 />
             </div>
 
-            {/* <button 
+            <button 
               type="submit" 
               className={`continue-button ${!isFormValid ? 'disabled' : ''}`} 
               onClick={handleForward}
               disabled={!isFormValid}
-              style={{position:'absolute', bottom:'15px', width:'714px'}}
+              style={{margin:'50px 0 0 0'}}
             >
               Продолжить
-            </button> */}
+            </button>
 
 
 
