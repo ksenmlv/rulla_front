@@ -56,18 +56,19 @@ export default function PhoneNumber({ onPhoneSubmit }) {
                 countryCallingCodeEditable={false}
                 inputClassName='custom-phone-input'
                 countrySelectorStyleProps={{
-                buttonClassName: "country-selector-button"
+                  buttonClassName: "country-selector-button"
                 }}
                 showDisabledDialCodeAndPrefix={false}
                 forceDialCode={true}
+                
             />
         </div>
         <button 
-                type="submit" 
-                className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
-                disabled={!isValidPhone}
-            >
-                Продолжить
+              type="submit" 
+              className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
+              disabled={!isValidPhone}
+          >
+              Продолжить
         </button>
     </form>
   )

@@ -1,5 +1,5 @@
 import '../../Registration.css'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -16,6 +16,9 @@ export default function Step2Activity() {
 
   // проверка на заполненность всех полей
   const isFormComplete = userActivity && userRegion
+
+  // состояния для чекбокса работы на выезде   
+  const [isChecked, setIsChecked] = useState(false)
 
   // обработчики для получения выбранных значений
   const handleActivitySelect = (activity) => {
@@ -58,6 +61,7 @@ export default function Step2Activity() {
               <img src={scale} alt='Registration scale' />
           </div>
 
+          {/* 2 поля данных */}
           <div className='input-fields' style={{marginBottom:'40px'}}>
               <h3 style={{marginBottom:'10px'}}>Вид деятельности</h3>
               <RegistrSelector 
@@ -90,6 +94,15 @@ export default function Step2Activity() {
                 subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
                 onSelect={handleRegionSelect}
                 style={{marginBottom:'20px'}}/>
+          </div>
+
+          <div className="checkbox-wrapper" onClick={() => setIsChecked(!isChecked)} style={{justifyContent: 'flex-start', margin: '-50px 0 40px 0'}}>
+              <div 
+                className={`custom-checkbox ${isChecked ? 'checked' : ''}`} 
+                onClick={() => setIsChecked(!isChecked)} >
+                  {isChecked && <span className="inner-square"></span>}
+              </div>
+              <span className="checkbox-text" style={{fontSize: '20px'}}>Готов к выездам в другие регионы</span>
           </div>
 
           

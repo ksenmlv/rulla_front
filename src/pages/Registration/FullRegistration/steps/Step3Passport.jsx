@@ -108,12 +108,19 @@ export default function Step3Passport() {
 
   // обработчик выбора пункта гражданства
   const handleCountryChange = (country) => {
-    handlePassportChange('citizenship', country)
-    // очистка поля ввода при выборе РФ
-    if (country === 'Российская федерация') {
-      handlePassportChange('otherCountry', '')
-    }
-  }
+    // Сбрасываем все поля паспорта при смене гражданства
+    setPassportData({
+      citizenship: country,
+      otherCountry: '',
+      series: '',
+      number: '',
+      issuedBy: '',
+      issueDate: '',
+      scanMain: [],
+      scanRegistration: []
+    })
+}
+
 
   // обработчик загрузки файлов
   const handleFileUpload = (field, files) => {

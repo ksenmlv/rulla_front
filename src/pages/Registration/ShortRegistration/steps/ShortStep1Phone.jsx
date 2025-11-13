@@ -14,6 +14,17 @@ export default function ShortStep1Phone() {
   const { phoneNumber } = useAppContext()
   const navigate = useNavigate()
 
+  // локальное состояние для роли
+  const [role, setRole] = useState('executor')
+
+  // обработчик изменения роли
+  const handleRoleChange = (newRole) => {
+    setRole(newRole)
+    if (newRole === 'customer') {
+      navigate('/full_registration_step1') // переход на полный этап регистрации
+    }
+  }
+
 
   const handleBack = () => {
     navigate('/enter')
@@ -38,7 +49,7 @@ export default function ShortStep1Phone() {
                     <h2 className="login-title">Регистрация</h2>
                 </div>
 
-                <RoleSwitcher />
+                <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
                 <PhoneNumber onPhoneSubmit={handlePhoneSubmit}/>
                 
                 <div className="register-link">

@@ -48,7 +48,7 @@
 }
 
 .country-selector-button {
-  background-color: #F3F3F3 !important;
+  background-color: #fff !important;
   border: none !important;
   height: 53px !important;
   margin-right: 5px !important;
@@ -202,7 +202,7 @@
 .policy-link {
   color: inherit; 
   text-decoration: underline;
-  text-underline-offset: 2px; 
+  text-underline-offset: 5px; 
 }
 
 .policy-link:hover {
@@ -458,7 +458,17 @@
       height: 18px;
     }
   }
+}
 
 
-
+/* 7 этап */
+.btn-social-media {
+  height: 80px;
+  width: 220px;
+  background-color: #fff;
+  border: 1px solid #919191;
+  border-radius: 7px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #151515;
 }

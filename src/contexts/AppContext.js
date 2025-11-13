@@ -60,11 +60,18 @@ export const AppProvider = ({ children }) => {
   const [userCriminalRecord, setUserCriminalRecord] = useState({ status: '', text: '' });
 
   // 6 этап регистрации
-  const [userService, setUserService] = useState({ name: '', price: '' })
+  const [userService, setUserService] = useState([{ name: '', price: '' }])
   const [otherTeamsInteraction, setOtherTeamsInteraction] = useState({ status: '', text: '' })
-  const [userProjects, setUserProjects] = useState({ files: [], text: '' })
+  const [userProjects, setUserProjects] = useState([{ files: [], text: '' }])
   const [reviews, setReviews] = useState({ files: [] })
   const [certificates, setCertificates] = useState({ files: [] })
+
+  // 7 этап регистрации
+  const [userPhone, setUserPhone] = useState('')
+  const [userEmail, setUserEmail] = useState('')
+  const [userSocialMedia, setUserSocialMedia] = useState([])
+  const [userWebsite, setUserWebsite] = useState('')
+
 
   const [stepNumber, setStepNumber] = useState(1)
 
@@ -94,7 +101,7 @@ export const AppProvider = ({ children }) => {
     setIndividualEntrepreneurData,
     selfEmployedData, 
     setSelfEmployedData,
-    legalEntityData, setLegalEntityData, 
+    legalEntityData, 
     setLegalEntityData,
     userExperience, 
     setUserExperience,
@@ -116,8 +123,14 @@ export const AppProvider = ({ children }) => {
     setReviews,
     certificates, 
     setCertificates,
-
-
+    userPhone, 
+    setUserPhone,
+    userEmail, 
+    setUserEmail,
+    userSocialMedia, 
+    setUserSocialMedia,
+    userWebsite, 
+    setUserWebsite,
 
 
   }), [
@@ -143,6 +156,10 @@ export const AppProvider = ({ children }) => {
     userProjects, 
     reviews, 
     certificates, 
+    userPhone, 
+    userEmail, 
+    userSocialMedia, 
+    userWebsite, 
 
 
   ])

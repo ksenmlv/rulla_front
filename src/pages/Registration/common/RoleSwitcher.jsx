@@ -1,22 +1,21 @@
-import React, { useState } from 'react'
+import React from 'react'
 import '../common/Common.css'
 
-
-export default function RoleSwitcher() {
-  const [activeRole, setActiveRole] = useState('executor')  
-
+export default function RoleSwitcher({ activeRole, onChangeRole }) {
   return (
     <div className="role-buttons">
-        <button 
-            className={`role-button ${activeRole === 'executor' ? 'active' : ''}`} 
-            onClick={() => setActiveRole('executor')}> 
-            Я заказчик
-        </button>
-        <button 
-            className={`role-button ${activeRole === 'customer' ? 'active' : ''}`}
-            onClick={() => setActiveRole('customer')}>
-            Я исполнитель
-        </button>
+      <button 
+        className={`role-button ${activeRole === 'executor' ? 'active' : ''}`} 
+        onClick={() => onChangeRole('executor')}
+      > 
+        Я заказчик
+      </button>
+      <button 
+        className={`role-button ${activeRole === 'customer' ? 'active' : ''}`}
+        onClick={() => onChangeRole('customer')}
+      >
+        Я исполнитель
+      </button>
     </div>
   )
 }
