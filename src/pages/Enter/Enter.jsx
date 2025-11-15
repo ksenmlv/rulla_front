@@ -8,26 +8,52 @@ import arrow from '../../assets/Main/arrow_left.svg'
 import 'react-international-phone/style.css'
 import '../Enter/Enter.css'
 
-
 function Enter() {
   const navigate = useNavigate()
   const inputRef = useRef()
   const { phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
   const [activeRole, setActiveRole] = useState('executor')       // or customer
-  const [step, setStep] = useState(1)                            // 1 - ввод телефона, 2 - ввод кода
   const [isValidPhone, setIsValidPhone] = useState(false)
-  const [submitAttempted, setSubmitAttempted] = useState(false)  // попытка отправки 1 формы
+  const [submitAttempted, setSubmitAttempted] = useState(false)
+
+  // восстановление шага из localStorage при загрузке
+  const [step, setStep] = useState(() => {
+    const savedStep = localStorage.getItem('loginStep')
+    return savedStep ? parseInt(savedStep) : 1
+  })
+  
+  // сохранение шага в localStorage при изменении
+  useEffect(() => {
+    localStorage.setItem('loginStep', step.toString())
+    
+    if (step === 1) {
+      localStorage.removeItem('loginPhoneNumber')
+      setSmsCode(['', '', '', ''])
+    }
+    
+    if (step === 2 && phoneNumber) {
+      localStorage.setItem('loginPhoneNumber', phoneNumber)
+    }
+  }, [step, phoneNumber, setSmsCode])
+
+  // восстановление номера телефона при загрузке
+  useEffect(() => {
+    const savedPhoneNumber = localStorage.getItem('loginPhoneNumber')
+    if (savedPhoneNumber && step === 2) {
+      setPhoneNumber(savedPhoneNumber)
+      setIsValidPhone(true)
+    }
+  }, [step, setPhoneNumber])
 
   // фокус на инпут
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus()
     }
-  }, [])
+  }, [activeRole])
 
   // преобразование smsCode в массив для работы с инпутами
   const codeArray = Array.isArray(smsCode) ? smsCode : (typeof smsCode === 'string' ? smsCode.split('') : ['', '', '', ''])
-
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
@@ -47,13 +73,16 @@ function Enter() {
         setStep(2)
         console.log('Номер телефона:', phoneNumber)
         // Здесь можно отправить запрос для получения SMS кода
-
       }
     } else if (step === 2 && isCodeComplete) {
       console.log('Введенный код:', codeArray.join(''))
       // Обработка ввода кода подтверждения
-
       // переход на следующую страницу и завершение входа
+      
+      // Очищаем localStorage при успешном входе
+      localStorage.removeItem('loginStep')
+      localStorage.removeItem('loginPhoneNumber')
+      
       setPhoneNumber('')
       setSmsCode('')
       alert('Успешный вход')
@@ -61,14 +90,13 @@ function Enter() {
     }
   }
 
-
   // обработчик ввода кода
   const handleCodeChange = (index, value) => {
-    if (/^\d?$/.test(value)) { 
+    if (/^\d?$/.test(value)) {
       const newCode = [...codeArray]
       newCode[index] = value
       setSmsCode(newCode)
-      
+
       // автопереход к следующему полю
       if (value && index < 3) {
         document.getElementById(`code-input-${index + 1}`)?.focus()
@@ -104,16 +132,17 @@ function Enter() {
     }
   }
 
-
   const handleBack = () => {
     if (step === 2) {
       setSmsCode(['', '', '', ''])
       setStep(1)
     } else {
+      // очищение localStorage при возврате на главную
+      localStorage.removeItem('loginStep')
+      localStorage.removeItem('loginPhoneNumber')
       navigate('/')
     }
   }
-
 
 
   return (
@@ -137,8 +166,8 @@ function Enter() {
             <div className="role-buttons">
               <button 
                 className={`role-button ${activeRole === 'executor' ? 'active' : ''}`} 
-                onClick={() => setActiveRole('executor')}> 
-                Я заказчик
+                onClick={() => setActiveRole('executor')}>
+                 Я заказчик
               </button>
               <button 
                 className={`role-button ${activeRole === 'customer' ? 'active' : ''}`}
@@ -168,12 +197,14 @@ function Enter() {
                   showDisabledDialCodeAndPrefix={false}
                   forceDialCode={true}
                 />
+
                 {submitAttempted && phoneNumber && !isValidPhone && (
                   <div className="error-message">
                     Введите корректный номер телефона
                   </div>
                 )}
               </div>
+
               <button 
                 type="submit" 
                 className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
@@ -194,6 +225,7 @@ function Enter() {
                     Код отправлен на номер: {phoneNumber}
                   </div>
                 </label>
+
                 <div className="code-inputs">
                   {[0, 1, 2, 3].map((index) => (
                     <input
@@ -206,31 +238,31 @@ function Enter() {
                       onKeyDown={(e) => handleKeyDown(index, e)}
                       className="code-input"
                       autoFocus={index === 0}
-                      // Здесь можно добавить логику для управления вводом кода
                     />
                   ))}
                 </div>
+
                 <div className="resend-code">
                   <button type="button" className="resend-link">
                     Получить новый код
                   </button>
                 </div>
+
               </div>
+
               <button type="submit" className={`continue-button ${!isCodeComplete ? 'disabled' : ''}`} disabled={!isCodeComplete}>
                 Продолжить
               </button>
             </form>
           )}
 
-
           <div className="register-link">
             У вас еще нет аккаунта? <Link to="/simplified_registration_step1" className="register-here">Зарегистрироваться</Link>
           </div>
-          
-
+                  
         </div>
       </div>
-
+      
       <Footer className='footer footer--enter' />
     </div>
   )

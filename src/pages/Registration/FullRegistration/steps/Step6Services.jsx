@@ -214,14 +214,19 @@ export default function Step6Services() {
                             <label htmlFor="no">Нет</label>
                         </div>
 
-                        <h3 style={{marginTop: '15px'}}>С кем можете взаимодействовать?</h3>
-                        <textarea
-                            placeholder="Опишите подробнее"
-                            disabled={interaction.status !== 'yes'}
-                            value={interaction.text}
-                            onChange={(e) => setInteraction({ ...interaction, text: e.target.value })}
-                            className="country-input"
-                        />
+                        {/* показ поля, только если статус да */}
+                        {interaction?.status === 'yes' && (
+                            <>
+                                <h3 style={{marginTop: '15px'}}>С кем можете взаимодействовать?</h3>
+                                <textarea
+                                    placeholder="Опишите подробнее"
+                                    disabled={interaction.status !== 'yes'}
+                                    value={interaction.text}
+                                    onChange={(e) => setInteraction({ ...interaction, text: e.target.value })}
+                                    className="country-input"
+                                />
+                            </>
+                        )}
                     </div>
 
                     {/* === Реализованные проекты === */}
@@ -279,13 +284,13 @@ export default function Step6Services() {
                     <div className='passport-field' style={{marginTop: '10px'}}>
                         <h3 style={{marginBottom: 0}}>Отзывы от заказчиков</h3>
                         <p style={{fontSize: '20px', margin: '10px 0 10px 0'}}>Добавьте фото реальных отзывов от заказчиков </p>
-                        <FileUpload onFilesUpload={(files) => setReviews({ files })} /> 
+                        <FileUpload maxFiles={3} onFilesUpload={(files) => setReviews({ files })} /> 
                     </div>
 
                     {/* === Сертификаты === */}
                     <div className='passport-field' style={{marginTop: '25px'}}>
                         <h3>Сертификаты о повышении квалификации</h3>
-                        <FileUpload onFilesUpload={(files) => setCertificates({ files })} />
+                        <FileUpload maxFiles={3} onFilesUpload={(files) => setCertificates({ files })} />
                     </div>
 
                     <button 

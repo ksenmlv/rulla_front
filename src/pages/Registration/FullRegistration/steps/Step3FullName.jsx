@@ -2,6 +2,7 @@ import '../../Registration.css'
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
+import DatePicker from '../../common/Calendar/DatePicker'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
@@ -9,7 +10,7 @@ import LawSubjectSwitcher from '../../common/LawSubjectSwitcher'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale4.svg'
 
-export default function Step4FullName() {
+export default function Step3FullName() {
   const navigate = useNavigate()
   const { 
     stepNumber, 
@@ -47,15 +48,34 @@ export default function Step4FullName() {
     }, 100)
   }, [isLegalEntity, userLawSubject]) // Добавляем userLawSubject в зависимости
 
+
   // Проверка валидности формы
   useEffect(() => {
     let isValid = false
+
+    // Функция проверки корректности даты
+    const isValidDate = (dateStr) => {
+      if (!dateStr || dateStr.replace(/\D/g, '').length !== 6) return false
+      
+      const day = parseInt(dateStr.slice(0, 2))
+      const month = parseInt(dateStr.slice(3, 5))
+      const year = parseInt('20' + dateStr.slice(6, 8))
+      
+      // Проверка на валидность даты
+      const date = new Date(year, month - 1, day)
+      const today = new Date()
+      
+      return date <= today && 
+            date.getDate() === day && 
+            date.getMonth() === month - 1 && 
+            date.getFullYear() === year
+    }
 
     if (isLegalEntity) {
       // Валидация для юридического лица
       const innValid = legalEntityData.INN?.replace(/\D/g, '').length === 10 // ИНН юрлица - 10 цифр
       const ogrnValid = legalEntityData.OGRN?.replace(/\D/g, '').length === 13 // ОГРН - 13 цифр
-      const dateValid = legalEntityData.registrationDate?.replace(/\D/g, '').length === 6
+      const dateValid = legalEntityData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(legalEntityData.registrationDate)
       const hasExtractEGRUL = legalEntityData.extractEGRUL && legalEntityData.extractEGRUL.length > 0
       
       isValid = Boolean(
@@ -70,7 +90,7 @@ export default function Step4FullName() {
       // Валидация для ИП
       const innValid = individualEntrepreneurData.INN?.replace(/\D/g, '').length === 12 // ИНН физлица - 12 цифр
       const ogrnipValid = individualEntrepreneurData.OGRNIP?.replace(/\D/g, '').length === 15 // ОГРНИП - 15 цифр
-      const dateValid = individualEntrepreneurData.registrationDate?.replace(/\D/g, '').length === 6
+      const dateValid = individualEntrepreneurData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(individualEntrepreneurData.registrationDate)
       const hasExtractOGRNIP = individualEntrepreneurData.extractOGRNIP && individualEntrepreneurData.extractOGRNIP.length > 0
       
       isValid = Boolean(
@@ -84,7 +104,7 @@ export default function Step4FullName() {
     } else if (userLawSubject === 'self-employed') {
       // Валидация для самозанятого
       const innValid = selfEmployedData.INN?.replace(/\D/g, '').length === 12 // ИНН физлица - 12 цифр
-      const dateValid = selfEmployedData.registrationDate?.replace(/\D/g, '').length === 6
+      const dateValid = selfEmployedData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(selfEmployedData.registrationDate)
       const hasRegistrationCertificate = selfEmployedData.registrationCertificate && selfEmployedData.registrationCertificate.length > 0
       
       isValid = Boolean(
@@ -167,6 +187,7 @@ export default function Step4FullName() {
       handleIndividualEntrepreneurChange('registrationDate', formattedValue)
     }
     
+    // Проверка корректности даты
     if (value.length === 6) {
       const day = parseInt(value.slice(0, 2))
       const month = parseInt(value.slice(2, 4))
@@ -176,7 +197,7 @@ export default function Step4FullName() {
       
       if (date > today) {
         setDateError('Дата не может быть больше текущей')
-      } else if (date.getDate() !== day || date.getMonth() !== month - 1) {
+      } else if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
         setDateError('Некорректная дата')
       } else {
         setDateError('')
@@ -295,15 +316,15 @@ export default function Step4FullName() {
   }
 
   // Динамическое изменение высоты формы
-  useEffect(() => {
-    if (isLegalEntity) {
-      setFormHeight('1290px') // Высота для юрлица
-    } else if (userLawSubject === 'individual_entrepreneur') {
-      setFormHeight('1365px') // Высота для ИП (больше полей)
-    } else {
-      setFormHeight('1130px') // Высота для самозанятого
-    }
-  }, [userLawSubject, isLegalEntity])
+  // useEffect(() => {
+  //   if (isLegalEntity) {
+  //     setFormHeight('1290px') // Высота для юрлица
+  //   } else if (userLawSubject === 'individual_entrepreneur') {
+  //     setFormHeight('1365px') // Высота для ИП (больше полей)
+  //   } else {
+  //     setFormHeight('1130px') // Высота для самозанятого
+  //   }
+  // }, [userLawSubject, isLegalEntity])
 
   const handleBack = () => {
     setIndividualEntrepreneurData({
@@ -328,16 +349,23 @@ export default function Step4FullName() {
       extractEGRUL: []
     })
 
-    navigate('/full_registration_step3')
+    navigate('/full_registration_step2')
   }
 
   const handleForward = () => {
     console.log('Данные ИП:', individualEntrepreneurData)
     console.log('Данные юрлица:', legalEntityData)
     console.log('Данные самозанятого:', selfEmployedData)
+    console.log(userLawSubject)
     
     setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step5')
+    
+    // если юр лицо, то пропускаем форму с паспортом
+    if (isLegalEntity) {
+      navigate('/full_registration_step5')
+    } else {
+      navigate('/full_registration_step4')
+    }
   }
 
   return (
@@ -345,7 +373,7 @@ export default function Step4FullName() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: formHeight}}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '10px' }}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
@@ -355,7 +383,7 @@ export default function Step4FullName() {
             </div>
 
             <div className='registr-scale'>
-                <p>4/7</p>
+                <p>3/7</p>
                 <img src={scale} alt='Registration scale' />
             </div>
 
@@ -405,7 +433,7 @@ export default function Step4FullName() {
 
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
-                      <h3>ИНН</h3>
+                      <h3>ИНН <span style={{color: '#666', fontSize: '15px'}}>(10 цифр)</span></h3>
                       <input
                         value={getCurrentValue('INN')}
                         onChange={handleINNChange}
@@ -417,7 +445,7 @@ export default function Step4FullName() {
 
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
-                      <h3>ОГРН</h3>
+                      <h3>ОГРН <span style={{color: '#666', fontSize: '15px'}}>(13 цифр)</span></h3>
                       <input
                         value={getCurrentValue('OGRN')}
                         onChange={handleOGRNChange}
@@ -427,6 +455,7 @@ export default function Step4FullName() {
                     </div>
                   </div>
 
+                  {/* инпут даты с календарем */}
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -443,13 +472,15 @@ export default function Step4FullName() {
                           </span>
                         )}
                       </div>
-                      <input 
-                          value={getCurrentValue('registrationDate')}
-                          placeholder='00.00.00' 
-                          maxLength={8}
-                          onChange={handleDateChange}
-                          className={dateError ? 'error' : ''}
+
+                      {/* календарь */}
+                      <DatePicker 
+                        value={getCurrentValue('registrationDate')}
+                        onChange={(value) => handleDateChange({ target: { value } })}
+                        placeholder="00.00.00"
+                        error={!!dateError}
                       />
+
                     </div>
                   </div>
 
@@ -466,7 +497,7 @@ export default function Step4FullName() {
 
                   <div className='passport-field' style={{marginTop: '10px'}}>
                     <h3>Выписка из ЕГРЮЛ</h3>
-                    <FileUpload onFilesUpload={(files) => handleFileUpload('extractEGRUL', files)} maxFiles/>
+                    <FileUpload onFilesUpload={(files) => handleFileUpload('extractEGRUL', files)} maxFiles={5}/>
                     <p>Добавьте скан документа</p>
                   </div>
                 </>
@@ -487,7 +518,7 @@ export default function Step4FullName() {
 
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
-                      <h3>ИНН <span style={{color: '#666', fontSize: '14px'}}>(12 цифр)</span></h3>
+                      <h3>ИНН <span style={{color: '#666', fontSize: '15px'}}>(12 цифр)</span></h3>
                       <input 
                         value={getCurrentValue('INN')}
                         onChange={handleINNChange}
@@ -500,7 +531,7 @@ export default function Step4FullName() {
                   {userLawSubject === 'individual_entrepreneur' && (
                     <div className='passport-row'>
                       <div className='passport-field full-width'>
-                        <h3>ОГРНИП <span style={{color: '#666', fontSize: '14px'}}>(15 цифр)</span></h3>
+                        <h3>ОГРНИП <span style={{color: '#666', fontSize: '15px'}}>(15 цифр)</span></h3>
                         <input 
                           value={getCurrentValue('OGRNIP')}
                           onChange={handleOGRNIPChange}
@@ -511,6 +542,7 @@ export default function Step4FullName() {
                     </div>
                   )}
 
+                  {/* инпут даты с календарем */}
                   <div className='passport-row'>
                     <div className='passport-field full-width'>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
@@ -527,13 +559,15 @@ export default function Step4FullName() {
                           </span>
                         )}
                       </div>
-                      <input 
-                          value={getCurrentValue('registrationDate')}
-                          placeholder='00.00.00' 
-                          maxLength={8}
-                          onChange={handleDateChange}
-                          className={dateError ? 'error' : ''}
+
+                      {/* календарь */}
+                      <DatePicker 
+                        value={getCurrentValue('registrationDate')}
+                        onChange={(value) => handleDateChange({ target: { value } })}
+                        placeholder="00.00.00"
+                        error={!!dateError}
                       />
+
                     </div>
                   </div>
 

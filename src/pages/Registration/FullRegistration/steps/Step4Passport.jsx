@@ -4,16 +4,18 @@ import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
+import DatePicker from '../../common/Calendar/DatePicker'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale3.svg'
 
-export default function Step3Passport() {
+export default function Step4Passport() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, passportData, setPassportData } = useAppContext()
   const citizenship = ['Российская федерация', 'Страны СНГ', 'Другое']
   const [isFormValid, setIsFormValid] = useState(false)
   const [dateError, setDateError] = useState('')
+  
 
   // Рефы для полей ввода
   const seriesInputRef = useRef(null)
@@ -46,6 +48,24 @@ export default function Step3Passport() {
   // валидация всей формы
   useEffect(() => {
     const validateForm = () => {
+      // Функция проверки корректности даты
+      const isValidDate = (dateStr) => {
+        if (!dateStr || dateStr.replace(/\D/g, '').length !== 6) return false
+        
+        const day = parseInt(dateStr.slice(0, 2))
+        const month = parseInt(dateStr.slice(3, 5))
+        const year = parseInt('20' + dateStr.slice(6, 8))
+        
+        // Проверка на валидность даты
+        const date = new Date(year, month - 1, day)
+        const today = new Date()
+        
+        return date <= today && 
+               date.getDate() === day && 
+               date.getMonth() === month - 1 && 
+               date.getFullYear() === year
+      }
+
       // Базовые обязательные поля для всех
       const baseRequiredFields = [
         passportData.citizenship,
@@ -65,7 +85,7 @@ export default function Step3Passport() {
       const areFieldsFilled = requiredFields.every(field => field && field.trim().length > 0)
       
       // Проверка загрузки файлов
-      const hasScanMain = passportData.scanMain && passportData.scanMain.length > 0
+      const hasScanMain = passportData.scanPages && passportData.scanPages.length > 0
       const hasScanRegistration = passportData.scanRegistration && passportData.scanRegistration.length > 0
       
       // Если выбрано "Другое" - проверяем поле otherCountry
@@ -85,13 +105,17 @@ export default function Step3Passport() {
         isNumberValid = passportData.number && passportData.number.trim().length > 0
       }
 
+      // Проверка корректности даты выдачи
+      const isDateValid = isValidDate(passportData.issueDate)
+
       // Общая валидация
       const isValid = areFieldsFilled && 
                     isOtherCountryValid && 
                     hasScanMain && 
                     hasScanRegistration && 
                     isSeriesValid && 
-                    isNumberValid
+                    isNumberValid &&
+                    isDateValid // Добавляем проверку даты
 
       setIsFormValid(isValid)
     }
@@ -109,15 +133,15 @@ export default function Step3Passport() {
   // обработчик выбора пункта гражданства
   const handleCountryChange = (country) => {
     // Сбрасываем все поля паспорта при смене гражданства
-    setPassportData({
-      citizenship: country,
-      otherCountry: '',
-      series: '',
-      number: '',
-      issuedBy: '',
-      issueDate: '',
-      scanMain: [],
-      scanRegistration: []
+    setPassportData ({
+        citizenship: country, 
+        otherCountry: '', 
+        series: '',
+        number: '',
+        issuedBy: '',
+        issueDate: '',
+        scanPages: [],
+        scanRegistration: []
     })
 }
 
@@ -175,7 +199,8 @@ export default function Step3Passport() {
       const date = new Date(year, month - 1, day)
       const today = new Date()
       
-      if ((date > today) || (date.getDate() !== day || date.getMonth() !== month - 1)) {
+      // Улучшенная проверка даты
+      if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
         setDateError('Некорректная дата')
       } else {
         setDateError('')
@@ -186,7 +211,7 @@ export default function Step3Passport() {
   }
 
   const handleBack = () => {
-    navigate('/full_registration_step2')
+    navigate('/full_registration_step3')
   }
 
   const handleForward = () => {
@@ -204,7 +229,7 @@ export default function Step3Passport() {
     })
 
     setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step4')
+    navigate('/full_registration_step5')
   }
 
   // Вычисляем высоту контейнера в зависимости от гражданства
@@ -225,7 +250,7 @@ export default function Step3Passport() {
           </div>
 
           <div className='registr-scale'>
-            <p>3/7</p>
+            <p>4/7</p>
             <img src={scale} alt='Registration scale' />
           </div>
 
@@ -244,7 +269,7 @@ export default function Step3Passport() {
                       id={`country-${index}`}
                       name="country"
                       value={region}
-                      checked={passportData.citizenship === region}
+                      checked={passportData.citizenship === region || (passportData.citizenship === '' && index === 0)}
                       onChange={() => handleCountryChange(region)}
                     />
                     <label htmlFor={`country-${index}`}>
@@ -262,7 +287,7 @@ export default function Step3Passport() {
                     className="country-input"
                     placeholder={
                       passportData.citizenship === 'Страны СНГ'
-                      ? 'Введите название страны СНГ'
+                      ? 'Введите название страны'
                       : 'Введите название страны'
                     }
                     value={passportData.otherCountry || ''}
@@ -312,6 +337,7 @@ export default function Step3Passport() {
                       />
                     </div>
                     
+                    {/* инпут даты с календарем */}
                     <div className='passport-field'>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <h3>Дата выдачи</h3>
@@ -327,12 +353,13 @@ export default function Step3Passport() {
                                 </span>
                             )}
                         </div>
-                        <input 
-                            value={passportData.issueDate || ''}
-                            placeholder='00.00.00' 
-                            maxLength={8}
-                            onChange={handleDateChange}
-                            className={dateError ? 'error' : ''}
+
+                        {/* календарь */}
+                        <DatePicker 
+                          value={passportData.issueDate || ''}
+                          onChange={(value) => handleDateChange({ target: { value } })}
+                          placeholder="00.00.00"
+                          error={!!dateError}
                         />
                     </div>
                   </div>
@@ -389,13 +416,13 @@ export default function Step3Passport() {
               <div className='passport-row'>
                 <div className='passport-field'>
                   <h3>Скан главного разворота</h3>
-                  <FileUpload onFilesUpload={(files) => handleFileUpload('scanMain', files)} maxFiles={2}/>
+                  <FileUpload key={passportData.citizenship} onFilesUpload={(files) => handleFileUpload('scanPages', files)} maxFiles={1}/>
                   <p>Добавьте скан 2-3 страницы паспорта</p>
                 </div>
                 
                 <div className='passport-field'>
                   <h3>Скан регистрации</h3>
-                  <FileUpload onFilesUpload={(files) => handleFileUpload('scanRegistration', files)} maxFiles={1}/>
+                  <FileUpload key={passportData.citizenship} onFilesUpload={(files) => handleFileUpload('scanRegistration', files)} maxFiles={1}/>
                   <p>Добавьте скан 5 страницы паспорта</p>
                 </div>
               </div>

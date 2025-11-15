@@ -17,19 +17,7 @@ export const AppProvider = ({ children }) => {
   const [userActivity, setUserActivity] = useState('')
 
   // 3 этап регистрации
-  const [passportData, setPassportData] = useState({
-      citizenship: '', // 'ru', 'chf', 'other'
-      otherCountry: '', // если citizenship === 'other' или 'chf'
-      series: '',
-      number: '',
-      issuedBy: '',
-      issueDate: '',
-      scanPages: [],
-      scanRegistration: []
-  })
-
-  // 4 этап регистрации
-  const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')
+  const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')         // legal_entity || individual_entrepreneur || self_employed
   const [individualEntrepreneurData, setIndividualEntrepreneurData] = useState({
       FIO: '',
       INN: '', 
@@ -50,6 +38,18 @@ export const AppProvider = ({ children }) => {
     registrationDate: '',
     registrationAddress: '',
     extractEGRUL: []
+  })
+
+  // 4 этап регистрации
+  const [passportData, setPassportData] = useState({
+    citizenship: 'Российская федерация', 
+    otherCountry: '', // если citizenship === 'other' или 'chf'
+    series: '',
+    number: '',
+    issuedBy: '',
+    issueDate: '',
+    scanPages: [],
+    scanRegistration: []
   })
 
   // 5 этап регистрации

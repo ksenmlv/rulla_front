@@ -18,18 +18,12 @@ export default function Step5Experience() {
     specialistsNumber, setSpecialistsNumber,
     userLicense, setUserLicense,
     userEducationalDiplom, setUserEducationalDiplom,
-    userCriminalRecord, setUserCriminalRecord
+    userCriminalRecord, setUserCriminalRecord,
+    userLawSubject
   } = useAppContext()
 
-  // Преобразуем данные для работы с радиокнопками
-  const licenseStatus = Array.isArray(userLicense) && userLicense.length > 0 ? 'yes' : 
-                      userLicense === 'no' ? 'no' : ''
+  console.log('userLawSubject:', userLawSubject)
 
-  const diplomStatus = Array.isArray(userEducationalDiplom) && userEducationalDiplom.length > 0 ? 'yes' : 
-                      userEducationalDiplom === 'no' ? 'no' : ''
-
-  const criminalStatus = userCriminalRecord && userCriminalRecord !== 'no' ? 'yes' : 
-                        userCriminalRecord === 'no' ? 'no' : ''
 
   // Проверка заполненности обязательных полей
   const isFormValid =
@@ -42,32 +36,6 @@ export default function Step5Experience() {
     (userEducationalDiplom.status !== 'yes' || (userEducationalDiplom.files && userEducationalDiplom.files.length > 0)) &&
     (userCriminalRecord.status !== 'yes' || (userCriminalRecord.text && userCriminalRecord.text.trim()));
 
-
-
-  // Обработчики для радиокнопок
-  const handleLicenseChange = (status) => {
-    if (status === 'yes') {
-      setUserLicense({ status: 'yes', files: userLicense?.files || [] })
-    } else {
-      setUserLicense({ status: 'no', files: [] })
-    }
-  }
-
-  const handleDiplomChange = (status) => {
-    if (status === 'yes') {
-      setUserEducationalDiplom({ status: 'yes', files: userEducationalDiplom?.files || [] })
-    } else {
-      setUserEducationalDiplom({ status: 'no', files: [] })
-    }
-  }
-
-  const handleCriminalChange = (status) => {
-    if (status === 'yes') {
-      setUserCriminalRecord({ status: 'yes', text: userCriminalRecord?.text || '' })
-    } else {
-      setUserCriminalRecord({ status: 'no', text: '' })
-    }
-  }
 
   const handleBack = () => navigate('/full_registration_step4')
   const handleForward = () => {
@@ -106,13 +74,17 @@ export default function Step5Experience() {
               onSelect={setUserExperience} 
             />
 
-            {/* Количество специалистов */}
-            <h3>Количество специалистов в компании</h3>
-            <RegistrSelector 
-              placeholder={'Укажите количество специалистов'} 
-              subject={['1', 'до 5', 'до 10', 'до 20', 'до 30', 'более 30']}
-              onSelect={setSpecialistsNumber} 
-            />
+            {/* Количество специалистов (для самозанятого убираем) */}
+            { userLawSubject !== 'self-employed' && (
+              <>
+                <h3>Количество специалистов в компании</h3>
+                <RegistrSelector 
+                  placeholder={'Укажите количество специалистов'} 
+                  subject={['1', 'до 5', 'до 10', 'до 20', 'до 30', 'более 30']}
+                  onSelect={setSpecialistsNumber} 
+                />
+              </>
+            )}
 
             {/* Лицензия */}
             <div className='passport-field' >
@@ -156,7 +128,8 @@ export default function Step5Experience() {
             
 
             {/* Диплом */}
-            <div className='passport-field' style={{marginTop: '25px'}}>
+            { userLawSubject !== 'legal_entity' && (
+              <div className='passport-field' style={{marginTop: '25px'}}>
                 <h3>Наличие диплома о профессиональном образовании</h3>
                 <div className="radio-option"  style={{marginBottom:'10px'}}>
                   <input 
@@ -181,7 +154,7 @@ export default function Step5Experience() {
                     style={{margin: '0 10px 0 0'}}
                   />
                   <label htmlFor="diplom-no">Нет</label>
-                </div>
+                </div>          
 
                 {/* показ  формы для файлоы, только при выборе "Да"*/}
                 {userEducationalDiplom?.status === 'yes' && (
@@ -193,7 +166,8 @@ export default function Step5Experience() {
                     <p>Добавьте скан диплома</p>
                   </>
                 )}          
-            </div>
+              </div>
+            )}
             
 
             {/* Судимости */}
@@ -223,13 +197,17 @@ export default function Step5Experience() {
                   />
                   <label htmlFor="criminal-no">Нет</label>
                 </div>
-                <textarea
-                  placeholder="Добавьте информацию о судимостях / текущих судах"
-                  disabled={userCriminalRecord?.status !== 'yes'}
-                  value={userCriminalRecord?.text || ''}
-                  onChange={(e) => setUserCriminalRecord({ ...userCriminalRecord, text: e.target.value })}
-                  className="country-input"
-                />
+
+                {/* показ поля, только если статус да */}
+                {userCriminalRecord?.status === 'yes' && (
+                  <textarea
+                    placeholder="Добавьте информацию о судимостях / текущих судах"
+                    disabled={userCriminalRecord?.status !== 'yes'}
+                    value={userCriminalRecord?.text || ''}
+                    onChange={(e) => setUserCriminalRecord({ ...userCriminalRecord, text: e.target.value })}
+                    className="country-input"
+                  />
+                )}
             </div>
 
             <button 

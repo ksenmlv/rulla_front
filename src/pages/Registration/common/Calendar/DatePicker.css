@@ -1,0 +1,51 @@
+.date-picker-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.date-input {
+  width: 100%;
+  height: 55px;
+  padding: 0 50px 0 0; /* место под иконку */
+  font-size: 18px;
+  border: 1px solid #e3e3e3;
+  border-radius: 14px;
+  outline: none;
+}
+
+.date-input--error {
+  border-color: #ff4d4f;
+}
+
+/* SVG-иконка календаря внутри инпута */
+.calendar-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.calendar-icon:hover {
+  opacity: 1;
+}
+
+/* Popup-календарь */
+.calendar-popup {
+  position: absolute;
+  top: 70px;
+  right: 0;
+  z-index: 500;
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 12px;
+}
+
+.react-calendar__tile--now {
+  background: #F0DED7 !important;
+  border-radius: 10px;
+}

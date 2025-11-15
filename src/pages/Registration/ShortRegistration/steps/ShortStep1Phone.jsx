@@ -6,6 +6,7 @@ import Footer from '../../../../components/Footer/Footer'
 import RoleSwitcher from '../../common/RoleSwitcher'
 import PhoneNumber from '../../common/PhoneNumber'
 import '../../Registration.css'
+import '../../../Enter/Enter.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 
 
