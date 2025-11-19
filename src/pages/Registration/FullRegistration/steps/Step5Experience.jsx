@@ -30,14 +30,23 @@ export default function Step5Experience() {
     userExperience &&
     specialistsNumber &&
     userLicense?.status &&
-    userEducationalDiplom?.status &&
     userCriminalRecord?.status &&
+    // проверяем диплом только если не юридическое лицо
+    (userLawSubject === 'legal_entity' || userEducationalDiplom?.status) &&
     (userLicense.status !== 'yes' || (userLicense.files && userLicense.files.length > 0)) &&
-    (userEducationalDiplom.status !== 'yes' || (userEducationalDiplom.files && userEducationalDiplom.files.length > 0)) &&
+    (userEducationalDiplom?.status !== 'yes' || (userEducationalDiplom.files && userEducationalDiplom.files.length > 0)) &&
     (userCriminalRecord.status !== 'yes' || (userCriminalRecord.text && userCriminalRecord.text.trim()));
 
 
-  const handleBack = () => navigate('/full_registration_step4')
+
+  const handleBack = () => {
+    if (userLawSubject === 'legal_entity') {
+      navigate('/full_registration_step3')
+    } else {
+      navigate('/full_registration_step4')
+    }
+  }
+
   const handleForward = () => {
     setStepNumber(stepNumber + 1)
     navigate('/full_registration_step6')

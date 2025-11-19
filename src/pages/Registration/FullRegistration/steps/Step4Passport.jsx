@@ -423,7 +423,7 @@ export default function Step4Passport() {
                 <div className='passport-field'>
                   <h3>Скан регистрации</h3>
                   <FileUpload key={passportData.citizenship} onFilesUpload={(files) => handleFileUpload('scanRegistration', files)} maxFiles={1}/>
-                  <p>Добавьте скан 5 страницы паспорта</p>
+                  <p>Добавьте скан актуальной регистрации — 5-7 страницы</p>
                 </div>
               </div>
 

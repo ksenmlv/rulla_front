@@ -69,7 +69,11 @@ export const AppProvider = ({ children }) => {
   // 7 этап регистрации
   const [userPhone, setUserPhone] = useState('')
   const [userEmail, setUserEmail] = useState('')
-  const [userSocialMedia, setUserSocialMedia] = useState([])
+  const [userSocialMedia, setUserSocialMedia] = useState({
+    telegram: { phone: '', nickname: '' },
+    whatsapp: { phone: '' },
+    vk: { phone: '', nickname: '' }
+  })
   const [userWebsite, setUserWebsite] = useState('')
 
 

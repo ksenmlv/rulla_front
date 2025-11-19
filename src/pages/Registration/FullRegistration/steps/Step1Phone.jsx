@@ -112,7 +112,7 @@ export default function Step1Phone() {
                 </div>
 
                 {step === 1 && (
-                  <PhoneNumber onPhoneSubmit={handlePhoneSubmit} />
+                  <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit} />
                 )}
 
                 {/* форма ввода кода подтверждения */}

@@ -52,7 +52,7 @@ export default function ShortStep1Phone() {
                 </div>
 
                 <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
-                <PhoneNumber onPhoneSubmit={handlePhoneSubmit}/>
+                <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit}/>
                 
                 <div className="register-link">
                     У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>

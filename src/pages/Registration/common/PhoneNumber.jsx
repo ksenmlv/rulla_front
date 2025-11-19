@@ -6,9 +6,9 @@ import 'react-international-phone/style.css'
 import '../Registration.css'
 
 
-export default function PhoneNumber({ onPhoneSubmit }) {
+export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
   const navigate = useNavigate()
-  const { phoneNumber, setPhoneNumber } = useAppContext()
+  const { phoneNumber, setPhoneNumber, stepNumber, userLawSubject } = useAppContext()
   const [isValidPhone, setIsValidPhone] = useState(false)
   const inputRef = useRef()
 
@@ -29,7 +29,7 @@ export default function PhoneNumber({ onPhoneSubmit }) {
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
-    setPhoneNumber(value)
+    onChange(value) 
     const digitsOnly = value.replace(/\D/g, '')
     setIsValidPhone(digitsOnly.length > 10)
   }
@@ -53,10 +53,11 @@ export default function PhoneNumber({ onPhoneSubmit }) {
   return (    
     <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-            <label className="form-label">Номер телефона</label>
+            {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>}
+
             <PhoneInput
                 placeholder="Введите номер телефона"
-                value={phoneNumber}
+                value={value}
                 ref={inputRef}
                 onChange={handlePhoneChange}
                 defaultCountry="ru"
@@ -71,13 +72,16 @@ export default function PhoneNumber({ onPhoneSubmit }) {
                 
             />
         </div>
-        <button 
-              type="submit" 
-              className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
-              disabled={!isValidPhone}
-          >
-              Продолжить
-        </button>
+        {stepNumber !== 7 && (
+          <button 
+                type="submit" 
+                className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
+                disabled={!isValidPhone}
+            >
+                Продолжить
+          </button> 
+        )}
+
     </form>
   )
 }
