@@ -1,9 +1,10 @@
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
+import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import '../../Registration.css'
 
 
@@ -11,6 +12,7 @@ import '../../Registration.css'
 export default function ShortStep2Name() {
   const { userName, userRegion, setUserName, setUserRegion, setPhoneNumber } = useAppContext()
   const navigate = useNavigate()
+  const nameInputRef = useRef(null)
 
   const handleBack = () => {
     navigate('/simplified_registration_step1')
@@ -18,6 +20,13 @@ export default function ShortStep2Name() {
 
   const [isChecked, setIsChecked] = useState(false)
 
+
+  // автофокус на первое поле при монтировании компонента
+  useEffect(() => {
+    if (nameInputRef.current) {
+      nameInputRef.current.focus()
+    }
+  }, [])
 
   // проверка на заполненность полей и галочкм
   const isFormValid = userName.trim() !== '' && userRegion.trim() !== '' && isChecked
@@ -28,11 +37,10 @@ export default function ShortStep2Name() {
     setUserName(onlyLettersName)
   }
 
-  const handleRegionChange = (e) => {
-    const value = e.target.value
-    const onlyLettersRegion = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
-    setUserRegion(onlyLettersRegion)
+  const handleRegionSelect = (selectedRegions) => {
+    setUserRegion(selectedRegions.join(', '))
   }
+
 
   // нажатие на кнопку "Зарегистрироваться"
   const handleSubmit = () => {
@@ -66,9 +74,16 @@ export default function ShortStep2Name() {
 
             <div className='input-fields'>
               <h3>Имя</h3>
-              <input type='text' placeholder='Введите ваше имя' value={userName} onChange={handleNameChange}/>
+              <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={userName} onChange={handleNameChange}/>
               <h3>Регион</h3>
-              <input type='text' placeholder='Укажите свой регион' value={userRegion} onChange={handleRegionChange }/>
+              <RegistrSelector
+                subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
+                placeholder="Выберите предмет"
+                multiple={true}
+                maxSelect={3}
+                onSelect={handleRegionSelect}
+              />
+
             </div>
 
             {/* Checkbox с политикой конфиденциальности */}

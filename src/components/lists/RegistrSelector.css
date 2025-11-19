@@ -127,3 +127,8 @@
   display: none;
 }
 
+.activity-option.disabled {
+  color: #aaa;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

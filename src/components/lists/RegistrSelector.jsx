@@ -1,72 +1,110 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './RegistrSelector.css'; 
 
-const RegistrSelector = ({ subject = [], placeholder, onSelect }) => {
+const RegistrSelector = ({
+  subject = [],
+  placeholder,
+  onSelect,
+  multiple = false,      // новый проп
+  maxSelect = Infinity   // новый проп
+}) => {
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [selectedActivity, setSelectedActivity] = useState('');
-  
+  const [selectedActivity, setSelectedActivity] = useState(''); 
+
+  // для multiple — массив выбранных
+  const [selectedList, setSelectedList] = useState([]);
 
   const dropdownRef = useRef(null);
   const dropdownListRef = useRef(null);
   const selectedOptionRef = useRef(null);
 
-  // Закрытие dropdown при клике вне
+  /** Закрытие dropdown при клике вне */
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        // если введённого текста нет в списке — очищаем
-        if (!subject.includes(searchValue)) {
-          setSearchValue(selectedActivity || '');
-        }
         setIsOpen(false);
+
+        if (!multiple) {
+          if (!subject.includes(searchValue)) {
+            setSearchValue(selectedActivity || '');
+          }
+        }
       }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [searchValue, selectedActivity, subject]);
+  }, [searchValue, selectedActivity, subject, multiple]);
 
-  // Прокрутка к выбранному элементу при открытии списка
+  /** Прокрутка к выбранному */
   useEffect(() => {
-    if (isOpen && selectedActivity && dropdownListRef.current && selectedOptionRef.current) {
+    if (!multiple && isOpen && selectedActivity && dropdownListRef.current && selectedOptionRef.current) {
       setTimeout(() => {
         const dropdown = dropdownListRef.current;
         const selectedElement = selectedOptionRef.current;
         dropdown.scrollTop = selectedElement.offsetTop - dropdown.offsetTop;
       }, 0);
     }
-  }, [isOpen, selectedActivity]);
+  }, [isOpen, selectedActivity, multiple]);
 
-  const handleSelect = (activity) => {
+
+  /** Обработка выбора */
+  const handleSelectSingle = (activity) => {
     setSelectedActivity(activity);
     setSearchValue(activity);
     setIsOpen(false);
-    if (onSelect) onSelect(activity); 
+    if (onSelect) onSelect(activity);
   };
 
+  const handleSelectMultiple = (activity) => {
+    const alreadySelected = selectedList.includes(activity);
+
+    // Снять выбор
+    if (alreadySelected) {
+      const updated = selectedList.filter((item) => item !== activity);
+      setSelectedList(updated);
+      if (onSelect) onSelect(updated);
+      return;
+    }
+
+    // Блокировать, если достигнут лимит
+    if (selectedList.length >= maxSelect) return;
+
+    // Добавить
+    const updated = [...selectedList, activity];
+    setSelectedList(updated);
+    if (onSelect) onSelect(updated);
+  };
+
+
+  /** Ввод */
   const handleInputChange = (e) => {
     setSearchValue(e.target.value);
     setIsOpen(true);
   };
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   const handleInputFocus = () => {
     setIsOpen(true);
-    if (selectedActivity) {
+    if (!multiple && selectedActivity) {
       setSearchValue('');
     }
   };
 
-  // Фильтрация при вводе: по первой букве, иначе показываем всё
+  /** Фильтрация */
   const filteredActivities = searchValue
     ? subject.filter((activity) =>
         activity.toLowerCase().startsWith(searchValue.toLowerCase())
       )
     : subject;
+
+
+  /** Текст в input */
+  const inputValue = multiple
+    ? selectedList.join(', ')
+    : (searchValue || selectedActivity);
+
 
   return (
     <div className="activity-input-container" ref={dropdownRef}>
@@ -74,13 +112,15 @@ const RegistrSelector = ({ subject = [], placeholder, onSelect }) => {
         type="text"
         className={`activity-input ${isOpen ? 'active' : ''}`}
         placeholder={placeholder}
-        value={searchValue || selectedActivity}
+        value={inputValue}
         onFocus={handleInputFocus}
-        onChange={handleInputChange}
+        onChange={multiple ? () => {} : handleInputChange} // disable typing for multiple
+        readOnly={multiple} // в multiple поле только показывает выбор
       />
+
       <div
         className={`arrow ${isOpen ? 'arrow-up' : 'arrow-down'}`}
-        onClick={toggleDropdown}
+        onClick={() => setIsOpen(!isOpen)}
       >
         <svg width="20" height="12" viewBox="0 0 12 8" fill="none">
           <path
@@ -94,23 +134,46 @@ const RegistrSelector = ({ subject = [], placeholder, onSelect }) => {
       </div>
 
       {isOpen && (
-        <div 
-          className="activity-dropdown" 
-          ref={dropdownListRef}
-        >
+        <div className="activity-dropdown" ref={dropdownListRef}>
           {filteredActivities.length > 0 ? (
-            filteredActivities.map((activity, index) => (
-              <div
-                key={index}
-                ref={activity === selectedActivity ? selectedOptionRef : null}
-                className={`activity-option ${
-                  activity === selectedActivity ? 'selected' : ''
-                }`}
-                onClick={() => handleSelect(activity)}
-              >
-                {activity}
-              </div>
-            ))
+            filteredActivities.map((activity, index) => {
+
+              const isSelected = multiple
+                ? selectedList.includes(activity)
+                : activity === selectedActivity;
+
+              const isDisabled =
+                multiple && !isSelected && selectedList.length >= maxSelect;
+
+              return (
+                <div
+                  key={index}
+                  ref={!multiple && isSelected ? selectedOptionRef : null}
+                  className={`activity-option ${
+                    isSelected ? 'selected' : ''
+                  } ${isDisabled ? 'disabled' : ''}`}
+                  onClick={() => {
+                    if (isDisabled) return;
+                    multiple
+                      ? handleSelectMultiple(activity)
+                      : handleSelectSingle(activity);
+                  }}
+                  style={{ display: 'flex', gap: '10px' }}
+                >
+
+                {multiple && (
+                  <div className="custom-checkbox-wrapper">
+                    <div className={`custom-checkbox ${isSelected ? 'checked' : ''}`}>
+                      {isSelected && <div className="inner-square"></div>}
+                    </div>
+                  </div>
+                )}
+
+
+                  {activity}
+                </div>
+              );
+            })
           ) : (
             <div className="activity-option" style={{ color: '#999' }}>
               Ничего не найдено

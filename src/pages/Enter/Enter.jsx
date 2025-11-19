@@ -45,6 +45,14 @@ function Enter() {
     }
   }, [step, setPhoneNumber])
 
+  // проверка заполненности поля на первом этапе
+  useEffect(() => {
+    if (phoneNumber && step === 1) {
+      const digitsOnly = phoneNumber.replace(/\D/g, '')
+      setIsValidPhone(digitsOnly.length > 10)
+    }
+  }, [phoneNumber, step])
+
   // фокус на инпут
   useEffect(() => {
     if (inputRef.current) {
@@ -262,7 +270,7 @@ function Enter() {
                   
         </div>
       </div>
-      
+
       <Footer className='footer footer--enter' />
     </div>
   )

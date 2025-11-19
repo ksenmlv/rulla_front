@@ -12,7 +12,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 
 
 export default function ShortStep1Phone() {
-  const { phoneNumber } = useAppContext()
+  const { phoneNumber, setPhoneNumber } = useAppContext()
   const navigate = useNavigate()
 
   // локальное состояние для роли
@@ -26,12 +26,13 @@ export default function ShortStep1Phone() {
     }
   }
 
-
+  
   const handleBack = () => {
     navigate('/enter')
   }
 
   const handlePhoneSubmit = () => {
+    console.log(phoneNumber)
     navigate('/simplified_registration_step2')
   }
 

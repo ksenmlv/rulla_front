@@ -288,6 +288,7 @@
   transition: all 0.2s ease;
   flex-shrink: 0;
   background-color: white;
+  position: relative;
 }
 
 .custom-checkbox:hover {
@@ -303,6 +304,7 @@
   height: 10px;
   background-color: #DE5A2B;
   border-radius: 2px;
+  display: block;
 }
 
 

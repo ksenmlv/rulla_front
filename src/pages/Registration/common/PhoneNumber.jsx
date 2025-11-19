@@ -10,7 +10,7 @@ export default function PhoneNumber({ onPhoneSubmit }) {
   const navigate = useNavigate()
   const { phoneNumber, setPhoneNumber } = useAppContext()
   const [isValidPhone, setIsValidPhone] = useState(false)
-    const inputRef = useRef()
+  const inputRef = useRef()
 
   // фокус на инпут при открытии формы
   useEffect(() => {
@@ -18,6 +18,14 @@ export default function PhoneNumber({ onPhoneSubmit }) {
       inputRef.current.focus();
     }
   }, [])
+
+  // проверка валидности при монтировании компонента
+  useEffect(() => {
+    if (phoneNumber) {
+      const digitsOnly = phoneNumber.replace(/\D/g, '')
+      setIsValidPhone(digitsOnly.length > 10)
+    }
+  }, [phoneNumber]) 
 
   // проверка валидности номера тел
   const handlePhoneChange = (value) => {
