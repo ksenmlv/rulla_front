@@ -9,9 +9,9 @@ import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale5.svg'
 
+
 export default function Step5Experience() {
   const navigate = useNavigate()
-
   const { 
     stepNumber, setStepNumber,
     userExperience, setUserExperience,
@@ -22,39 +22,70 @@ export default function Step5Experience() {
     userLawSubject
   } = useAppContext()
 
-  console.log('userLawSubject:', userLawSubject)
-
-
-  // Проверка заполненности обязательных полей
-  const isFormValid =
-    userExperience &&
-    specialistsNumber &&
-    userLicense?.status &&
-    userCriminalRecord?.status &&
-    // проверяем диплом только если не юридическое лицо
-    (userLawSubject === 'legal_entity' || userEducationalDiplom?.status) &&
-    (userLicense.status !== 'yes' || (userLicense.files && userLicense.files.length > 0)) &&
-    (userEducationalDiplom?.status !== 'yes' || (userEducationalDiplom.files && userEducationalDiplom.files.length > 0)) &&
-    (userCriminalRecord.status !== 'yes' || (userCriminalRecord.text && userCriminalRecord.text.trim()));
-
-
-
   const handleBack = () => {
-    if (userLawSubject === 'legal_entity') {
-      navigate('/full_registration_step3')
-    } else {
-      navigate('/full_registration_step4')
-    }
+    navigate(userLawSubject === 'legal_entity' ? '/full_registration_step3' : '/full_registration_step4')
   }
 
   const handleForward = () => {
+    console.log(userExperience, specialistsNumber, userLicense, userEducationalDiplom, userCriminalRecord)
     setStepNumber(stepNumber + 1)
     navigate('/full_registration_step6')
   }
 
+  const updateField = (setter, field, value) => setter(prev => ({ ...prev, [field]: value }))
+
+  // проверка на валидность формы
+  const isFormValid = 
+    !!userExperience &&
+    (!!specialistsNumber || userLawSubject === 'self-employed') &&
+    userLicense?.status &&
+    userCriminalRecord?.status &&
+    (userLawSubject === 'legal_entity' || userEducationalDiplom?.status) &&
+    (userLicense.status !== 'yes' || userLicense.files?.length > 0) &&
+    (userEducationalDiplom?.status !== 'yes' || userEducationalDiplom.files?.length > 0) &&
+    (userCriminalRecord.status !== 'yes' || (userCriminalRecord.text?.trim().length > 0))
+
+  // рендер радиокнопок 
+  const renderRadioField = (title, data, setter, filesFieldLabel) => (
+    <div className='passport-field' >
+      <h3 style={{marginTop: '10px'}}>{title}</h3>
+      {['yes', 'no'].map(val => (
+        <div className="radio-option" key={val} style={{ marginBottom: '10px' }}>
+          <input 
+            type="radio" 
+            id={`${title}-${val}`} 
+            name={title} 
+            value={val}
+            checked={data?.status === val}
+            onChange={() => updateField(setter, 'status', val)}
+            style={{ margin: '0 10px 0 0' }}
+          />
+          <label htmlFor={`${title}-${val}`}>{val === 'yes' ? 'Да' : 'Нет'}</label>
+        </div>
+      ))}
+
+      {data?.status === 'yes' && filesFieldLabel && (
+        <>
+          <FileUpload onFilesUpload={(files) => updateField(setter, 'files', files)} maxFiles={4} />
+          <p style={{marginBottom: '10px'}}>{filesFieldLabel}</p>
+        </>
+      )}
+
+      {data?.status === 'yes' && title === 'Судимости/текущие суды' && (
+        <textarea
+          placeholder="Добавьте информацию о судимостях/текущих судах"
+          value={data?.text || ''}
+          onChange={(e) => updateField(setter, 'text', e.target.value)}
+          className="country-input"
+        />
+      )}
+    </div>
+  )
+
+
   return (
     <div>
-      <Header hideElements={true} />
+      <Header hideElements />
       <div className='reg-container'>
         <div className='registr-container' style={{ height: 'auto', paddingBottom: '5px' }}>
 
@@ -75,161 +106,37 @@ export default function Step5Experience() {
           </p>
 
           <div className='input-fields' style={{ marginBottom: '40px' }}>
-            {/* Опыт работы */}
             <h3>Опыт работы</h3>
             <RegistrSelector 
-              placeholder={'Укажите опыт работы'} 
+              placeholder='Укажите опыт работы' 
               subject={['До 1 года', '2 года', '3 года', '4 года', '5 лет', '6 лет', '7 лет', '8 лет', '9 лет', '10-15 лет', '15-20 лет', '20+ лет']}
               onSelect={setUserExperience} 
             />
 
-            {/* Количество специалистов (для самозанятого убираем) */}
-            { userLawSubject !== 'self-employed' && (
+            {userLawSubject !== 'self-employed' && (
               <>
                 <h3>Количество специалистов в компании</h3>
                 <RegistrSelector 
-                  placeholder={'Укажите количество специалистов'} 
+                  placeholder='Укажите количество специалистов' 
                   subject={['1', 'до 5', 'до 10', 'до 20', 'до 30', 'более 30']}
                   onSelect={setSpecialistsNumber} 
                 />
               </>
             )}
 
-            {/* Лицензия */}
-            <div className='passport-field' >
-                <h3>Наличие лицензии</h3>
-                <div className="radio-option" style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="license-yes" 
-                    name="license" 
-                    value="yes"
-                    checked={userLicense?.status === 'yes'}
-                    onChange={() => setUserLicense({ ...userLicense, status: 'yes' })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="license-yes">Да</label>
-                </div>
-                <div className="radio-option" style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="license-no" 
-                    name="license" 
-                    value="no"
-                    checked={userLicense?.status === 'no'}
-                    onChange={() => setUserLicense({ ...userLicense, status: 'no', files: [] })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="license-no">Нет</label>
-                </div>
-
-                {/* показ  формы для файлоы, только при выборе "Да"*/}
-                {userLicense?.status === 'yes' && (
-                  <>
-                    <FileUpload
-                      disabled={userLicense.status !== 'yes'}
-                      onFilesUpload={(files) => setUserLicense({ ...userLicense, files })}
-                    />
-                    <p>Добавьте скан лицензии</p>
-                  </>
-                )}
-            </div>
-            
-
-            {/* Диплом */}
-            { userLawSubject !== 'legal_entity' && (
-              <div className='passport-field' style={{marginTop: '25px'}}>
-                <h3>Наличие диплома о профессиональном образовании</h3>
-                <div className="radio-option"  style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="diplom-yes" 
-                    name="diplom" 
-                    value="yes"
-                    checked={userEducationalDiplom?.status === 'yes'}
-                    onChange={() => setUserEducationalDiplom({ ...userEducationalDiplom, status: 'yes' })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="diplom-yes">Да</label>
-                </div>
-                <div className="radio-option" style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="diplom-no" 
-                    name="diplom" 
-                    value="no"
-                    checked={userEducationalDiplom?.status === 'no'}
-                    onChange={() => setUserEducationalDiplom({ ...userEducationalDiplom, status: 'no', files: [] })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="diplom-no">Нет</label>
-                </div>          
-
-                {/* показ  формы для файлоы, только при выборе "Да"*/}
-                {userEducationalDiplom?.status === 'yes' && (
-                  <>
-                    <FileUpload
-                      disabled={userEducationalDiplom.status !== 'yes'}
-                      onFilesUpload={(files) => setUserEducationalDiplom({ ...userEducationalDiplom, files })}
-                    />
-                    <p>Добавьте скан диплома</p>
-                  </>
-                )}          
-              </div>
-            )}
-            
-
-            {/* Судимости */}
-            <div className='passport-field' style={{marginTop: '25px'}}>
-                <h3>Судимости/текущие суды</h3>
-                <div className="radio-option"  style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="criminal-yes" 
-                    name="criminal" 
-                    value="yes"
-                    checked={userCriminalRecord?.status === 'yes'}
-                    onChange={() => setUserCriminalRecord({ ...userCriminalRecord, status: 'yes' })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="criminal-yes">Да</label>
-                </div>
-                <div className="radio-option" style={{marginBottom:'10px'}}>
-                  <input 
-                    type="radio" 
-                    id="criminal-no" 
-                    name="criminal" 
-                    value="no"
-                    checked={userCriminalRecord?.status === 'no'}
-                    onChange={() => setUserCriminalRecord({ ...userCriminalRecord, status: 'no', text: '' })}
-                    style={{margin: '0 10px 0 0'}}
-                  />
-                  <label htmlFor="criminal-no">Нет</label>
-                </div>
-
-                {/* показ поля, только если статус да */}
-                {userCriminalRecord?.status === 'yes' && (
-                  <textarea
-                    placeholder="Добавьте информацию о судимостях / текущих судах"
-                    disabled={userCriminalRecord?.status !== 'yes'}
-                    value={userCriminalRecord?.text || ''}
-                    onChange={(e) => setUserCriminalRecord({ ...userCriminalRecord, text: e.target.value })}
-                    className="country-input"
-                  />
-                )}
-            </div>
+            {renderRadioField('Наличие лицензии', userLicense, setUserLicense, 'Добавьте скан лицензии')}
+            {userLawSubject !== 'legal_entity' && renderRadioField('Наличие диплома о профессиональном образовании', userEducationalDiplom, setUserEducationalDiplom, 'Добавьте скан диплома')}
+            {renderRadioField('Судимости/текущие суды', userCriminalRecord, setUserCriminalRecord)}
 
             <button 
               type="submit" 
               className={`continue-button ${!isFormValid ? 'disabled' : ''}`} 
               onClick={handleForward}
               disabled={!isFormValid}
-              style={{margin:'50px 0 0 0'}}
+              style={{ margin: '50px 0 0 0' }}
             >
               Продолжить
             </button>
-
-
 
           </div>
         </div>

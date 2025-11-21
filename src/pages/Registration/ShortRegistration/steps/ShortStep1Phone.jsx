@@ -14,6 +14,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 export default function ShortStep1Phone() {
   const { phoneNumber, setPhoneNumber } = useAppContext()  
   const [isValidPhone, setIsValidPhone] = useState(false)
+  const [submitAttempted, setSubmitAttempted] = useState(false)
   const navigate = useNavigate()
 
   // локальное состояние для роли
@@ -30,16 +31,23 @@ export default function ShortStep1Phone() {
   // проверка номера телефона
   const handlePhoneChange = (value) => {
     setPhoneNumber(value)
-
     const digitsOnly = value.replace(/\D/g, '')
     setIsValidPhone(digitsOnly.length > 10)
   }
 
+  // восстановление валидности при возврате
+  useEffect(() => {
+    if (phoneNumber) {
+      const digitsOnly = phoneNumber.replace(/\D/g, '')
+      setIsValidPhone(digitsOnly.length > 10)
+    }
+  }, [])
+
   const handlePhoneSubmit = () => {
-    console.log(phoneNumber)
+    setSubmitAttempted(true)
+    if (!isValidPhone) return
     navigate('/simplified_registration_step2')
   }
-
   
   const handleBack = () => {
     navigate('/enter')
@@ -60,9 +68,10 @@ export default function ShortStep1Phone() {
                     <h2 className="login-title">Регистрация</h2>
                 </div>
 
-                <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
-                <h3 className='form-label' style={{marginTop: '40px'}}>Номер телефона</h3>
-                <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit}/>
+                <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange}/>
+
+                <h3 className='form-label' style={{margin: '39px 0 13px 0'}}>Номер телефона</h3>
+                <PhoneNumber value={phoneNumber} onChange={handlePhoneChange} onPhoneSubmit={handlePhoneSubmit}/>
 
                 <button 
                       className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}

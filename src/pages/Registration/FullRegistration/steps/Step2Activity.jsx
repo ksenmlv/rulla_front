@@ -11,14 +11,10 @@ import scale from '../../../../assets/Main/registr_scale2.svg'
 
 export default function Step2Activity() {
   const navigate = useNavigate()
-  const { stepNumber, setStepNumber, userRegion, setUserRegion, userActivity, setUserActivity } = useAppContext()
-
+  const { stepNumber, setStepNumber, userRegion, setUserRegion, userActivity, setUserActivity, travelReadiness, setTravelReadiness } = useAppContext()
 
   // проверка на заполненность всех полей
   const isFormComplete = userActivity && userRegion
-
-  // состояния для чекбокса работы на выезде   
-  const [isChecked, setIsChecked] = useState(false)
 
   // обработчики для получения выбранных значений
   const handleActivitySelect = (activity) => {
@@ -27,7 +23,6 @@ export default function Step2Activity() {
   const handleRegionSelect = (region) => {
     setUserRegion(region)
   }
-
   
   // нажатие на стрелку назад
   const handleBack = () => {
@@ -35,6 +30,7 @@ export default function Step2Activity() {
   }
 
   const handleForward = () => {
+    console.log(userRegion, userActivity, travelReadiness)
     setUserActivity('')
     setUserRegion('')
 
@@ -98,11 +94,10 @@ export default function Step2Activity() {
                 style={{marginBottom:'20px'}}/>
           </div>
 
-          <div className="checkbox-wrapper" onClick={() => setIsChecked(!isChecked)} style={{justifyContent: 'flex-start', margin: '-50px 0 40px 0'}}>
+          <div className="checkbox-wrapper" onClick={() => setTravelReadiness(!travelReadiness)} style={{justifyContent: 'flex-start', margin: '-50px 0 40px 0'}}>
               <div 
-                className={`custom-checkbox ${isChecked ? 'checked' : ''}`} 
-                onClick={() => setIsChecked(!isChecked)} >
-                  {isChecked && <span className="inner-square"></span>}
+                className={`custom-checkbox ${travelReadiness  ? 'checked' : ''}`}  >
+                  {travelReadiness && <span className="inner-square"></span>}
               </div>
               <span className="checkbox-text" style={{fontSize: '20px'}}>Готов к выездам в другие регионы</span>
           </div>

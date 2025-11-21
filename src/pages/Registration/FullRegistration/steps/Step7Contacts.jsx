@@ -33,12 +33,13 @@ export default function Step7Contacts() {
     const [selectedService, setSelectedService] = useState('')
     const [emailError, setEmailError] = useState('')
     const [formValid, setFormValid] = useState(false)                      // корректность заполненных полей формы
+    const [isPhoneValid, setIsPhoneValid] = useState(false)
     const [modalValid, setModalValid] = useState(false)                    // корректность заполненных полей модалки
 
 
     const firstServiceInputRef = useRef(null)
 
-    // Восстановление локального состояния при монтировании
+    // восстановление локального состояния при монтировании
     useEffect(() => {
         setStepNumber(7)
         firstServiceInputRef.current?.focus()
@@ -55,20 +56,29 @@ export default function Step7Contacts() {
         setFormValid(phoneValid && emailValid && isChecked)
     }, [localPhone, localEmail, isChecked])
 
+    
+
     // валидация модального окна
     useEffect(() => {
         if (!selectedService) return setModalValid(false);
 
         const data = localSocialMedia[selectedService] || {};
 
-        if (selectedService === 'telegram') {
-            setModalValid(Boolean(data.phone && data.nickname));
-        } else if (selectedService === 'whatsapp') {
-            setModalValid(Boolean(data.phone));
-        } else if (selectedService === 'vk') {
-            setModalValid(Boolean(data.nickname));
+        switch (selectedService) {
+            case 'telegram':
+                setModalValid(Boolean(data.phone?.trim() && data.nickname?.trim()));
+                break;
+            case 'whatsapp':
+                setModalValid(Boolean(data.phone?.trim()));
+                break;
+            case 'vk':
+                setModalValid(Boolean(data.nickname?.trim()));
+                break;
+            default:
+                setModalValid(false);
         }
     }, [localSocialMedia, selectedService]);
+
 
 
     const handleBack = () => navigate('/full_registration_step6')
@@ -80,6 +90,7 @@ export default function Step7Contacts() {
         setUserWebsite(localWebsite)
         setUserSocialMedia(localSocialMedia)
 
+        console.log('phone:', userPhone, 'email:',  userEmail, 'site:', userWebsite, 'соц сети:', userSocialMedia)
         alert('Полная регистрация завершена')
         navigate('/')
     }
@@ -240,7 +251,7 @@ export default function Step7Contacts() {
 
                         <h3>Добавьте ссылки на социальные сети</h3>
 
-                        <div className="social-buttons">
+                        <div className="social-buttons" >
                             <button 
                                 className={`btn-social ${selectedService === 'telegram' ? 'selected' : ''}`}
                                 onClick={() => setSelectedService('telegram')}
@@ -263,7 +274,7 @@ export default function Step7Contacts() {
 
                         {/* телефон — только для tg и whatsapp */}
                         {(selectedService === 'telegram' || selectedService === 'whatsapp') && (
-                            <div className='passport-field full-width'>
+                            <div className='passport-field full-width' style={{marginBottom: '-50px'}}>
                                 <h3 style={{ fontSize: '24px', fontWeight: '500', textAlign:'left' }}>
                                     Номер телефона
                                 </h3>
@@ -285,8 +296,8 @@ export default function Step7Contacts() {
 
                         {/* ник — для tg и vk */}
                         {(selectedService === 'telegram' || selectedService === 'vk') && (
-                            <div className='passport-field full-width'>
-                                <h3 style={{ fontSize: '24px', fontWeight: '500', margin: '-50px 0 10px 0', textAlign:'left' }}>
+                            <div className='passport-field full-width' >
+                                <h3 style={{ fontSize: '24px', fontWeight: '500',  textAlign: 'left' }}>
                                     Никнейм
                                 </h3>
                                 <input
@@ -309,7 +320,7 @@ export default function Step7Contacts() {
                             type="submit"
                             className={`save-button ${!modalValid ? 'disabled' : ''}`}
                             onClick={saveSocialMedia}
-                            disabled={!formValid}
+                            disabled={!modalValid}
                         >
                             Сохранить
                         </button>

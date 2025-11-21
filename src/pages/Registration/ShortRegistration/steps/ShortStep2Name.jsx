@@ -8,18 +8,11 @@ import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import '../../Registration.css'
 
 
-
 export default function ShortStep2Name() {
   const { userName, userRegion, setUserName, setUserRegion, setPhoneNumber } = useAppContext()
   const navigate = useNavigate()
   const nameInputRef = useRef(null)
-
-  const handleBack = () => {
-    navigate('/simplified_registration_step1')
-  }
-
-  const [isChecked, setIsChecked] = useState(false)
-
+  const [isChecked, setIsChecked] = useState(false)   // состояние чекбокса
 
   // автофокус на первое поле при монтировании компонента
   useEffect(() => {
@@ -41,13 +34,10 @@ export default function ShortStep2Name() {
     setUserRegion(selectedRegions.join(', '))
   }
 
-
-  // нажатие на кнопку "Зарегистрироваться"
+  // обработка кнопки "Зарегистрироваться"
   const handleSubmit = () => {
     if (isFormValid) {
-      // Логика регистрации
       console.log('Данные для регистрации:', {name: userName, region: userRegion})
-      // navigate('/next-step') // Переход на следующий шаг
       setPhoneNumber('')
       setUserName('')
       setUserRegion('')
@@ -56,18 +46,21 @@ export default function ShortStep2Name() {
     }
   }
 
+  const handleBack = () => {
+    navigate('/simplified_registration_step1')
+  }
+
 
   return (
     <div>
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{height: '610px'}}>
+        <div className='registr-container' style={{height: '625px'}}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
                     <img src={arrow} alt='Назад' />
-                    {/* <p className='btn-arrow'>‹</p> */}
                 </button>
                 <h2 className="login-title">Регистрация</h2>
             </div>
@@ -86,7 +79,7 @@ export default function ShortStep2Name() {
 
             </div>
 
-            {/* Checkbox с политикой конфиденциальности */}
+            {/* checkbox с политикой конфиденциальности */}
             <div className="checkbox-wrapper" onClick={() => setIsChecked(!isChecked)}>
               <div 
                 className={`custom-checkbox ${isChecked ? 'checked' : ''}`} 

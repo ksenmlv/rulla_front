@@ -10,614 +10,189 @@ import LawSubjectSwitcher from '../../common/LawSubjectSwitcher'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale4.svg'
 
+
 export default function Step3FullName() {
   const navigate = useNavigate()
-  const { 
-    stepNumber, 
-    setStepNumber, 
-    userLawSubject, 
-    setUserLawSubject, 
-    individualEntrepreneurData, 
-    setIndividualEntrepreneurData, 
-    selfEmployedData, 
-    setSelfEmployedData,
-    legalEntityData,
-    setLegalEntityData
+  const {
+    stepNumber, setStepNumber,
+    userLawSubject, setUserLawSubject,
+    individualEntrepreneurData, setIndividualEntrepreneurData,
+    selfEmployedData, setSelfEmployedData,
+    legalEntityData, setLegalEntityData
   } = useAppContext()
-  
+
   const [dateError, setDateError] = useState('')
-  const [formHeight, setFormHeight] = useState('1365px')
   const [isFormValid, setIsFormValid] = useState(false)
 
-  // Рефы для автофокуса
   const organizationNameRef = useRef(null)
   const fioInputRef = useRef(null)
 
-  // Определяем тип субъекта
-  const isLegalEntity = (userLawSubject === 'legal_entity')
+  const isLegalEntity = userLawSubject === 'legal_entity'
   const showIPSelfSwitcher = !isLegalEntity
 
-  // Автофокус на первое поле при открытии формы и при переключении
+  // фокус на первое поле
   useEffect(() => {
     setTimeout(() => {
-      if (isLegalEntity) {
-        organizationNameRef.current?.focus()
-      } else {
-        fioInputRef.current?.focus()
-      }
+      if (isLegalEntity) organizationNameRef.current?.focus()
+      else fioInputRef.current?.focus()
     }, 100)
-  }, [isLegalEntity, userLawSubject]) // Добавляем userLawSubject в зависимости
+  }, [isLegalEntity, userLawSubject])
+
+  // обработка переключателей
+  const getActiveData = () => isLegalEntity ? legalEntityData : userLawSubject === 'self-employed' ? selfEmployedData : individualEntrepreneurData
+  const setActiveData = (newData) => {
+    if (isLegalEntity) setLegalEntityData(newData)
+    else if (userLawSubject === 'self-employed') setSelfEmployedData(newData)
+    else setIndividualEntrepreneurData(newData)
+  }
+
+  // обработка обновления данных
+  const updateField = (field, value) => setActiveData({ ...getActiveData(), [field]: value })
+  // вместо старого addFiles
+  const addFiles = (field, newFiles) => {
+    setActiveData(prev => ({ ...prev, [field]: newFiles }));
+  }
 
 
-  // Проверка валидности формы
+  // валидация даты
+  const validateDate = (dateStr) => {
+    if (!dateStr || dateStr.replace(/\D/g,'').length!==6) return false
+    const day=parseInt(dateStr.slice(0,2))
+    const month=parseInt(dateStr.slice(3,5))
+    const year=parseInt('20'+dateStr.slice(6,8))
+    const date=new Date(year, month-1, day)
+    const today=new Date()
+    return date <= today && date.getDate()===day && date.getMonth()===month-1 && date.getFullYear()===year
+  }
+
+  // обработка добавления данных
   useEffect(() => {
-    let isValid = false
+    const data = getActiveData();
+    let valid = false;
 
-    // Функция проверки корректности даты
-    const isValidDate = (dateStr) => {
-      if (!dateStr || dateStr.replace(/\D/g, '').length !== 6) return false
-      
-      const day = parseInt(dateStr.slice(0, 2))
-      const month = parseInt(dateStr.slice(3, 5))
-      const year = parseInt('20' + dateStr.slice(6, 8))
-      
-      // Проверка на валидность даты
-      const date = new Date(year, month - 1, day)
-      const today = new Date()
-      
-      return date <= today && 
-            date.getDate() === day && 
-            date.getMonth() === month - 1 && 
-            date.getFullYear() === year
-    }
+    const hasFiles = (field) => Array.isArray(data[field]) && data[field].length > 0;
 
     if (isLegalEntity) {
-      // Валидация для юридического лица
-      const innValid = legalEntityData.INN?.replace(/\D/g, '').length === 10 // ИНН юрлица - 10 цифр
-      const ogrnValid = legalEntityData.OGRN?.replace(/\D/g, '').length === 13 // ОГРН - 13 цифр
-      const dateValid = legalEntityData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(legalEntityData.registrationDate)
-      const hasExtractEGRUL = legalEntityData.extractEGRUL && legalEntityData.extractEGRUL.length > 0
-      
-      isValid = Boolean(
-        legalEntityData.organizationName?.trim() &&
+      const innValid = data.INN?.replace(/\D/g,'').length === 10;
+      const ogrnValid = data.OGRN?.replace(/\D/g,'').length === 13;
+      const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      valid = Boolean(
+        data.organizationName?.trim() &&
         innValid &&
         ogrnValid &&
         dateValid &&
-        legalEntityData.registrationAddress?.trim() &&
-        hasExtractEGRUL
-      )
+        data.registrationAddress?.trim() &&
+        hasFiles('extractEGRUL')
+      );
     } else if (userLawSubject === 'individual_entrepreneur') {
-      // Валидация для ИП
-      const innValid = individualEntrepreneurData.INN?.replace(/\D/g, '').length === 12 // ИНН физлица - 12 цифр
-      const ogrnipValid = individualEntrepreneurData.OGRNIP?.replace(/\D/g, '').length === 15 // ОГРНИП - 15 цифр
-      const dateValid = individualEntrepreneurData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(individualEntrepreneurData.registrationDate)
-      const hasExtractOGRNIP = individualEntrepreneurData.extractOGRNIP && individualEntrepreneurData.extractOGRNIP.length > 0
-      
-      isValid = Boolean(
-        individualEntrepreneurData.FIO?.trim() &&
+      const innValid = data.INN?.replace(/\D/g,'').length === 12;
+      const ogrnipValid = data.OGRNIP?.replace(/\D/g,'').length === 15;
+      const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      valid = Boolean(
+        data.FIO?.trim() &&
         innValid &&
         ogrnipValid &&
         dateValid &&
-        individualEntrepreneurData.registrationPlace?.trim() &&
-        hasExtractOGRNIP
-      )
+        data.registrationPlace?.trim() &&
+        hasFiles('extractOGRNIP')
+      );
     } else if (userLawSubject === 'self-employed') {
-      // Валидация для самозанятого
-      const innValid = selfEmployedData.INN?.replace(/\D/g, '').length === 12 // ИНН физлица - 12 цифр
-      const dateValid = selfEmployedData.registrationDate?.replace(/\D/g, '').length === 6 && isValidDate(selfEmployedData.registrationDate)
-      const hasRegistrationCertificate = selfEmployedData.registrationCertificate && selfEmployedData.registrationCertificate.length > 0
-      
-      isValid = Boolean(
-        selfEmployedData.FIO?.trim() &&
+      const innValid = data.INN?.replace(/\D/g,'').length === 12;
+      const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      valid = Boolean(
+        data.FIO?.trim() &&
         innValid &&
         dateValid &&
-        hasRegistrationCertificate
-      )
+        hasFiles('registrationCertificate')
+      );
     }
 
-    setIsFormValid(isValid)
-  }, [userLawSubject, individualEntrepreneurData, selfEmployedData, legalEntityData, isLegalEntity])
+    setIsFormValid(valid);
+  }, [
+    userLawSubject,
+    individualEntrepreneurData,
+    selfEmployedData,
+    legalEntityData,
+    isLegalEntity,
+  ]);
 
-  // Обработчики для данных юридического лица
-  const handleLegalEntityChange = (field, value) => {
-    setLegalEntityData(prev => ({
-      ...prev,
-      [field]: value
-    }))
+
+  const handleFIOChange = e => updateField('FIO', e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s-]/g,''))
+  const handleINNChange = e => {
+    let val=e.target.value.replace(/\D/g,'')
+    val=val.slice(0,isLegalEntity?10:12)
+    updateField('INN', val)
+  }
+  const handleOGRNChange = e => updateField('OGRN', e.target.value.replace(/\D/g,'').slice(0,13))
+  const handleOGRNIPChange = e => updateField('OGRNIP', e.target.value.replace(/\D/g,'').slice(0,15))
+  const handleRegistrationPlaceChange = e => updateField('registrationPlace', e.target.value)
+  const handleOrganizationNameChange = e => updateField('organizationName', e.target.value)
+  const handleDateChange = value => {
+    let digits=value.replace(/\D/g,'').slice(0,6)
+    let formatted=digits.length>4?digits.slice(0,2)+'.'+digits.slice(2,4)+'.'+digits.slice(4):digits.length>2?digits.slice(0,2)+'.'+digits.slice(2):digits
+    updateField('registrationDate', formatted)
+    setDateError(digits.length===6 && !validateDate(formatted)?'Некорректная дата':'')
   }
 
-  const handleLegalEntityFileUpload = (field, files) => {
-    setLegalEntityData(prev => ({
-      ...prev,
-      [field]: [...(prev[field] || []), ...files]
-    }))
-  }
-
-  // Обработчики для ИП
-  const handleIndividualEntrepreneurChange = (field, value) => {
-    setIndividualEntrepreneurData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  // Обработчики для самозанятого
-  const handleSelfEmployedChange = (field, value) => {
-    setSelfEmployedData(prev => ({
-      ...prev,
-      [field]: value
-    }))
-  }
-
-  const handleSelfEmployedFileUpload = (field, files) => {
-    setSelfEmployedData(prev => ({
-      ...prev,
-      [field]: [...(prev[field] || []), ...files]
-    }))
-  }
-
-  // Универсальные обработчики для полей ввода
-  const handleFIOChange = (e) => {
-    let value = e.target.value
-    value = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s-]/g, '')
-    
-    if (userLawSubject === 'self-employed') {
-      handleSelfEmployedChange('FIO', value)
-    } else {
-      handleIndividualEntrepreneurChange('FIO', value)
-    }
-  }
-
-  const handleDateChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '')
-    if (value.length > 6) value = value.slice(0, 6)
-    
-    let formattedValue = value
-    if (value.length > 4) {
-      formattedValue = value.slice(0, 2) + '.' + value.slice(2, 4) + '.' + value.slice(4)
-    } else if (value.length > 2) {
-      formattedValue = value.slice(0, 2) + '.' + value.slice(2)
-    }
-    
-    if (isLegalEntity) {
-      handleLegalEntityChange('registrationDate', formattedValue)
-    } else if (userLawSubject === 'self-employed') {
-      handleSelfEmployedChange('registrationDate', formattedValue)
-    } else {
-      handleIndividualEntrepreneurChange('registrationDate', formattedValue)
-    }
-    
-    // Проверка корректности даты
-    if (value.length === 6) {
-      const day = parseInt(value.slice(0, 2))
-      const month = parseInt(value.slice(2, 4))
-      const year = parseInt('20' + value.slice(4, 6))
-      const date = new Date(year, month - 1, day)
-      const today = new Date()
-      
-      if (date > today) {
-        setDateError('Дата не может быть больше текущей')
-      } else if (date.getDate() !== day || date.getMonth() !== month - 1 || date.getFullYear() !== year) {
-        setDateError('Некорректная дата')
-      } else {
-        setDateError('')
-      }
-    } else {
-      setDateError('')
-    }
-  }
-
-  const handleINNChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '')
-    
-    // Устанавливаем максимальную длину в зависимости от типа субъекта
-    let maxLength = isLegalEntity ? 10 : 12 // 10 для юрлица, 12 для физлица
-    if (value.length > maxLength) value = value.slice(0, maxLength)
-    
-    let formattedValue = value
-    if (isLegalEntity) {
-      // Форматирование для ИНН юрлица (10 цифр): XX XX XXXXX X
-      if (value.length > 8) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2, 4) + ' ' + value.slice(4, 9) + ' ' + value.slice(9)
-      } else if (value.length > 4) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2, 4) + ' ' + value.slice(4)
-      } else if (value.length > 2) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2)
-      }
-    } else {
-      // Форматирование для ИНН физлица (12 цифр): XX XX XXXXXX XX
-      if (value.length > 10) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2, 4) + ' ' + value.slice(4, 10) + ' ' + value.slice(10)
-      } else if (value.length > 5) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2, 4) + ' ' + value.slice(4)
-      } else if (value.length > 2) {
-        formattedValue = value.slice(0, 2) + ' ' + value.slice(2)
-      }
-    }
-    
-    if (isLegalEntity) {
-      handleLegalEntityChange('INN', formattedValue)
-    } else if (userLawSubject === 'self-employed') {
-      handleSelfEmployedChange('INN', formattedValue)
-    } else {
-      handleIndividualEntrepreneurChange('INN', formattedValue)
-    }
-  }
-
-  const handleOGRNChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '')
-    if (value.length > 13) value = value.slice(0, 13) // ОГРН - 13 цифр
-    handleLegalEntityChange('OGRN', value)
-  }
-
-  const handleOGRNIPChange = (e) => {
-    let value = e.target.value.replace(/\D/g, '')
-    if (value.length > 15) value = value.slice(0, 15) // ОГРНИП - 15 цифр
-    handleIndividualEntrepreneurChange('OGRNIP', value)
-  }
-
-  const handleRegistrationPlaceChange = (e) => {
-    const value = e.target.value
-    if (userLawSubject === 'self-employed') {
-      handleSelfEmployedChange('registrationPlace', value)
-    } else {
-      handleIndividualEntrepreneurChange('registrationPlace', value)
-    }
-  }
-
-  const handleFileUpload = (field, files) => {
-    if (isLegalEntity) {
-      handleLegalEntityFileUpload(field, files)
-    } else if (userLawSubject === 'self-employed') {
-      handleSelfEmployedFileUpload(field, files)
-    } else {
-      setIndividualEntrepreneurData(prev => ({
-        ...prev,
-        [field]: [...(prev[field] || []), ...files]
-      }))
-    }
-  }
-
-  // Обработчик переключения между ИП и самозанятым с очисткой полей
-  const handleIPSelfSwitch = (type) => {
-    // Очищаем данные при переключении
-    if (type === 'self-employed' && userLawSubject === 'individual_entrepreneur') {
-      // Переключаемся на самозанятого - очищаем данные ИП
-      setIndividualEntrepreneurData({
-        FIO: '',
-        INN: '',
-        OGRNIP: '',
-        registrationDate: '',
-        registrationPlace: '',
-        extractOGRNIP: []
-      })
-    } else if (type === 'individual_entrepreneur' && userLawSubject === 'self-employed') {
-      // Переключаемся на ИП - очищаем данные самозанятого
-      setSelfEmployedData({
-        FIO: '',
-        INN: '',
-        registrationDate: '',
-        registrationPlace: '',
-        registrationCertificate: []
-      })
-    }
+  const handleIPSelfSwitch = type => {
+    if(type==='self-employed' && userLawSubject==='individual_entrepreneur') setIndividualEntrepreneurData({ FIO:'', INN:'', OGRNIP:'', registrationDate:'', registrationPlace:'', extractOGRNIP:[] })
+    else if(type==='individual_entrepreneur' && userLawSubject==='self-employed') setSelfEmployedData({ FIO:'', INN:'', registrationDate:'', registrationCertificate:[] })
     setUserLawSubject(type)
   }
 
-  // Получаем текущие значения для отображения в полях ввода
-  const getCurrentValue = (field) => {
-    if (isLegalEntity) {
-      return legalEntityData[field] || ''
-    } else if (userLawSubject === 'self-employed') {
-      return selfEmployedData[field] || ''
-    } else {
-      return individualEntrepreneurData[field] || ''
-    }
-  }
-
-  // Динамическое изменение высоты формы
-  // useEffect(() => {
-  //   if (isLegalEntity) {
-  //     setFormHeight('1290px') // Высота для юрлица
-  //   } else if (userLawSubject === 'individual_entrepreneur') {
-  //     setFormHeight('1365px') // Высота для ИП (больше полей)
-  //   } else {
-  //     setFormHeight('1130px') // Высота для самозанятого
-  //   }
-  // }, [userLawSubject, isLegalEntity])
-
-  const handleBack = () => {
-    setIndividualEntrepreneurData({
-      FIO: '',
-      INN: '', 
-      OGRNIP: '', 
-      regustrationDate: '', 
-      extractOGRNIP: []
-    })
-    setSelfEmployedData({
-      FIO: '',
-      INN: '', 
-      regustrationDate: '',
-      registrationCertificate: []
-    })
-    setLegalEntityData({
-      organizationName: '', 
-      INN: '', 
-      OGRN: '',
-      registrationDate: '',
-      registrationAddress: '',
-      extractEGRUL: []
-    })
-
-    navigate('/full_registration_step2')
-  }
-
-  const handleForward = () => {
-    console.log('Данные ИП:', individualEntrepreneurData)
-    console.log('Данные юрлица:', legalEntityData)
-    console.log('Данные самозанятого:', selfEmployedData)
-    console.log(userLawSubject)
-    
+  const handleBack = () => navigate('/full_registration_step2')
+  const handleForward = () => { 
+    console.log(userLawSubject, 'ИП', individualEntrepreneurData, 'СЗ', selfEmployedData, 'Физ', legalEntityData)
     setStepNumber(stepNumber + 1)
-    
-    // если юр лицо, то пропускаем форму с паспортом
-    if (isLegalEntity) {
-      navigate('/full_registration_step5')
-    } else {
-      navigate('/full_registration_step4')
-    }
+    isLegalEntity ? navigate('/full_registration_step5') : navigate('/full_registration_step4') 
   }
+
+  const getValue = field => getActiveData()[field]||''
 
   return (
     <div>
-      <Header hideElements={true} />
-
+      <Header hideElements={true}/>
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: 'auto', paddingBottom: '10px' }}>
+        <div className='registr-container' style={{ height:'auto', paddingBottom:'10px' }}>
 
-            <div className='title'>
-                <button className='btn-back' onClick={handleBack}>
-                    <img src={arrow} alt='Назад' />
-                </button>
-                <h2 className="login-title">Полная регистрация</h2>
-            </div>
+          <div className='title'>
+            <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад'/></button>
+            <h2 className="login-title">Полная регистрация</h2>
+          </div>
+          <div className='registr-scale'><p>3/7</p><img src={scale} alt='Registration scale'/></div>
 
-            <div className='registr-scale'>
-                <p>3/7</p>
-                <img src={scale} alt='Registration scale' />
-            </div>
+          {/* переключатели */}
+          <LawSubjectSwitcher currentSubject={userLawSubject} onSubjectChange={setUserLawSubject}/>
+          {showIPSelfSwitcher && <div className="role-switcher">
+            <button className={`role-option ${userLawSubject==='individual_entrepreneur'?'active':''}`} onClick={()=>handleIPSelfSwitch('individual_entrepreneur')}>ИП</button>
+            <button className={`role-option ${userLawSubject==='self-employed'?'active':''}`} onClick={()=>handleIPSelfSwitch('self-employed')}>Самозанятый</button>
+          </div>}
 
-            {/* переключатель физ/юр лицо */}
-            <LawSubjectSwitcher 
-              currentSubject={userLawSubject}
-              onSubjectChange={setUserLawSubject}
-            />
+          {/* все инпуты */}
+          <div className='passport-fields-grid' style={{marginTop:'30px'}}>
+            {isLegalEntity ? <>
+              <div className='passport-row'><div className='passport-field full-width'><h3>Наименование организации</h3><input ref={organizationNameRef} value={getValue('organizationName')} onChange={handleOrganizationNameChange} placeholder='Введите наименование организации'/></div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>ИНН <span style={{color:'#666', fontSize:'15px'}}>(10 цифр)</span></h3><input value={getValue('INN')} onChange={handleINNChange} placeholder='00 00 00000 0' maxLength={10}/></div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>ОГРН <span style={{color:'#666', fontSize:'15px'}}>(13 цифр)</span></h3><input value={getValue('OGRN')} onChange={handleOGRNChange} placeholder='0000000000000' maxLength={13}/></div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/>{dateError&&<span style={{color:'#ff4444'}}>{dateError}</span>}</div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>Адрес регистрации</h3><input value={getValue('registrationAddress')} onChange={e=>updateField('registrationAddress',e.target.value)} placeholder='Укажите юридический адрес'/></div></div>
+              <div className='passport-field'><h3>Выписка из ЕГРЮЛ</h3><FileUpload onFilesUpload={(files) => addFiles('extractEGRUL', files)} maxFiles={5} /><p>Добавьте скан документа</p></div>
+            </> : <>
+              <div className='passport-row'><div className='passport-field full-width'><h3>ФИО</h3><input ref={fioInputRef} value={getValue('FIO')} onChange={handleFIOChange} placeholder='Введите ваше ФИО'/></div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>ИНН <span style={{color:'#666', fontSize:'15px'}}>(12 цифр)</span></h3><input value={getValue('INN')} onChange={handleINNChange} placeholder='00 00 000000 00' maxLength={12}/></div></div>
+              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>ОГРНИП <span style={{color:'#666', fontSize:'15px'}}>(15 цифр)</span></h3><input value={getValue('OGRNIP')} onChange={handleOGRNIPChange} placeholder='000000000000000' maxLength={15}/></div></div>}
+              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/>{dateError&&<span style={{color:'#ff4444'}}>{dateError}</span>}</div></div>
+              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>Место регистрации</h3><input value={getValue('registrationPlace')} onChange={handleRegistrationPlaceChange} placeholder='Укажите место регистрации'/></div></div>}
+              {userLawSubject==='individual_entrepreneur'&&<div className='passport-field'><h3>Выписка из ЕГРИП</h3><FileUpload onFilesUpload={files=>addFiles('extractOGRNIP',files)} maxFiles/><p>Добавьте скан документа</p></div>}
+              {userLawSubject==='self-employed'&&<div className='passport-field'><h3>Справка о постановке на учет (СЗ)</h3><FileUpload onFilesUpload={files=>addFiles('registrationCertificate',files)} maxFiles/><p>Добавьте скан документа</p></div>}
+            </>}
+          </div>
 
-            {/* переключатель ИП/самозанятый отображается только для физ лица */}
-            {showIPSelfSwitcher && (
-              <div className="role-switcher">
-                  <div className="role-slider"></div>
-
-                  <button
-                    className={`role-option ${userLawSubject === 'individual_entrepreneur' ? 'active' : ''}`}
-                    onClick={() => handleIPSelfSwitch('individual_entrepreneur')}
-                  > 
-                    ИП 
-                  </button>
-
-                  <button
-                    className={`role-option ${userLawSubject === 'self-employed' ? 'active' : ''}`}
-                    onClick={() => handleIPSelfSwitch('self-employed')}
-                  > 
-                    Самозанятый 
-                  </button>
-              </div>
-            )}
-
-            {/* инпуты для ввода данных */}
-            <div className='passport-fields-grid' style={{marginTop:'30px'}}>
-              {isLegalEntity ? (
-                // === ПОЛЯ ДЛЯ ЮРИДИЧЕСКОГО ЛИЦА ===
-                <>
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>Наименование организации</h3>
-                      <input
-                        ref={organizationNameRef}
-                        value={getCurrentValue('organizationName')}
-                        onChange={(e) => handleLegalEntityChange('organizationName', e.target.value)}
-                        placeholder='Введите наименование организации'
-                      />
-                    </div>
-                  </div>
-
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>ИНН <span style={{color: '#666', fontSize: '15px'}}>(10 цифр)</span></h3>
-                      <input
-                        value={getCurrentValue('INN')}
-                        onChange={handleINNChange}
-                        placeholder='00 00 00000 0'
-                        maxLength={14}
-                      />
-                    </div>
-                  </div>
-
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>ОГРН <span style={{color: '#666', fontSize: '15px'}}>(13 цифр)</span></h3>
-                      <input
-                        value={getCurrentValue('OGRN')}
-                        onChange={handleOGRNChange}
-                        placeholder='0000000000000'
-                        maxLength={13}
-                      />
-                    </div>
-                  </div>
-
-                  {/* инпут даты с календарем */}
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <h3>Дата регистрации</h3>
-                        {dateError && (
-                          <span style={{ 
-                              color: '#ff4444', 
-                              fontSize: '16px',
-                              fontWeight: '700',
-                              marginLeft:'15px',
-                              marginBottom: '10px'
-                          }}>
-                            {dateError}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* календарь */}
-                      <DatePicker 
-                        value={getCurrentValue('registrationDate')}
-                        onChange={(value) => handleDateChange({ target: { value } })}
-                        placeholder="00.00.00"
-                        error={!!dateError}
-                      />
-
-                    </div>
-                  </div>
-
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>Адрес регистрации</h3>
-                      <input 
-                        value={getCurrentValue('registrationAddress')}
-                        onChange={(e) => handleLegalEntityChange('registrationAddress', e.target.value)}
-                        placeholder='Укажите юридический адрес' 
-                      />
-                    </div>
-                  </div>
-
-                  <div className='passport-field' style={{marginTop: '10px'}}>
-                    <h3>Выписка из ЕГРЮЛ</h3>
-                    <FileUpload onFilesUpload={(files) => handleFileUpload('extractEGRUL', files)} maxFiles={5}/>
-                    <p>Добавьте скан документа</p>
-                  </div>
-                </>
-              ) : (
-                // === ПОЛЯ ДЛЯ ФИЗИЧЕСКИХ ЛИЦ (ИП/САМОЗАНЯТЫЙ) ===
-                <>
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>ФИО</h3>
-                      <input 
-                        ref={fioInputRef}
-                        value={getCurrentValue('FIO')}
-                        onChange={handleFIOChange}
-                        placeholder='Введите ваше ФИО' 
-                      />
-                    </div>
-                  </div>
-
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <h3>ИНН <span style={{color: '#666', fontSize: '15px'}}>(12 цифр)</span></h3>
-                      <input 
-                        value={getCurrentValue('INN')}
-                        onChange={handleINNChange}
-                        placeholder='00 00 000000 00'
-                        maxLength={17}
-                      />
-                    </div>
-                  </div>
-
-                  {userLawSubject === 'individual_entrepreneur' && (
-                    <div className='passport-row'>
-                      <div className='passport-field full-width'>
-                        <h3>ОГРНИП <span style={{color: '#666', fontSize: '15px'}}>(15 цифр)</span></h3>
-                        <input 
-                          value={getCurrentValue('OGRNIP')}
-                          onChange={handleOGRNIPChange}
-                          placeholder='000000000000000'
-                          maxLength={15}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* инпут даты с календарем */}
-                  <div className='passport-row'>
-                    <div className='passport-field full-width'>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <h3>Дата регистрации</h3>
-                        {dateError && (
-                          <span style={{ 
-                              color: '#ff4444', 
-                              fontSize: '16px',
-                              fontWeight: '700',
-                              marginLeft:'15px',
-                              marginBottom: '10px'
-                          }}>
-                            {dateError}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* календарь */}
-                      <DatePicker 
-                        value={getCurrentValue('registrationDate')}
-                        onChange={(value) => handleDateChange({ target: { value } })}
-                        placeholder="00.00.00"
-                        error={!!dateError}
-                      />
-
-                    </div>
-                  </div>
-
-                  {userLawSubject === 'individual_entrepreneur' && (
-                    <div className='passport-row'>
-                      <div className='passport-field full-width'>
-                        <h3>Место регистрации</h3>
-                        <input 
-                          value={getCurrentValue('registrationPlace')}
-                          onChange={handleRegistrationPlaceChange}
-                          placeholder='Укажите место регистрации' 
-                        />
-                      </div>
-                    </div> 
-                  )}
-
-                  {userLawSubject === 'individual_entrepreneur' && (
-                    <div className='passport-field' style={{marginTop: '10px'}}>
-                      <h3>Выписка из ЕГРИП</h3>
-                      <FileUpload onFilesUpload={(files) => handleFileUpload('extractOGRNIP', files)} maxFiles/>
-                      <p>Добавьте скан документа</p>
-                    </div>
-                  )}
-
-                  {userLawSubject === 'self-employed' && (
-                    <div className='passport-field' style={{marginTop: '10px'}}>
-                      <h3>Справка о постановке на учет (СЗ)</h3>
-                      <FileUpload onFilesUpload={(files) => handleFileUpload('registrationCertificate', files)} maxFiles/>
-                      <p>Добавьте скан документа</p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            <button
-                type="submit"
-                className={`continue-button ${!isFormValid ? 'disabled' : ''}`}
-                onClick={handleForward}
-                style={{marginTop: '50px'}}
-                disabled={!isFormValid}
-            >
-              Продолжить
-            </button>
-            
-
+          <button className={`continue-button ${!isFormValid?'disabled':''}`} disabled={!isFormValid} onClick={handleForward} style={{marginTop:'50px'}}>Продолжить</button>
         </div>
       </div>
 
-      <Footer className='footer footer--registr' />
+      <Footer className='footer footer--registr'/>
     </div>
   )
 }

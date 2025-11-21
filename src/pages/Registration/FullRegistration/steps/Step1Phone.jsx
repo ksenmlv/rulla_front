@@ -1,5 +1,5 @@
 import '../../Registration.css'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -9,37 +9,60 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale.svg'
 
 
-
 export default function Step1Phone() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
   const [step, setStep] = useState(1)                              // 1 - ввод телефона, 2 - ввод кода
   const [isValidPhone, setIsValidPhone] = useState(false)
-  // const [submitAttempted, setSubmitAttempted] = useState(false)    // попытка отправки 1 формы для отображения ошибок
+  const [submitAttempted, setSubmitAttempted] = useState(false)    // попытка отправки 1 формы для отображения ошибок
 
   // преобразование smsCode в массив для работы с инпутами
-  const codeArray = Array.isArray(smsCode) ? smsCode : (typeof smsCode === 'string' ? smsCode.split('') : ['', '', '', ''])
+  const codeArray = Array.isArray(smsCode) ? smsCode : ['', '', '', '']
 
+  // восстановление валидности при возврате
+  useEffect(() => {
+    if (phoneNumber) {
+      const digits = phoneNumber.replace(/\D/g, '')
+      setIsValidPhone(digits.length > 10)
+    }
+  }, [])
+
+  // проверка номера
+  const handlePhoneChange = (value) => {
+    setPhoneNumber(value)
+
+    const digits = value.replace(/\D/g, '')
+    setIsValidPhone(digits.length > 10)
+  }
+
+  // обработка отправки формы
   const handleSubmit = (e) => {
     e.preventDefault()
-    
+
     if (step === 1) {
-      // setSubmitAttempted(true)
-      
+      setSubmitAttempted(true)
+
       if (isValidPhone) {
-        setStep(2) // переходим к шагу ввода кода
+        setStep(2)
         console.log('Номер телефона:', phoneNumber)
-        // Здесь можно отправить запрос для получения SMS кода
       }
-    } else if (step === 2 && isCodeComplete) {
-      console.log('Введенный код:', codeArray.join(''))
+      return
+    }
+
+    if (step === 2 && isCodeComplete) {
+      console.log('Номер телефона:', phoneNumber, 'Код:', codeArray.join(''))
       setPhoneNumber('')
       setSmsCode('')
-      // После успешного ввода кода переходим к следующему шагу регистрации
-      setStepNumber(stepNumber+1)
+      setStepNumber(stepNumber + 1)
     }
   }
 
+  const handlePhoneSubmit = () => {
+    setSubmitAttempted(true)
+    if (isValidPhone) setStep(2)
+  }
+
+  // обработка смс кода
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) { 
       const newCode = [...codeArray]
@@ -52,8 +75,9 @@ export default function Step1Phone() {
     }
   }
 
-  const isCodeComplete = codeArray.length === 4 && codeArray.every(digit => digit !== '' && digit !== null && digit !== undefined)
+  const isCodeComplete = codeArray.length === 4 && codeArray.every((digit) => digit !== '' && digit !== null && digit !== undefined)
 
+  // обработка клавиш при вводе кода
   const handleKeyDown = (index, e) => {
     if (e.key === 'Backspace') {
       if (!codeArray[index] && index > 0) {
@@ -69,22 +93,17 @@ export default function Step1Phone() {
       document.getElementById(`code-input-${index + 1}`)?.focus()
     }
     
-    if (e.key === 'Enter' && isCodeComplete) {
-      handleSubmit(e)
-    }
+    if (e.key === 'Enter' && isCodeComplete) handleSubmit(e)
   }
 
   const handleBack = () => {
     if (step === 2) {
       setSmsCode(['', '', '', ''])
       setStep(1) 
+      return
     } else {
       navigate('/')
     }
-  }
-
-  const handlePhoneSubmit = () => {
-    setStep(2)
   }
 
   const handleForward = () => {
@@ -111,23 +130,33 @@ export default function Step1Phone() {
                     <img src={scale} alt='Registration scale' />
                 </div>
 
+                {/* --- ШАГ 1: ввод телефона --- */}
                 {step === 1 && (
                   <>
                     <h3 className='form-label'>Номер телефона</h3>
-                    <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit} />
+                    <PhoneNumber value={phoneNumber} onChange={handlePhoneChange} onPhoneSubmit={handlePhoneSubmit} />
+
+                    <button 
+                        className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
+                        disabled={!isValidPhone}
+                        onClick={handlePhoneSubmit}
+                    > Продолжить </button> 
                   </>
                 )}
 
-                {/* форма ввода кода подтверждения */}
+                {/* --- ШАГ 2: код --- */}
                 {step === 2 && (
                   <form className="login-form" onSubmit={handleSubmit} >
                     <div className="form-group">
+
                       <label className="form-label">
                         Код из СМС
                         <div className="phone-preview">
                           Код отправлен на номер: {phoneNumber}
                         </div>
                       </label>
+
+                      {/* инпуты для кода */}
                       <div className="code-inputs">
                         {[0, 1, 2, 3].map((index) => (
                           <input
@@ -143,28 +172,28 @@ export default function Step1Phone() {
                           />
                         ))}
                       </div>
+
                       <div className="resend-code">
                         <button type="button" className="resend-link">
                           Получить новый код
                         </button>
                       </div>
+
                     </div>
+
                     <button 
                       type="submit" 
                       className={`continue-button ${!isCodeComplete ? 'disabled' : ''}`} 
                       disabled={!isCodeComplete}
                       onClick={handleForward}
-                    >
-                      Продолжить
-                    </button>
+                    > Продолжить </button>
+
                   </form>
                 )}
-
 
                 <div className="register-link">
                     У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
                 </div>
-
 
             </div>
         </div>
