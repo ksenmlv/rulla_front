@@ -13,8 +13,11 @@ export const AppProvider = ({ children }) => {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [smsCode, setSmsCode] = useState('')
   const [userName, setUserName] = useState('')
+
+  // 2 этап
   const [userRegion, setUserRegion] = useState('')
   const [userActivity, setUserActivity] = useState('')
+  const [travelReadiness, setTravelReadiness] = useState(false)
 
   // 3 этап регистрации
   const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')         // legal_entity || individual_entrepreneur || self_employed
@@ -97,6 +100,8 @@ export const AppProvider = ({ children }) => {
     setStepNumber,
     userActivity, 
     setUserActivity,
+    travelReadiness, 
+    setTravelReadiness,
     passportData, 
     setPassportData,
     userLawSubject, 
@@ -145,6 +150,7 @@ export const AppProvider = ({ children }) => {
     userRegion,
     stepNumber,
     userActivity,
+    travelReadiness,
     passportData,
     userLawSubject,
     individualEntrepreneurData,

@@ -191,7 +191,6 @@ function Enter() {
               <div className="form-group">
                 <label className="form-label">Номер телефона</label>
                 <PhoneInput
-                  placeholder="Введите номер телефона"
                   value={phoneNumber}
                   ref={inputRef}
                   onChange={handlePhoneChange}

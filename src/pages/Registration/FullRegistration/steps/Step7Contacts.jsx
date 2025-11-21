@@ -19,7 +19,8 @@ export default function Step7Contacts() {
         userPhone, setUserPhone,
         userEmail, setUserEmail,
         userSocialMedia, setUserSocialMedia,
-        userWebsite, setUserWebsite
+        userWebsite, setUserWebsite,
+        userLawSubject
     } = useAppContext()
 
     // Локальный стейт для всех полей
@@ -31,7 +32,9 @@ export default function Step7Contacts() {
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedService, setSelectedService] = useState('')
     const [emailError, setEmailError] = useState('')
-    const [formValid, setFormValid] = useState(false)
+    const [formValid, setFormValid] = useState(false)                      // корректность заполненных полей формы
+    const [modalValid, setModalValid] = useState(false)                    // корректность заполненных полей модалки
+
 
     const firstServiceInputRef = useRef(null)
 
@@ -45,12 +48,28 @@ export default function Step7Contacts() {
         setLocalSocialMedia(userSocialMedia || {})
     }, [])
 
-    // Валидация формы
+    // валидация формы
     useEffect(() => {
         const phoneValid = localPhone.replace(/\D/g, '').length > 10
         const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
         setFormValid(phoneValid && emailValid && isChecked)
     }, [localPhone, localEmail, isChecked])
+
+    // валидация модального окна
+    useEffect(() => {
+        if (!selectedService) return setModalValid(false);
+
+        const data = localSocialMedia[selectedService] || {};
+
+        if (selectedService === 'telegram') {
+            setModalValid(Boolean(data.phone && data.nickname));
+        } else if (selectedService === 'whatsapp') {
+            setModalValid(Boolean(data.phone));
+        } else if (selectedService === 'vk') {
+            setModalValid(Boolean(data.nickname));
+        }
+    }, [localSocialMedia, selectedService]);
+
 
     const handleBack = () => navigate('/full_registration_step6')
 
@@ -107,6 +126,8 @@ export default function Step7Contacts() {
                     <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
                         Контакты
                     </p>
+
+                    {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>}
 
                     {/* Номер телефона */}
                     <div className='passport-row'>
@@ -215,7 +236,7 @@ export default function Step7Contacts() {
             {modalVisible && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <button className="modal-close" onClick={closeModal}><img src={close} alt='Close' /></button>
+                        <button className="modal-close" onClick={closeModal}><img src={close} alt='Close' /></button>   
 
                         <h3>Добавьте ссылки на социальные сети</h3>
 
@@ -240,39 +261,59 @@ export default function Step7Contacts() {
                             </button>
                         </div>
 
-                        <input
-                            type="text"
-                            placeholder="Номер телефона"
-                            value={localSocialMedia[selectedService]?.phone || ''}
-                            onChange={(e) =>
-                                setLocalSocialMedia(prev => ({
-                                    ...prev,
-                                    [selectedService]: {
-                                        ...prev[selectedService],
-                                        phone: e.target.value
-                                    }
-                                }))
-                            }
-                        />
+                        {/* телефон — только для tg и whatsapp */}
+                        {(selectedService === 'telegram' || selectedService === 'whatsapp') && (
+                            <div className='passport-field full-width'>
+                                <h3 style={{ fontSize: '24px', fontWeight: '500', textAlign:'left' }}>
+                                    Номер телефона
+                                </h3>
+                                
+                                <PhoneNumber
+                                    value = {localSocialMedia[selectedService]?.phone || ''}
+                                    onChange = {(value) =>
+                                        setLocalSocialMedia(prev => ({
+                                            ...prev,
+                                            [selectedService]: {
+                                                ...prev[selectedService],
+                                                phone: value
+                                            }
+                                        }))
+                                    }  
+                                />
+                            </div>
+                        )}
 
-                        <input
-                            type="text"
-                            placeholder="Введите свой никнейм"
-                            value={localSocialMedia[selectedService]?.nickname || ''}
-                            onChange={(e) =>
-                                setLocalSocialMedia(prev => ({
-                                    ...prev,
-                                    [selectedService]: {
-                                        ...prev[selectedService],
-                                        nickname: e.target.value
+                        {/* ник — для tg и vk */}
+                        {(selectedService === 'telegram' || selectedService === 'vk') && (
+                            <div className='passport-field full-width'>
+                                <h3 style={{ fontSize: '24px', fontWeight: '500', margin: '-50px 0 10px 0', textAlign:'left' }}>
+                                    Никнейм
+                                </h3>
+                                <input
+                                    value={localSocialMedia[selectedService]?.nickname || ''}
+                                    placeholder='@никнейм'
+                                    onChange={(e) =>
+                                        setLocalSocialMedia(prev => ({
+                                            ...prev,
+                                            [selectedService]: {
+                                                ...prev[selectedService],
+                                                nickname: e.target.value
+                                            }
+                                        }))
                                     }
-                                }))
-                            }
-                        />
+                                />
+                            </div>
+                        )}
 
-                        <button className="save-button" onClick={saveSocialMedia}>
+                        <button
+                            type="submit"
+                            className={`save-button ${!modalValid ? 'disabled' : ''}`}
+                            onClick={saveSocialMedia}
+                            disabled={!formValid}
+                        >
                             Сохранить
                         </button>
+                        
                     </div>
                 </div>
             )}

@@ -112,7 +112,10 @@ export default function Step1Phone() {
                 </div>
 
                 {step === 1 && (
-                  <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit} />
+                  <>
+                    <h3 className='form-label'>Номер телефона</h3>
+                    <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit} />
+                  </>
                 )}
 
                 {/* форма ввода кода подтверждения */}

@@ -93,6 +93,8 @@ export default function Step2Activity() {
                 placeholder={'Укажите регион'} 
                 subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
                 onSelect={handleRegionSelect}
+                multiple={true}
+                maxSelect={2}
                 style={{marginBottom:'20px'}}/>
           </div>
 

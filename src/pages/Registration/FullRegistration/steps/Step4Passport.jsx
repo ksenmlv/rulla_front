@@ -393,12 +393,13 @@ export default function Step4Passport() {
                             </span>
                             )}
                         </div>
-                        <input 
-                            value={passportData.issueDate || ''}
-                            placeholder='00.00.00' 
-                            maxLength={8}
-                            onChange={handleDateChange}
-                            className={dateError ? 'error' : ''}
+                        
+                        {/* календарь */}
+                        <DatePicker 
+                          value={passportData.issueDate || ''}
+                          onChange={(value) => handleDateChange({ target: { value } })}
+                          placeholder="00.00.00"
+                          error={!!dateError}
                         />
                     </div>
                     

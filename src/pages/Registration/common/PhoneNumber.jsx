@@ -53,7 +53,7 @@ export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
   return (    
     <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-            {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>}
+            {/* {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>} */}
 
             <PhoneInput
                 placeholder="Введите номер телефона"
@@ -72,6 +72,8 @@ export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
                 
             />
         </div>
+          
+        {/* 
         {stepNumber !== 7 && (
           <button 
                 type="submit" 
@@ -80,7 +82,8 @@ export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
             >
                 Продолжить
           </button> 
-        )}
+        )} 
+         */}
 
     </form>
   )

@@ -80,7 +80,7 @@ export default function ShortStep2Name() {
                 subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
                 placeholder="Выберите предмет"
                 multiple={true}
-                maxSelect={3}
+                maxSelect={2}
                 onSelect={handleRegionSelect}
               />
 

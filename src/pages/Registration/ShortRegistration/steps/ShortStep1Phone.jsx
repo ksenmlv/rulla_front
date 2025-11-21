@@ -12,7 +12,8 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 
 
 export default function ShortStep1Phone() {
-  const { phoneNumber, setPhoneNumber } = useAppContext()
+  const { phoneNumber, setPhoneNumber } = useAppContext()  
+  const [isValidPhone, setIsValidPhone] = useState(false)
   const navigate = useNavigate()
 
   // локальное состояние для роли
@@ -26,14 +27,22 @@ export default function ShortStep1Phone() {
     }
   }
 
-  
-  const handleBack = () => {
-    navigate('/enter')
+  // проверка номера телефона
+  const handlePhoneChange = (value) => {
+    setPhoneNumber(value)
+
+    const digitsOnly = value.replace(/\D/g, '')
+    setIsValidPhone(digitsOnly.length > 10)
   }
 
   const handlePhoneSubmit = () => {
     console.log(phoneNumber)
     navigate('/simplified_registration_step2')
+  }
+
+  
+  const handleBack = () => {
+    navigate('/enter')
   }
 
 
@@ -52,7 +61,14 @@ export default function ShortStep1Phone() {
                 </div>
 
                 <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
+                <h3 className='form-label' style={{marginTop: '40px'}}>Номер телефона</h3>
                 <PhoneNumber value={phoneNumber} onChange={setPhoneNumber} onPhoneSubmit={handlePhoneSubmit}/>
+
+                <button 
+                      className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
+                      disabled={!isValidPhone}
+                      onClick={handlePhoneSubmit}
+                  > Продолжить </button> 
                 
                 <div className="register-link">
                     У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
