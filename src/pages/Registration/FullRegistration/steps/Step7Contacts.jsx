@@ -6,7 +6,8 @@ import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import PhoneNumber from '../../common/PhoneNumber'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale7.svg'
+import scale1 from '../../../../assets/Main/registr_scale7-1.svg'
+import scale2 from '../../../../assets/Main/registr_scale7-2.svg'
 import tg from '../../../../assets/Main/icon-telegram.svg'
 import whatsapp from '../../../../assets/Main/icon-whatsapp.svg'
 import vk from '../../../../assets/Main/icon-vk.svg'
@@ -28,7 +29,8 @@ export default function Step7Contacts() {
     const [localEmail, setLocalEmail] = useState(userEmail || '')
     const [localWebsite, setLocalWebsite] = useState(userWebsite || '')
     const [localSocialMedia, setLocalSocialMedia] = useState(userSocialMedia || {})
-    const [isChecked, setIsChecked] = useState(false)
+    const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)                      // чекбокс политики конф
+    const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)               // чекбокс с маркетингом
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedService, setSelectedService] = useState('')
     const [emailError, setEmailError] = useState('')
@@ -53,8 +55,8 @@ export default function Step7Contacts() {
     useEffect(() => {
         const phoneValid = localPhone.replace(/\D/g, '').length > 10
         const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
-        setFormValid(phoneValid && emailValid && isChecked)
-    }, [localPhone, localEmail, isChecked])
+        setFormValid(phoneValid && emailValid && isCheckedPolicy)
+    }, [localPhone, localEmail, isCheckedPolicy])
 
     
 
@@ -109,7 +111,7 @@ export default function Step7Contacts() {
 
     const closeModal = () => setModalVisible(false)
 
-    // Проверка, заполнены ли данные для социальной сети
+    // проверка, заполнены ли данные для социальной сети
     const isSocialMediaFilled = (service) => {
         return localSocialMedia[service] && 
                (localSocialMedia[service].phone || localSocialMedia[service].nickname)
@@ -131,7 +133,7 @@ export default function Step7Contacts() {
 
                     <div className='registr-scale'>
                         <p>7/7</p>
-                        <img src={scale} alt='Registration scale' />
+                        <img src={formValid ? scale2 : scale1} alt='Registration scale' width={654}/>
                     </div>
 
                     <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
@@ -221,13 +223,20 @@ export default function Step7Contacts() {
                     </div>
 
                     {/* Чекбокс */}
-                    <div className="checkbox-wrapper" onClick={() => setIsChecked(prev => !prev)} style={{ marginTop: '60px' }}>
-                        <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
-                            {isChecked && <span className="inner-square"></span>}
+                    <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(prev => !prev)} style={{ margin: '60px 0 0 0' }}>
+                        <div className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`}>
+                            {isCheckedPolicy && <span className="inner-square"></span>}
                         </div>
                         <span className="checkbox-text">
-                            Я соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и обработкой персональных данных
+                            Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и <a className='policy-link'>обработкой персональных данных</a>
                         </span>
+                    </div>
+
+                    <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(prev => !prev)} style={{margin: '5px 0 15px 0'}} >
+                        <div className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`}>
+                            {isCheckedMarketing && <span className="inner-square"></span>}
+                        </div>
+                        <span className="checkbox-text"> Хочу получать рекламные рассылки и специальные предложения </span>
                     </div>
 
                     <button

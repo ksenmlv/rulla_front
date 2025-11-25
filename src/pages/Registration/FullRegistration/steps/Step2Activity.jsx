@@ -53,7 +53,7 @@ export default function Step2Activity() {
           </div>
 
           <div className='registr-scale' >
-              <p>2/7</p>
+              <p >2/7</p>
               <img src={scale} alt='Registration scale' />
           </div>
 

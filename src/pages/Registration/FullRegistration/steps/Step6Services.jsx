@@ -8,6 +8,7 @@ import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale6.svg'
 import plus from '../../../../assets/Main/plus.svg'
+import RegistrSelector from '../../../../components/lists/RegistrSelector'
 
 
 export default function Step6Services() {
@@ -38,10 +39,10 @@ export default function Step6Services() {
     useEffect(() => {
         const allServicesFilled = userServices.every(s => s.name.trim() && s.price.trim())
         const interactionValid = interaction.status === 'yes' ? interaction.text.trim() : interaction.status === 'no'
-        const allProjectsFilled = projects.every(p => p.text.trim())
-        const hasReviews = reviews?.files?.length > 0
+        // const allProjectsFilled = projects.every(p => p.text.trim())
+        // const hasReviews = reviews?.files?.length > 0
         const hasCertificates = certificates?.files?.length > 0
-        setIsFormValid(allServicesFilled && interactionValid && allProjectsFilled && hasReviews && hasCertificates)
+        setIsFormValid(allServicesFilled && interactionValid && hasCertificates)
     }, [userServices, interaction, projects, reviews, certificates])
 
     const handleBack = () => navigate('/full_registration_step5')
@@ -80,11 +81,17 @@ export default function Step6Services() {
                     {/* услуги */}
                     {userServices.map((s, i) => (
                         <div key={i} style={{ position: 'relative', marginBottom: '25px' }}>
-                            {i > 0 && 
-                            <button 
-                                className='file-remove' onClick={() => removeItem(setUserServices, i)}  
-                                > ✕ 
-                            </button>}
+
+                            {/* показываем крестик, когда больше 1 элемента */}
+                            {userServices.length > 1 && (
+                                <button 
+                                    className='file-remove' 
+                                    onClick={() => removeItem(setUserServices, i)}
+                                    style={i === 0 ? { top: '42px' } : {}}
+                                >
+                                    ✕
+                                </button>
+                            )}
                             
                             <div className='passport-row'>
                                 <div className='passport-field full-width'>
@@ -99,7 +106,7 @@ export default function Step6Services() {
                             </div>
 
                             <div className='passport-row' style={{ marginTop: '15px', position: 'relative', width: '100%' }}>
-                                <div className='passport-field full-width'>
+                                <div className='passport-field '>
                                     <input
                                         placeholder='от'
                                         value={s.price}
@@ -107,9 +114,17 @@ export default function Step6Services() {
                                         style={{ paddingRight: '50px' }}
                                     />
                                     <span style={{
-                                        position: 'absolute', right: '20px', top: '50%',
+                                        position: 'absolute', left: '310px', top: '50%',
                                         transform: 'translateY(-50%)', color: '#656565', fontSize: '20px', pointerEvents: 'none'
                                     }}>₽</span>
+                                </div>
+                                <div className='passport-field '>
+                                    <div className='registr-selector-wrapper'>
+                                        <RegistrSelector 
+                                            placeholder='за че'
+                                            subject={['за услугу', 'за метр', 'за м²', 'за м³', 'за шт', 'за час']} 
+                                        />
+                                    </div>
                                 </div>
                             </div>
 
@@ -152,7 +167,17 @@ export default function Step6Services() {
                     {/* реализованные проекты */}
                     {projects.map((p, i) => (
                         <div key={i} style={{ position: 'relative', marginTop: '20px' }}>
-                            {i > 0 && <button className='file-remove' onClick={() => removeItem(setProjects, i)} >✕</button>}
+
+                            {/* показываем крестик, когда больше 1 элемента */}
+                            {projects.length > 1 && (
+                                <button 
+                                    className='file-remove' 
+                                    onClick={() => removeItem(setProjects, i)}
+                                    style={i === 0 ? { top: '70px' } : {}}
+                                >
+                                    ✕
+                                </button>
+                            )}
 
                             {i === 0 && <>
                                 <h3 style={{fontSize: '24px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>
@@ -160,8 +185,8 @@ export default function Step6Services() {
                             </>}
 
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <div className='file-upload-area' style={{ width: '203px', height: '142px' }}>
-                                    <FileUpload maxFiles={3}/>
+                                <div className='file-upload-area' style={{ width: '203px', minHeight: '142px', height: 'auto' }}>
+                                    <FileUpload maxFiles={10}/>
                                 </div>
                                 <textarea
                                     placeholder='Добавьте комментарий'
@@ -183,13 +208,13 @@ export default function Step6Services() {
                     <div className='passport-field' style={{ marginTop: '10px' }}>
                         <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
                         <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
-                        <FileUpload maxFiles={5} onFilesUpload={(files) => setReviews({ files })} />
+                        <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews({ files })} />
                     </div>
 
                     {/* сертификаты */}
                     <div className='passport-field' style={{ marginTop: '25px' }}>
                         <h3>Сертификаты о повышении квалификации</h3>
-                        <FileUpload maxFiles={5} onFilesUpload={(files) => setCertificates({ files })} />
+                        <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates({ files })} />
                     </div>
 
                     <button

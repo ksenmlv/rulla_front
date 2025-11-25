@@ -114,8 +114,8 @@ const RegistrSelector = ({
         placeholder={placeholder}
         value={inputValue}
         onFocus={handleInputFocus}
-        onChange={multiple ? () => {} : handleInputChange} // disable typing for multiple
-        readOnly={multiple} // в multiple поле только показывает выбор
+        onChange={handleInputChange}
+        readOnly={false}
       />
 
       <div

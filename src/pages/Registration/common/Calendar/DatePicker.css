@@ -1,6 +1,7 @@
 .date-picker-wrapper {
   position: relative;
   width: 100%;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .date-input {
@@ -11,6 +12,7 @@
   border: 1px solid #e3e3e3;
   border-radius: 14px;
   outline: none;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .date-input--error {
@@ -43,9 +45,14 @@
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.15);
   padding: 12px;
+  font-family: 'Wix Madefor Display', sans-serif;
 }
 
 .react-calendar__tile--now {
   background: #F0DED7 !important;
   border-radius: 10px;
+}
+
+.react-calendar {
+  font-family: 'Wix Madefor Display', sans-serif;
 }

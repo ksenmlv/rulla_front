@@ -62,26 +62,18 @@ const FileUpload = ({ onFilesUpload, maxFiles = 1 }) => {
         ) : (
           <div className="file-list">
             {files.map((file, index) => (
-              <div key={index} className="file-name" title={file.name}>
-                <span className="file-name-icon">📄</span>
-                <span className="file-name-text">{shortenFileName(file.name)}</span>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className="file-remove"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveFile(index);
-                  }}
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
+              <div key={index} className="file-name" title={file.name} style={{position: 'relative'}}>
+                  <span className="file-name-icon">📄</span>
+                  <span className="file-name-text">{shortenFileName(file.name)}</span>
+
+                  <div 
+                    className="file-remove-inside"
+                    onClick={(e) => {
+                      e.stopPropagation();
                       handleRemoveFile(index);
-                    }
-                  }}
-                >
-                  ✕
-                </div>
+                    }}
+                  > ✕ </div>
+
               </div>
             ))}
             {files.length < maxFiles && <span className="add-more-text">Добавить ещё файл</span>}

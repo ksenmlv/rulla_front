@@ -12,7 +12,8 @@ export default function ShortStep2Name() {
   const { userName, userRegion, setUserName, setUserRegion, setPhoneNumber } = useAppContext()
   const navigate = useNavigate()
   const nameInputRef = useRef(null)
-  const [isChecked, setIsChecked] = useState(false)   // состояние чекбокса
+  const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)                      // чекбокс политики конф
+  const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)               // чекбокс с маркетингом
 
   // автофокус на первое поле при монтировании компонента
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function ShortStep2Name() {
   }, [])
 
   // проверка на заполненность полей и галочкм
-  const isFormValid = userName.trim() !== '' && userRegion.trim() !== '' && isChecked
+  const isFormValid = userName.trim() !== '' && userRegion.trim() !== '' && isCheckedPolicy
 
   const handleNameChange = (e) => {
     const value = e.target.value
@@ -56,7 +57,7 @@ export default function ShortStep2Name() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{height: '625px'}}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px' }}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
@@ -80,13 +81,23 @@ export default function ShortStep2Name() {
             </div>
 
             {/* checkbox с политикой конфиденциальности */}
-            <div className="checkbox-wrapper" onClick={() => setIsChecked(!isChecked)}>
+            <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(!isCheckedPolicy)}>
               <div 
-                className={`custom-checkbox ${isChecked ? 'checked' : ''}`} 
-                onClick={() => setIsChecked(!isChecked)} >
-                  {isChecked && <span className="inner-square"></span>}
+                className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`} 
+                onClick={() => setIsCheckedPolicy(!isCheckedPolicy)} >
+                  {isCheckedPolicy && <span className="inner-square"></span>}
               </div>
-              <span className="checkbox-text">Я соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и обработкой персональных данных</span>
+              <span className="checkbox-text">Соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и <a className='policy-link'>обработкой персональных данных</a></span>
+            </div>
+
+            {/* checkbox с маркетингом */}
+            <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} style={{margin: '5px 0 15px 0'}}>
+              <div 
+                className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`} 
+                onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} >
+                  {isCheckedMarketing && <span className="inner-square"></span>}
+              </div>
+              <span className="checkbox-text"> Хочу получать рекламные рассылки и специальные предложения </span>
             </div>
 
             <button 

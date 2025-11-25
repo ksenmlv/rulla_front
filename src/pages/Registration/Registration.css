@@ -249,7 +249,7 @@
 .checkbox-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   gap: 15px;
   cursor: pointer;
   border-radius: 6px;
@@ -578,6 +578,16 @@
   cursor: pointer;
   z-index: 10;     
 }
+
+/* выпадающий список */
+.registr-selector-wrapper {
+  display: inline-block; 
+  position: relative; 
+}
+.registr-selector-wrapper .activity-dropdown {
+  margin-top: 20px; 
+}
+
 
 
 

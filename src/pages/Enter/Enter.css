@@ -179,7 +179,9 @@
 
 /* "Зарегистрироваться" */
 .register-here {
-  color: #DE5A2B;
+  color: #02283D;
+  font-weight: 600;
+  font-size: 16px;
   text-underline-offset: 4px; 
 }
 
