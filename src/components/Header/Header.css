@@ -55,7 +55,7 @@
     background-color: #DE5A2B;
     color: white;
     border: none;
-    border-radius: 10px;
+    border-radius: 7px;
     font-size: 24px;
     font-weight: 700;
     white-space: nowrap;
@@ -70,97 +70,42 @@
     cursor: pointer;
 }
 
-/* Мобильная версия 320px */
-@media (max-width: 767px) {
+
+/* мобильная адаптация */
+@media (max-width: 768px) {
     .headerContainer {
-        padding: 10px 15px !important;
-        flex-wrap: nowrap;
-        align-items: center;
-        height: 60px;
-        justify-content: space-between;
+        padding: 56px 25px 26px 25px;
     }
 
-    .header-left {
-        flex: 0 0 auto;
+    .header-items, .location-wrapper {
+        display: none !important;
     }
 
     .header-logo {
-        width: 50px;
+        width: 87px;
         height: auto;
-        margin-right: 0;
-    }
-
-    .header-items {
-        display: none;
-        position: absolute;
-        top: 100%;
-        right: 15px; 
-        left: auto;
-        width: 110px; 
-        background: white;
-        flex-direction: column;
-        padding: 5px; 
-        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-        z-index: 1000;
-        gap: 0; 
-        border-radius: 5px; 
-    }
-
-    .header-items.mobile-open {
-        display: flex;
-    }
-
-    .header-items a {
-        padding: 3px 10px;
-        font-size: 12px;
-    }
-
-    .header-items a:not(:last-child) {
-        border-bottom: 1px solid #eee; /* Граница снизу у всех, кроме последнего */
-    }
-
-    .header-right {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-left: auto;
-    }
-
-    .location-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .location-icon {
-        width: 16px !important;
-        height: 16px !important;
+        
     }
 
     .btn-orange {
-        display: block !important; 
-        width: 70px !important;
-        height: 30px !important;
-        font-size: 12px !important;
-        margin: 0 !important;
-        padding: 5px !important;
+        max-height: 40px;
+        max-width: 103px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 5px;
     }
 
     .mobile-menu-btn {
         display: block;
-        font-size: 20px;
-        margin-left: 10px;
-        order: 2;
+        max-height: 40px;
+        width: 45px;
+        background-color: #F4F5F5;
+        border-radius: 5px;
+        color: #000;
+        font-weight: 600;
     }
 
-    /* Скрываем десктопный контент */
-    .header-items:not(.mobile-open) {
-        display: none;
-    }
-
-    .location-icon {
-        width: 10px;
-        height: 10px;
+    .header-right {
+        gap: 15px;
     }
 }
-

@@ -108,13 +108,7 @@ export default function Step3FullName() {
     }
 
     setIsFormValid(valid);
-  }, [
-    userLawSubject,
-    individualEntrepreneurData,
-    selfEmployedData,
-    legalEntityData,
-    isLegalEntity,
-  ]);
+  }, [userLawSubject, individualEntrepreneurData, selfEmployedData, legalEntityData, isLegalEntity, ]);
 
 
   const handleFIOChange = e => updateField('FIO', e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s-]/g,''))
@@ -144,7 +138,7 @@ export default function Step3FullName() {
   const handleForward = () => { 
     console.log(userLawSubject, 'ИП', individualEntrepreneurData, 'СЗ', selfEmployedData, 'Физ', legalEntityData)
     setStepNumber(stepNumber + 1)
-    isLegalEntity ? navigate('/full_registration_step5') : navigate('/full_registration_step4') 
+    navigate('/full_registration_step4') 
   }
 
   const getValue = field => getActiveData()[field]||''

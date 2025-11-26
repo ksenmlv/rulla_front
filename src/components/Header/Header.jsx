@@ -13,6 +13,7 @@ import { Link, useNavigate } from 'react-router-dom'
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
   
+  // меню для мобилки
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
   }
@@ -21,33 +22,34 @@ import { Link, useNavigate } from 'react-router-dom'
     navigate('/enter')
   }
 
-  // const handleLogoClick = () => {
-  //   navigate('/')
-  // }
-
 
   return (
     <div className='headerContainer'>
-        {/* левая часть: лого и пункты меню */}
-        <div className='d-flex align-items-center'>
+
+        {/* ЛЕВАЯ ЧАСТЬ: лого и пункты меню */}
+        <div className='header-left d-flex align-items-center'>
             <Link to='/'>  <img src={logo} alt='logo' width={141} height={44} className='header-logo'/>  </Link>
 
+            {/* декстопные пункты меню */}
             <div className={`header-items ${isMenuOpen ? 'mobile-open' : ''}`}>
                 <a className='text-decoration-none text-dark'>О платформе</a>
                 <a className='text-decoration-none text-dark'>Каталог исполнителей</a>
             </div>
         </div>
 
-        {/* правая часть: локация и кнопка войти */}
+        {/* ПРАВАЯ ЧАСТЬ: локация и кнопка войти */}
         {!hideElements && (
-          <div className='d-flex align-items-center'>
+          <div className='header-right d-flex align-items-center'>
 
-            <div className='location-wrapper  d-md-flex align-items-center'>
+            {/* локация + кнопка войти */}
+            <div className='location-wrapper d-md-flex align-items-center'>
                 <img src={icon_location} alt='location' className='location-icon'/>
                 <TownSelect className='town-select'/>
             </div>
 
             <button className='btn-orange ms-5' onClick={handleEnterClick}>Войти</button>
+
+            {/* мобильная кнопка */}
             <button className='mobile-menu-btn' onClick={toggleMenu}>☰</button>
           </div>
         )}

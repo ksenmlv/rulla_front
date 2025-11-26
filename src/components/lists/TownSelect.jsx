@@ -26,27 +26,27 @@ const CustomSelector = () => {
   };
 
   // Загрузка городов
-  useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const dataCities = await citiesApi.getCities();
-        if (dataCities && dataCities.success && Array.isArray(dataCities.data)) {
-          const formattedCities = dataCities.data.map(city => ({
-            value: city.id,
-            label: city.name
-          }));
-          setCities(formattedCities);
-          setFilteredCities(formattedCities);
-          if (formattedCities.length > 0) {
-            setSelectedCity(formattedCities[0]);
-          }
-        }
-      } catch (err) {
-        console.error('Ошибка при загрузке городов:', err);
-      }
-    };
-    fetchCities();
-  }, []);
+  // useEffect(() => {
+  //   const fetchCities = async () => {
+  //     try {
+  //       const dataCities = await citiesApi.getCities();
+  //       if (dataCities && dataCities.success && Array.isArray(dataCities.data)) {
+  //         const formattedCities = dataCities.data.map(city => ({
+  //           value: city.id,
+  //           label: city.name
+  //         }));
+  //         setCities(formattedCities);
+  //         setFilteredCities(formattedCities);
+  //         if (formattedCities.length > 0) {
+  //           setSelectedCity(formattedCities[0]);
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.error('Ошибка при загрузке городов:', err);
+  //     }
+  //   };
+  //   fetchCities();
+  // }, []);
 
   // Фильтрация городов по вводу
   useEffect(() => {

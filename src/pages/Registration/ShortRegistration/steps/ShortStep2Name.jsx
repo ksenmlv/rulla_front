@@ -9,42 +9,81 @@ import '../../Registration.css'
 
 
 export default function ShortStep2Name() {
-  const { userName, userRegion, setUserName, setUserRegion, setPhoneNumber } = useAppContext()
+  const { userName, userRegion, setUserName, setUserRegion, userEmail, setUserEmail, setPhoneNumber } = useAppContext()
+
   const navigate = useNavigate()
   const nameInputRef = useRef(null)
+
   const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)                      // чекбокс политики конф
   const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)               // чекбокс с маркетингом
+  const [emailError, setEmailError] = useState('')
+  const [isSubmitted, setIsSubmitted] = useState(false)                             // состояние для показа ошибки почты
+
+  // локальные состояние
+  const [localEmail, setLocalEmail] = useState(userEmail || '')
+  const [localName, setLocalName] = useState(userName || '')
 
   // автофокус на первое поле при монтировании компонента
   useEffect(() => {
-    if (nameInputRef.current) {
-      nameInputRef.current.focus()
-    }
+    nameInputRef.current?.focus()
   }, [])
 
-  // проверка на заполненность полей и галочкм
-  const isFormValid = userName.trim() !== '' && userRegion.trim() !== '' && isCheckedPolicy
+  // валидация e-mail
+  const validateEmail = (value) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
 
+  // общая валидность
+  const isFormValid = localName.trim() !== '' && localEmail.trim() !== '' && validateEmail(localEmail) && isCheckedPolicy
+
+  // ввод имени
   const handleNameChange = (e) => {
-    const value = e.target.value
-    const onlyLettersName = value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
-    setUserName(onlyLettersName)
+    const clean = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
+    setLocalName(clean)
   }
 
-  const handleRegionSelect = (selectedRegions) => {
-    setUserRegion(selectedRegions.join(', '))
+  // ввод почты
+  const handleEmailChange = (e) => {
+    const value = e.target.value
+    setLocalEmail(value)
+
+    // не показываем ошибку во время набора
+    if (isSubmitted) {
+      setEmailError(validateEmail(value) ? '' : 'Введите корректный email')
+    }
   }
+
+
+  // const handleRegionSelect = (selectedRegions) => {
+  //   setUserRegion(selectedRegions.join(', '))
+  // }
+
 
   // обработка кнопки "Зарегистрироваться"
   const handleSubmit = () => {
-    if (isFormValid) {
-      console.log('Данные для регистрации:', {name: userName, region: userRegion})
-      setPhoneNumber('')
-      setUserName('')
-      setUserRegion('')
-      alert('Упрощенная регистрация завершена!')
-      navigate('/')
+    setIsSubmitted(true)
+    // если email неверный — не отправляем
+    if (!validateEmail(localEmail)) {
+      setEmailError("Введите корректный email")
+      return
     }
+
+    if (!isFormValid) return
+
+    // сохранение контекста при сабмите
+    setUserName(localName)
+    setUserEmail(localEmail)
+
+    console.log('Регистрация:', {
+      name: localName,
+      email: localEmail
+    })
+
+    // очистка
+    setPhoneNumber('')
+    setLocalName('')
+    setLocalEmail('')
+
+    alert('Упрощенная регистрация завершена!')
+    navigate('/')
   }
 
   const handleBack = () => {
@@ -68,15 +107,36 @@ export default function ShortStep2Name() {
 
             <div className='input-fields'>
               <h3>Имя</h3>
-              <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={userName} onChange={handleNameChange}/>
-              <h3>Регион</h3>
-              <RegistrSelector
+              <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={localName} onChange={handleNameChange}/>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <h3>Электронная почта</h3>
+                  {isSubmitted  && emailError && (
+                      <span style={{
+                          color: '#ff4444',
+                          fontSize: '16px',
+                          fontWeight: '700',
+                          margin: '0 0 7px auto',
+                      }}>
+                          {emailError}
+                      </span>
+                  )}
+              </div>
+
+              <input
+                  type="text"
+                  placeholder="Введите почту"
+                  value={localEmail}
+                  onChange={handleEmailChange}
+              />
+
+              {/* <RegistrSelector
                 subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
                 placeholder="Выберите предмет"
                 multiple={true}
                 maxSelect={2}
                 onSelect={handleRegionSelect}
-              />
+              /> */}
 
             </div>
 

@@ -180,12 +180,12 @@ export default function Step6Services() {
                             )}
 
                             {i === 0 && <>
-                                <h3 style={{fontSize: '24px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>
-                                <p style={{ color: '#000000B2', fontSize: '20px', margin: '0 0 10px 0' }}>Подробно опишите ваши проекты и добавьте фото/видео</p>
-                            </>}
+                                <h3 style={{fontSize: '24px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>            
+                                <p style={{ color: '#000000B2', fontSize: '20px', margin: '0 0 10px 0' }}>Подробно опишите ваши проекты и добавьте фото/видео </p>
+                            </>} 
 
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <div className='file-upload-area' style={{ width: '203px', minHeight: '142px', height: 'auto' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '142px', height: 'auto' }}>
+                                <div className='file-upload-area' style={{ width: '203px' }}>
                                     <FileUpload maxFiles={10}/>
                                 </div>
                                 <textarea
@@ -193,7 +193,7 @@ export default function Step6Services() {
                                     value={p.text}
                                     onChange={(e) => updateItem(setProjects, i, 'text', e.target.value)}
                                     className='country-input'
-                                    style={{ width: '491px', height: '142px' }}
+                                    style={{ width: '491px', height: 'auto' }}
                                 />
                             </div>
                         </div>
@@ -204,17 +204,21 @@ export default function Step6Services() {
                         </button>
                     </div>
 
+                    <p style={{ color: '#000000B2', fontSize: '20px', margin: '-50px 0 10px 0', width: '500px', lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> <br></br>
+
                     {/* отзывы */}
                     <div className='passport-field' style={{ marginTop: '10px' }}>
                         <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
                         <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
                         <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews({ files })} />
+                        <p style={{ color: '#000000B2', fontSize: '20px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
                     </div>
 
                     {/* сертификаты */}
                     <div className='passport-field' style={{ marginTop: '25px' }}>
                         <h3>Сертификаты о повышении квалификации</h3>
                         <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates({ files })} />
+                        <p style={{ color: '#000000B2', fontSize: '20px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
                     </div>
 
                     <button

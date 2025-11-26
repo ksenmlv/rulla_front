@@ -2,6 +2,7 @@ import '../../Registration.css'
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
+import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import DatePicker from '../../common/Calendar/DatePicker'
@@ -24,6 +25,9 @@ export default function Step4Passport() {
 
   const isRussian = passportData.citizenship === 'Российская федерация'
   const isNotRussian = !isRussian
+ 
+  const CIScountries = ["Азербайджан", "Армения", "Белоруссия", "Казахстан", "Киргизия", "Молдавия", "Таджикистан", "Туркменистан", "Узбекистан", "Украина"]
+
 
   // автофокус на первое поле
   useEffect(() => {
@@ -32,6 +36,18 @@ export default function Step4Passport() {
       else if (isNotRussian) countryRef.current?.focus()
     }, 100)
   }, [passportData.citizenship, isRussian, isNotRussian])
+
+  // загрузка данных из localStorage при первом рендере
+  useEffect(() => {
+    const saved = localStorage.getItem("passportData")
+    if (saved) {
+      setPassportData(JSON.parse(saved))
+    }}, [])
+
+  // запись в localStorage при каждом изменении паспорта
+  useEffect(() => {
+    localStorage.setItem("passportData", JSON.stringify(passportData))
+  }, [passportData])
 
   // обновление данных паспорта
   const updatePassport = (field, value) => {
@@ -75,7 +91,6 @@ export default function Step4Passport() {
     return date.getDate()===day && date.getMonth()===month-1 && date.getFullYear()===year && date <= new Date()
   }
 
-
   // валидация формы
   useEffect(() => {
     const validate = () => {
@@ -98,6 +113,7 @@ export default function Step4Passport() {
     setPassportData({
       citizenship: country,
       otherCountry: '',
+      cisCountry: '',
       series: '',
       number: '',
       issuedBy: '',
@@ -121,7 +137,8 @@ export default function Step4Passport() {
 
   const handleBack = () => navigate('/full_registration_step3')
   const handleForward = () => {
-    setStepNumber(stepNumber+1)
+    console.log(passportData)
+    setStepNumber(stepNumber +1 )
     navigate('/full_registration_step5')
   }
 
@@ -129,7 +146,7 @@ export default function Step4Passport() {
     <div>
       <Header hideElements={true}/>
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: isRussian ? '1120px' : '1365px', position:'relative'}}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '150px', position: 'relative' }}>
 
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
@@ -160,8 +177,8 @@ export default function Step4Passport() {
                 ))}
               </div>
 
-              {/* инпут для названия страны (СНГ/Другое) */}
-              {isNotRussian && (
+              {/* инпут для названия страны (Другое) */}
+              {passportData.citizenship === 'Другое' && (
                 <textarea 
                   ref={countryRef} 
                   placeholder='Введите название страны' 
@@ -169,6 +186,12 @@ export default function Step4Passport() {
                   onChange={(e)=>updatePassport('otherCountry', e.target.value)} 
                   className="country-input"
                 />
+              )}
+
+              {passportData.citizenship === 'Страны СНГ' && (
+                <div className='input-fields' style={{margin: '0'}}>
+                  <RegistrSelector placeholder={'Выберите страну'} subject={CIScountries} selected={passportData.cisCountry} onSelect={(v) => updatePassport("cisCountry", v)}/>
+                </div>
               )}
             </div>
 
@@ -198,7 +221,7 @@ export default function Step4Passport() {
                 // поля не для РФ
                 <div className='passport-row'>
                   <div className='passport-field full-width'>
-                    <h3>Номер документа</h3>
+                    <h3 style={{ marginTop: passportData.citizenship === 'Страны СНГ' ? '-25px' : '0px' }}>Номер документа</h3>
                     <input ref={numberRef} value={passportData.number||''} placeholder='Введите номер документа' maxLength={20} onChange={handleNumberChange}/>
                   </div>
                   <div className='passport-field full-width'>
@@ -222,7 +245,7 @@ export default function Step4Passport() {
                 <div className='passport-field'>
                   <h3>Скан регистрации</h3>
                   <FileUpload key={passportData.citizenship+'reg'} onFilesUpload={(files)=>handleFileUpload('scanRegistration', files)} maxFiles={1}/>
-                  <p>Добавьте скан актуальной регистрации — 5-7 страницы</p>
+                  <p style={{width: '330px'}}>Добавьте скан актуальной регистрации — 5-7 страницы</p>
                 </div>
               </div>
 

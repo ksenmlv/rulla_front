@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
-import back from '../../assets/Main/background.png'
+import TownSelect from '../../components/lists/TownSelect'
+import back from '../../assets/Main/back.png'
 import icon_connection from '../../assets/Main/icon_connection.png'
 import icon_search from '../../assets/Main/icon_search.svg'
 import separator from '../../assets/Main/bw_separator.svg'
@@ -31,11 +32,20 @@ import stage1 from '../../assets/Main/stage1.svg'
 import stage2 from '../../assets/Main/stage2.svg'
 import stage3 from '../../assets/Main/stage3.svg'
 import stage_final from '../../assets/Main/stage_final.jpg'
+import icon_location from '../../assets/Header/icon_location.png'
 
 
 
 function Main() {
-  const navigate = useNavigate()
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)        
+
+  // определение ширины устройства
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);   
 
 
   return (
@@ -52,7 +62,14 @@ function Main() {
                     <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
                     <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
 
-                    
+                    {/* локация для мобилки */}
+                    { isMobile &&             
+                        <div className='location-wrapper  d-md-flex align-items-center'>
+                            <img src={icon_location} alt='location' className='location-icon'/>
+                            <TownSelect className='town-select'/>
+                        </div>
+                    }
+
                     <button className='icon_conn'>
                         <img src={icon_connection} alt='connection' />
                     </button>
