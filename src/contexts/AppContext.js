@@ -54,6 +54,7 @@ export const AppProvider = ({ children }) => {
     scanPages: [],
     scanRegistration: []
   })
+  const [directorData, setDirectorData] = useState({FIO: '', phone: ''})
 
   // 5 этап регистрации
   const [userExperience, setUserExperience] = useState()
@@ -104,6 +105,8 @@ export const AppProvider = ({ children }) => {
     setTravelReadiness,
     passportData, 
     setPassportData,
+    directorData, 
+    setDirectorData,
     userLawSubject, 
     setUserLawSubject,
     individualEntrepreneurData, 
@@ -152,6 +155,7 @@ export const AppProvider = ({ children }) => {
     userActivity,
     travelReadiness,
     passportData,
+    directorData,
     userLawSubject,
     individualEntrepreneurData,
     selfEmployedData,

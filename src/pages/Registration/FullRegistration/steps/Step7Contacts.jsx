@@ -122,7 +122,7 @@ export default function Step7Contacts() {
             <Header hideElements={true} />
 
             <div className='reg-container'>
-                <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px' }}>
+                <div className='registr-container' style={{ height: 'auto', paddingBottom: '27px' }}>
                     {/* Шапка и шаг */}
                     <div className='title'>
                         <button className='btn-back' onClick={handleBack}>
@@ -132,7 +132,7 @@ export default function Step7Contacts() {
                     </div>
 
                     <div className='registr-scale'>
-                        <p>7/7</p>
+                        <p>6/6</p>
                         <img src={formValid ? scale2 : scale1} alt='Registration scale' width={654}/>
                     </div>
 
@@ -140,7 +140,7 @@ export default function Step7Contacts() {
                         Контакты
                     </p>
 
-                    {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>}
+                    {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона компании</h3> : <h3 className='form-label'>Номер телефона</h3>}
 
                     {/* Номер телефона */}
                     <div className='passport-row'>
@@ -225,7 +225,21 @@ export default function Step7Contacts() {
                     {/* Чекбокс */}
                     <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(prev => !prev)} style={{ margin: '60px 0 0 0' }}>
                         <div className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`}>
-                            {isCheckedPolicy && <span className="inner-square"></span>}
+                            {isCheckedPolicy && <svg 
+                                                    width="14" 
+                                                    height="10" 
+                                                    viewBox="0 0 14 10" 
+                                                    fill="none"
+                                                    className="check-icon"
+                                                  >
+                                                    <path 
+                                                      d="M1 5L5 9L13 1" 
+                                                      stroke="white" 
+                                                      strokeWidth="2" 
+                                                      strokeLinecap="round" 
+                                                      strokeLinejoin="round"
+                                                    />
+                                                  </svg>}
                         </div>
                         <span className="checkbox-text">
                             Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и <a className='policy-link'>обработкой персональных данных</a>
@@ -234,7 +248,21 @@ export default function Step7Contacts() {
 
                     <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(prev => !prev)} style={{margin: '5px 0 15px 0'}} >
                         <div className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`}>
-                            {isCheckedMarketing && <span className="inner-square"></span>}
+                            {isCheckedMarketing && <svg 
+                                                        width="14" 
+                                                        height="10" 
+                                                        viewBox="0 0 14 10" 
+                                                        fill="none"
+                                                        className="check-icon"
+                                                    >
+                                                        <path 
+                                                        d="M1 5L5 9L13 1" 
+                                                        stroke="white" 
+                                                        strokeWidth="2" 
+                                                        strokeLinecap="round" 
+                                                        strokeLinejoin="round"
+                                                        />
+                                                    </svg>}
                         </div>
                         <span className="checkbox-text"> Хочу получать рекламные рассылки и специальные предложения </span>
                     </div>

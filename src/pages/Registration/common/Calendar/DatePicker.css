@@ -50,9 +50,14 @@
 
 .react-calendar__tile--now {
   background: #F0DED7 !important;
-  border-radius: 10px;
+  /* border-radius: 10px; */
 }
 
 .react-calendar {
   font-family: 'Wix Madefor Display', sans-serif;
 }
+
+.custom-calendar {
+  padding: 10px;
+}
+

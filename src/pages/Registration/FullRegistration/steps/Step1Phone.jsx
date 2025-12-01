@@ -1,202 +1,266 @@
 import '../../Registration.css'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import PhoneNumber from '../../common/PhoneNumber'
+import RoleSwitcher from '../../common/RoleSwitcher'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale.svg'
-
 
 export default function Step1Phone() {
   const navigate = useNavigate()
-  const { stepNumber, setStepNumber, phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
-  const [step, setStep] = useState(1)                              // 1 - ввод телефона, 2 - ввод кода
-  const [isValidPhone, setIsValidPhone] = useState(false)
-  const [submitAttempted, setSubmitAttempted] = useState(false)    // попытка отправки 1 формы для отображения ошибок
+  const { stepNumber, setStepNumber, userLawSubject, setUserLawSubject } = useAppContext()
 
-  // преобразование smsCode в массив для работы с инпутами
-  const codeArray = Array.isArray(smsCode) ? smsCode : ['', '', '', '']
+  // ---------- ЛОКАЛЬНЫЕ СОСТОЯНИЯ ----------
+  const [step, setStep] = useState(() => Number(localStorage.getItem("reg_step")) || 1)
+  const [contact, setContact] = useState(() => localStorage.getItem("reg_contact") || '')
+  const [smsCode, setSmsCode] = useState(() => {
+    const saved = localStorage.getItem("reg_code")
+    return saved ? JSON.parse(saved) : ['', '', '', '']
+  })
+  const [role, setRole] = useState('executor')
+  const [contactType, setContactType] = useState('phone')
+  const [isValidContact, setIsValidContact] = useState(false)
 
-  // восстановление валидности при возврате
+  // ---------- ВЫЧИСЛЯЕМЫЕ ЗНАЧЕНИЯ ----------
+  const codeArray = useMemo(() => Array.isArray(smsCode) ? smsCode : ['', '', '', ''], [smsCode])
+  const isCodeComplete = useMemo(() => codeArray.every(digit => digit !== ''), [codeArray])
+
+  // ---------- УСТАНОВКА ФИЗИЧЕСКОГО ЛИЦА ПО УМОЛЧАНИЮ ----------
   useEffect(() => {
-    if (phoneNumber) {
-      const digits = phoneNumber.replace(/\D/g, '')
-      setIsValidPhone(digits.length > 10)
+    setUserLawSubject('individual')
+  }, [setUserLawSubject])
+
+  // эффект после установки userLawSubject
+  useEffect(() => {
+    // Сбрасываем поле контакта при изменении типа лица
+    setContact('')
+    setIsValidContact(false)
+  }, [userLawSubject])
+
+  // ---------- ВАЛИДАЦИОННЫЕ ФУНКЦИИ ----------
+  const isValidEmail = useCallback((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), [])
+  const isValidPhone = useCallback((phone) => phone.replace(/\D/g, '').length === 11, [])
+
+  // ---------- ВАЛИДАЦИЯ КОНТАКТА ----------
+  const validateContact = useCallback((value) => {
+    if (userLawSubject === 'individual') {
+      setContactType('phone')
+      setIsValidContact(isValidPhone(value))
+      return
     }
+
+    if (isValidEmail(value)) {
+      setContactType('email')
+      setIsValidContact(true)
+    } else if (isValidPhone(value)) {
+      setContactType('phone')
+      setIsValidContact(true)
+    } else {
+      setContactType('phone')
+      setIsValidContact(false)
+    }
+  }, [userLawSubject, isValidEmail, isValidPhone])
+
+  // ---------- ИНИЦИАЛЬНАЯ ВАЛИДАЦИЯ ----------
+  useEffect(() => {
+    if (contact) validateContact(contact)
+  }, [contact, validateContact])
+
+  // ---------- СОХРАНЕНИЕ В LOCALSTORAGE ----------
+  useEffect(() => { localStorage.setItem("reg_step", step) }, [step])
+  useEffect(() => { localStorage.setItem("reg_contact", contact) }, [contact])
+  useEffect(() => { localStorage.setItem("reg_code", JSON.stringify(smsCode)) }, [smsCode])
+
+  // ---------- ОБРАБОТЧИКИ ----------
+  const resetAll = useCallback(() => {
+    setContact('')
+    setSmsCode(['', '', '', ''])
+    setIsValidContact(false)
+    setStep(1)
+    setContactType('phone')
+    localStorage.removeItem('reg_step')
+    localStorage.removeItem('reg_contact')
+    localStorage.removeItem('reg_code')
   }, [])
 
-  // проверка номера
-  const handlePhoneChange = (value) => {
-    setPhoneNumber(value)
+  const handleRoleChange = useCallback((newRole) => {
+    setRole(newRole)
+    if (newRole === 'customer') {
+      resetAll()
+      navigate('/simplified_registration_step1')
+    }
+  }, [resetAll, navigate])
 
-    const digits = value.replace(/\D/g, '')
-    setIsValidPhone(digits.length > 10)
-  }
+  const handleContactChange = useCallback((value) => {
+    setContact(value)
+    validateContact(value)
+  }, [validateContact])
 
-  // обработка отправки формы
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault()
 
     if (step === 1) {
-      setSubmitAttempted(true)
-
-      if (isValidPhone) {
-        setStep(2)
-        console.log('Номер телефона:', phoneNumber)
-      }
+      if (isValidContact) setStep(2)
       return
     }
 
     if (step === 2 && isCodeComplete) {
-      console.log('Номер телефона:', phoneNumber, 'Код:', codeArray.join(''))
-      setPhoneNumber('')
-      setSmsCode('')
-      setStepNumber(stepNumber + 1)
+      localStorage.removeItem("reg_step")
+      localStorage.removeItem("reg_contact")
+      localStorage.removeItem("reg_code")
+      // setStepNumber(stepNumber + 1)
+      navigate('/full_registration_step1_2')
+      // setStep(1)
     }
-  }
+  }, [step, isValidContact, isCodeComplete, setStepNumber, stepNumber, navigate])
 
-  const handlePhoneSubmit = () => {
-    setSubmitAttempted(true)
-    if (isValidPhone) setStep(2)
-  }
-
-  // обработка смс кода
-  const handleCodeChange = (index, value) => {
-    if (/^\d?$/.test(value)) { 
-      const newCode = [...codeArray]
+  const handleCodeChange = useCallback((index, value) => {
+    if (/^\d?$/.test(value)) {
+      const newCode = [...smsCode]
       newCode[index] = value
       setSmsCode(newCode)
-      
       if (value && index < 3) {
         document.getElementById(`code-input-${index + 1}`)?.focus()
       }
     }
-  }
+  }, [smsCode])
 
-  const isCodeComplete = codeArray.length === 4 && codeArray.every((digit) => digit !== '' && digit !== null && digit !== undefined)
-
-  // обработка клавиш при вводе кода
-  const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace') {
-      if (!codeArray[index] && index > 0) {
-        document.getElementById(`code-input-${index - 1}`)?.focus()
-      }
-    }
-    
-    if (e.key === 'ArrowLeft' && index > 0) {
+  const handleKeyDown = useCallback((index, e) => {
+    if (e.key === 'Backspace' && !smsCode[index] && index > 0) {
       document.getElementById(`code-input-${index - 1}`)?.focus()
     }
-    
-    if (e.key === 'ArrowRight' && index < 3) {
-      document.getElementById(`code-input-${index + 1}`)?.focus()
-    }
-    
-    if (e.key === 'Enter' && isCodeComplete) handleSubmit(e)
-  }
+  }, [smsCode])
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (step === 2) {
       setSmsCode(['', '', '', ''])
-      setStep(1) 
+      setStep(1)
       return
-    } else {
-      navigate('/')
     }
-  }
+    navigate('/')
+  }, [step, navigate])
 
-  const handleForward = () => {
-    navigate('/full_registration_step2')
-  }
 
+
+  const getDisplayContact = useCallback(() => {
+    if (contactType === 'phone') {
+      const digits = contact.replace(/\D/g, '')
+      if (digits.length === 11) {
+        return `+7 (${digits.substring(1, 4)}) ${digits.substring(4, 7)}-${digits.substring(7, 9)}-${digits.substring(9)}`
+      }
+    }
+    return contact
+  }, [contactType, contact])
+
+  // ---------- РЕНДЕР ----------
+  const renderStep1 = () => (
+    <>
+      <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
+
+      <div className="role-switcher">
+        <button
+          className={`role-option ${userLawSubject === 'individual' ? 'active' : ''}`}
+          onClick={() => setUserLawSubject('individual')}
+        >
+          Физическое лицо
+        </button>
+        <button
+          className={`role-option ${userLawSubject === 'legal_entity' ? 'active' : ''}`}
+          onClick={() => setUserLawSubject('legal_entity')}
+        >
+          Юридическое лицо
+        </button>
+      </div>
+
+      <div className='passport-field full-width' style={{marginTop: '45px'}}>
+        <h3>
+          {userLawSubject === 'individual' ? 'Номер телефона' : 'Номер телефона или почта'}
+        </h3>
+        {userLawSubject === 'individual' ? (
+          <PhoneNumber value={contact} onChange={handleContactChange} />
+        ) : (
+          <input
+            type="text"
+            value={contact}
+            onChange={(e) => handleContactChange(e.target.value)}
+            placeholder="Введите номер телефона или email"
+            style={{marginBottom: '50px'}}
+          />
+        )}
+      </div>
+
+      <button
+        className={`continue-button ${!isValidContact ? 'disabled' : ''}`}
+        disabled={!isValidContact}
+        onClick={() => isValidContact && setStep(2)}
+        style={{ marginTop: '10px' }}
+      >
+        Продолжить
+      </button>
+    </>
+  )
+
+  const renderStep2 = () => (
+    <form className="login-form" onSubmit={handleSubmit}>
+      <div className="form-group">
+        <label className="form-label">
+          Код из {contactType === 'phone' ? 'SMS' : 'Email'}
+          <div className="phone-preview">
+            Код отправлен на {contactType === 'phone' ? 'номер' : 'email'}: {getDisplayContact()}
+          </div>
+        </label>
+
+        <div className="code-inputs">
+          {[0, 1, 2, 3].map((index) => (
+            <input
+              key={index}
+              id={`code-input-${index}`}
+              type="text"
+              maxLength="1"
+              value={codeArray[index] || ''}
+              onChange={(e) => handleCodeChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+              className="code-input"
+              autoFocus={index === 0}
+            />
+          ))}
+        </div>
+
+        <div className="resend-code">
+          <button type="button" className="resend-link">Получить новый код</button>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        className={`continue-button ${!isCodeComplete ? 'disabled' : ''}`}
+        disabled={!isCodeComplete}
+      >
+        Продолжить
+      </button>
+    </form>
+  )
 
   return (
     <div>
       <Header hideElements={true} />
 
       <div className='reg-container'>
-            <div className='registr-container' style={{height: step === 1 ? '539px' : '650px'}}>
+        <div className='registr-container' style={{ height: step === 1 ? '660px' : '570px' }}>
+          <div className='title'>
+            <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад' /></button>
+            <h2 className="login-title">Регистрация</h2>
+          </div>
 
-                <div className='title'>
-                    <button className='btn-back' onClick={handleBack}>
-                        <img src={arrow} alt='Назад' />
-                    </button>
-                    <h2 className="login-title">Полная регистрация</h2>
-                </div>
+          {step === 1 ? renderStep1() : renderStep2()}
 
-                <div className='registr-scale'>
-                    <p>1/7</p>
-                    <img src={scale} alt='Registration scale' />
-                </div>
-
-                {/* --- ШАГ 1: ввод телефона --- */}
-                {step === 1 && (
-                  <>
-                    <h3 className='form-label'>Номер телефона</h3>
-                    <PhoneNumber value={phoneNumber} onChange={handlePhoneChange} onPhoneSubmit={handlePhoneSubmit} />
-
-                    <button 
-                        className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
-                        disabled={!isValidPhone}
-                        onClick={handlePhoneSubmit}
-                    > Продолжить </button> 
-                  </>
-                )}
-
-                {/* --- ШАГ 2: код --- */}
-                {step === 2 && (
-                  <form className="login-form" onSubmit={handleSubmit} >
-                    <div className="form-group">
-
-                      <label className="form-label">
-                        Код из СМС
-                        <div className="phone-preview">
-                          Код отправлен на номер: {phoneNumber}
-                        </div>
-                      </label>
-
-                      {/* инпуты для кода */}
-                      <div className="code-inputs">
-                        {[0, 1, 2, 3].map((index) => (
-                          <input
-                            key={index}
-                            id={`code-input-${index}`}
-                            type="text"
-                            maxLength="1"
-                            value={codeArray[index] || ''}
-                            onChange={(e) => handleCodeChange(index, e.target.value)}
-                            onKeyDown={(e) => handleKeyDown(index, e)}
-                            className="code-input"
-                            autoFocus={index === 0}
-                          />
-                        ))}
-                      </div>
-
-                      <div className="resend-code">
-                        <button type="button" className="resend-link">
-                          Получить новый код
-                        </button>
-                      </div>
-
-                    </div>
-
-                    <button 
-                      type="submit" 
-                      className={`continue-button ${!isCodeComplete ? 'disabled' : ''}`} 
-                      disabled={!isCodeComplete}
-                      onClick={handleForward}
-                    > Продолжить </button>
-
-                  </form>
-                )}
-
-                <div className="register-link">
-                    У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
-                </div>
-
-            </div>
+          <div className="register-link">
+            У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
+          </div>
         </div>
+      </div>
 
       <Footer className='footer footer--registr' />
     </div>

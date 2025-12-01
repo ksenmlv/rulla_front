@@ -3,17 +3,18 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
+import PhoneNumber from '../../common/PhoneNumber'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import DatePicker from '../../common/Calendar/DatePicker'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale3.svg'
+import scale from '../../../../assets/Main/registr_scale4.svg'
 
 
 export default function Step4Passport() {
   const navigate = useNavigate()
-  const { stepNumber, setStepNumber, passportData, setPassportData } = useAppContext()
+  const { stepNumber, setStepNumber, passportData, setPassportData, directorData, setDirectorData, userLawSubject } = useAppContext()
 
   const citizenshipOptions = ['Российская федерация', 'Страны СНГ', 'Другое']
   const [isFormValid, setIsFormValid] = useState(false)
@@ -22,6 +23,7 @@ export default function Step4Passport() {
   const seriesRef = useRef(null)
   const countryRef = useRef(null)
   const numberRef = useRef(null)
+  const directorFIORef = useRef(null)
 
   const isRussian = passportData.citizenship === 'Российская федерация'
   const isNotRussian = !isRussian
@@ -35,19 +37,20 @@ export default function Step4Passport() {
       if (isRussian) seriesRef.current?.focus()
       else if (isNotRussian) countryRef.current?.focus()
     }, 100)
-  }, [passportData.citizenship, isRussian, isNotRussian])
+  }, [passportData.citizenship, isRussian])
 
   // загрузка данных из localStorage при первом рендере
   useEffect(() => {
-    const saved = localStorage.getItem("passportData")
-    if (saved) {
-      setPassportData(JSON.parse(saved))
-    }}, [])
+    const savedPassport = localStorage.getItem("passportData")
+    if (savedPassport) setPassportData(JSON.parse(savedPassport))
 
-  // запись в localStorage при каждом изменении паспорта
-  useEffect(() => {
-    localStorage.setItem("passportData", JSON.stringify(passportData))
-  }, [passportData])
+    const savedDirector = localStorage.getItem("directorData")
+    if (savedDirector) setDirectorData(JSON.parse(savedDirector))
+  }, [])
+
+  // запись в localStorage при каждом изменении 
+  useEffect(() => localStorage.setItem("passportData", JSON.stringify(passportData)), [passportData])
+  useEffect(() => localStorage.setItem("directorData", JSON.stringify(directorData)), [directorData])
 
   // обновление данных паспорта
   const updatePassport = (field, value) => {
@@ -91,24 +94,48 @@ export default function Step4Passport() {
     return date.getDate()===day && date.getMonth()===month-1 && date.getFullYear()===year && date <= new Date()
   }
 
+  // обновление ФИО директора 
+  const handleDirectorFIOChange = (value) => {
+    const cleanValue = value.replace(/[^а-яА-ЯёЁa-zA-Z\s]/g, '')
+    handleDirectorChange('FIO', cleanValue)
+  }
+
+  // обновление телефона 
+  const handleDirectorPhoneChange = (value) => {
+    const digits = value.replace(/\D/g, '')
+    handleDirectorChange('phone', digits)
+  }
+
   // валидация формы
   useEffect(() => {
-    const validate = () => {
+    let formValid = false
+
+    if(userLawSubject === 'legal_entity'){
+      const fioFilled = directorData.FIO?.trim().length > 0
+      const phoneValid = directorData.phone?.replace(/\D/g,'').length > 10
+      formValid = fioFilled && phoneValid
+    } else {
       const fieldsFilled = isRussian
-        ? passportData.series && passportData.number && passportData.issuedBy && passportData.issueDate
-        : passportData.number && passportData.issuedBy && passportData.issueDate
+        ? passportData.series?.trim() && passportData.number?.trim() && passportData.issuedBy?.trim() && passportData.issueDate?.trim()
+        : passportData.number?.trim() && passportData.issuedBy?.trim() && passportData.issueDate?.trim()
 
       const dateValid = isValidDate(passportData.issueDate)
       const scanValid = (passportData.scanPages?.length > 0) && (passportData.scanRegistration?.length > 0)
       const otherCountryValid = passportData.citizenship !== 'Другое' || (passportData.otherCountry?.trim().length > 0)
-      const seriesValid = !isRussian || (passportData.series.replace(/\s/g,'').length === 4)
-      const numberValid = isRussian ? passportData.number.replace(/\D/g,'').length === 6 : passportData.number?.trim().length > 0
+      const seriesValid = !isRussian || (passportData.series?.replace(/\s/g,'').length === 4)
+      const numberValid = isRussian ? passportData.number?.replace(/\D/g,'').length === 6 : passportData.number?.trim().length > 0
 
-      setIsFormValid(fieldsFilled && dateValid && scanValid && otherCountryValid && seriesValid && numberValid)
+      formValid = Boolean(fieldsFilled && dateValid && scanValid && otherCountryValid && seriesValid && numberValid)
     }
-    validate()
-  }, [passportData, dateError, isRussian])
 
+    setIsFormValid(formValid)
+  }, [passportData, directorData, dateError, isRussian, userLawSubject])
+
+
+  // обновление директора 
+  const handleDirectorChange = (field, value) => setDirectorData(prev => ({...prev, [field]: value}))
+
+  // обработчик выбора страны
   const handleCountryChange = (country) => {
     setPassportData({
       citizenship: country,
@@ -137,7 +164,7 @@ export default function Step4Passport() {
 
   const handleBack = () => navigate('/full_registration_step3')
   const handleForward = () => {
-    console.log(passportData)
+    console.log('Паспортные данные:', passportData, 'Данные директора', directorData)
     setStepNumber(stepNumber +1 )
     navigate('/full_registration_step5')
   }
@@ -146,7 +173,7 @@ export default function Step4Passport() {
     <div>
       <Header hideElements={true}/>
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: 'auto', paddingBottom: '150px', position: 'relative' }}>
+        <div className='registr-container' style={{ height: userLawSubject === 'legal_entity' ? '610px' : 'auto', paddingBottom: '170px', position: 'relative' }}>
 
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
@@ -156,10 +183,13 @@ export default function Step4Passport() {
           </div>
 
           <div className='registr-scale'>
-            <p>4/7</p>
+            <p>3/6</p>
             <img src={scale} alt='Registration scale'/>
           </div>
 
+
+          {/* паспортные данные для ИП и СЗ */}
+          {userLawSubject !== 'legal_entity' && (
           <div className='passport-details'>
             <h2>Паспортные данные:</h2>
 
@@ -250,13 +280,28 @@ export default function Step4Passport() {
               </div>
 
             </div>
-          </div>
+          </div> )}
+
+
+          {/* контакты директора для физ лиц */}
+          {userLawSubject == 'legal_entity' && (
+            <div className='passport-row'>
+              <div className='passport-field full-width' style={{marginBottom: '-50px'}}>
+                  <h3>Номер телефона руководителя</h3>
+                  <PhoneNumber  value={directorData.phone}  onChange={(val) => handleDirectorPhoneChange(val)}  />
+              </div>
+              <div className='passport-field full-width'>
+                  <h3>ФИО руководителя (генерального директора, президента компании, др.)</h3>
+                  <input ref={directorFIORef} value={directorData.FIO||''} onChange={(e)=>handleDirectorFIOChange(e.target.value)} />
+              </div>
+            </div>
+          )}
 
           <button 
             className={`continue-button ${!isFormValid?'disabled':''}`} 
             disabled={!isFormValid} 
             onClick={handleForward} 
-            style={{position:'absolute', bottom:'15px', width:'714px'}}
+            style={{position:'absolute', bottom:'27px', width:'714px'}}
           >
             Продолжить
           </button>

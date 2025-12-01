@@ -23,7 +23,7 @@ export default function Step5Experience() {
   } = useAppContext()
 
   const handleBack = () => {
-    navigate(userLawSubject === 'legal_entity' ? '/full_registration_step3' : '/full_registration_step4')
+    navigate('/full_registration_step4')
   }
 
   const handleForward = () => {
@@ -87,7 +87,7 @@ export default function Step5Experience() {
     <div>
       <Header hideElements />
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: 'auto', paddingBottom: '5px' }}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '17px' }}>
 
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
@@ -97,7 +97,7 @@ export default function Step5Experience() {
           </div>
 
           <div className='registr-scale'>
-            <p>5/7</p>
+            <p>4/6</p>
             <img src={scale} alt='Registration scale' />
           </div>
 

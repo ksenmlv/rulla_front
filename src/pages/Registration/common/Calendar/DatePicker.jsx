@@ -48,7 +48,10 @@ export default function CustomDatePicker({ value, onChange, error }) {
 
       {open && (
         <div className="calendar-popup">
-          <Calendar onClickDay={handleSelect} />
+          <Calendar 
+            onClickDay={handleSelect}
+            className="custom-calendar" // Добавляем класс для кастомизации
+          />
         </div>
       )}
     </div>

@@ -9,84 +9,258 @@ import '../../Registration.css'
 import '../../../Enter/Enter.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 
-
-
 export default function ShortStep1Phone() {
-  const { phoneNumber, setPhoneNumber } = useAppContext()  
+  const navigate = useNavigate()
+  const inputRef = useRef()
+
+  const { phoneNumber, setPhoneNumber, smsCode, setSmsCode } = useAppContext()
+
+  const [role, setRole] = useState('customer')
   const [isValidPhone, setIsValidPhone] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
-  const navigate = useNavigate()
 
-  // локальное состояние для роли
-  const [role, setRole] = useState('executor')
+  // --- шаги (1 — телефон, 2 — код)
+  const [step, setStep] = useState(() => {
+    const saved = localStorage.getItem('regShortStep')
+    return saved ? Number(saved) : 1
+  })
 
-  // обработчик изменения роли
-  const handleRoleChange = (newRole) => {
-    setRole(newRole)
-    if (newRole === 'customer') {
-      navigate('/full_registration_step1') // переход на полный этап регистрации
-    }
-  }
-
-  // проверка номера телефона
-  const handlePhoneChange = (value) => {
-    setPhoneNumber(value)
-    const digitsOnly = value.replace(/\D/g, '')
-    setIsValidPhone(digitsOnly.length > 10)
-  }
-
-  // восстановление валидности при возврате
+  // --- восстановление значений при загрузке
   useEffect(() => {
-    if (phoneNumber) {
-      const digitsOnly = phoneNumber.replace(/\D/g, '')
-      setIsValidPhone(digitsOnly.length > 10)
+    const savedPhone = localStorage.getItem('regShortPhone')
+    if (savedPhone) {
+      setPhoneNumber(savedPhone)
+      const digits = savedPhone.replace(/\D/g, '')
+      setIsValidPhone(digits.length > 10)
+    }
+
+    const savedCode = localStorage.getItem('regShortCode')
+    if (savedCode) {
+      setSmsCode(JSON.parse(savedCode))
     }
   }, [])
 
-  const handlePhoneSubmit = () => {
-    setSubmitAttempted(true)
-    if (!isValidPhone) return
-    navigate('/simplified_registration_step2')
+  // --- сохранение состояния в storage
+  useEffect(() => {
+    localStorage.setItem('regShortStep', step)
+  }, [step])
+
+  useEffect(() => {
+    if (phoneNumber) {
+      localStorage.setItem('regShortPhone', phoneNumber)
+    }
+  }, [phoneNumber])
+
+  useEffect(() => {
+    localStorage.setItem('regShortCode', JSON.stringify(smsCode))
+  }, [smsCode])
+
+  const codeArray = Array.isArray(smsCode) ? smsCode : ['', '', '', '']
+
+  // ======================================================================
+  // RESET ALL — как во входе
+  // ======================================================================
+  const resetAll = () => {
+    setPhoneNumber('')
+    setSmsCode(['', '', '', ''])
+    setIsValidPhone(false)
+    setSubmitAttempted(false)
+    setStep(1)
+
+    localStorage.removeItem('regShortStep')
+    localStorage.removeItem('regShortPhone')
+    localStorage.removeItem('regShortCode')
   }
-  
+
+  // ======================================================================
+  // Ввод телефона
+  // ======================================================================
+  const handlePhoneChange = (value) => {
+    setPhoneNumber(value)
+
+    const digits = value.replace(/\D/g, '')
+    setIsValidPhone(digits.length > 10)
+  }
+
+  const isCodeComplete = codeArray.every((d) => d)
+
+  // ======================================================================
+  // Обработка отправки
+  // ======================================================================
+  const handleSubmit = (e) => {
+    e.preventDefault()
+
+    // ШАГ 1 — телефон
+    if (step === 1) {
+      setSubmitAttempted(true)
+      if (isValidPhone) setStep(2)
+      return
+    }
+
+    // ШАГ 2 — код
+    if (step === 2 && isCodeComplete) {
+      console.log('Регистрация:', phoneNumber, codeArray.join(''))
+
+      // очистка storage
+      localStorage.removeItem('regShortStep')
+      localStorage.removeItem('regShortPhone')
+      localStorage.removeItem('regShortCode')
+
+      // очистка контекста
+      setSmsCode(['', '', '', ''])
+      setPhoneNumber('')
+
+      // переход дальше
+      navigate('/simplified_registration_step2')
+    }
+  }
+
+  // ======================================================================
+  // Код SMS
+  // ======================================================================
+  const handleCodeChange = (index, value) => {
+    if (/^\d?$/.test(value)) {
+      const newCode = [...codeArray]
+      newCode[index] = value
+      setSmsCode(newCode)
+
+      if (value && index < 3) {
+        document.getElementById(`code-${index + 1}`)?.focus()
+      }
+    }
+  }
+
+  const handleKeyDown = (index, e) => {
+    if (e.key === 'Backspace' && !codeArray[index] && index > 0)
+      document.getElementById(`code-${index - 1}`)?.focus()
+
+    if (e.key === 'ArrowLeft' && index > 0)
+      document.getElementById(`code-${index - 1}`)?.focus()
+
+    if (e.key === 'ArrowRight' && index < 3)
+      document.getElementById(`code-${index + 1}`)?.focus()
+
+    if (e.key === 'Enter' && isCodeComplete) handleSubmit(e)
+  }
+
+  // ======================================================================
+  // Роль
+  // ======================================================================
+  const handleRoleChange = (newRole) => {
+    setRole(newRole)
+    if (newRole === 'executor') {
+      // сброс как в Enter, чтобы не тянуть старый ввод
+      resetAll()
+      navigate('/full_registration_step1')
+    }
+  }
+
+  // ======================================================================
+  // Назад
+  // ======================================================================
   const handleBack = () => {
+    if (step === 2) {
+      setSmsCode(['', '', '', ''])
+      setStep(1)
+      return
+    }
+
+    resetAll()
     navigate('/enter')
   }
 
-
   return (
     <div>
-        <Header hideElements={true} />
+      <Header hideElements={true} />
 
-        <div className='reg-container'>
-            <div className='registr-container' style={{height: '580px'}}>
+      <div className='reg-container'>
+        <div className='registr-container' style={{ height: '565px' }}>
 
-                <div className='title'>
-                    <button className='btn-back' onClick={handleBack}>
-                        <img src={arrow} alt='Назад' />
-                    </button>
-                    <h2 className="login-title">Регистрация</h2>
+          {/* Заголовок */}
+          <div className='title'>
+            <button className='btn-back' onClick={handleBack}>
+              <img src={arrow} alt='Назад' />
+            </button>
+            <h2 className='login-title'>Регистрация</h2>
+          </div>
+
+          {/* ШАГ 1 */}
+          {step === 1 && (
+            <>
+              <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
+
+              <h3 className='form-label' style={{ margin: '39px 0 12px 0' }}>Номер телефона</h3>
+
+              <PhoneNumber
+                value={phoneNumber}
+                onChange={handlePhoneChange}
+                ref={inputRef}
+              />
+
+              <button
+                className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
+                disabled={!isValidPhone}
+                onClick={(e) => handleSubmit(e)}
+              >
+                Продолжить
+              </button>
+            </>
+          )}
+
+          {/* ШАГ 2 — код */}
+          {step === 2 && (
+            <form className='login-form' onSubmit={handleSubmit}>
+              <div className='form-group'>
+                <label className='form-label'>
+                  Код из СМС
+                  <div className='phone-preview'>Код отправлен на номер: {phoneNumber}</div>
+                </label>
+
+                <div className='code-inputs'>
+                  {[0, 1, 2, 3].map((index) => (
+                    <input
+                      key={index}
+                      id={`code-${index}`}
+                      type='text'
+                      maxLength='1'
+                      value={codeArray[index] || ''}
+                      onChange={(e) => handleCodeChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      className='code-input'
+                      autoFocus={index === 0}
+                    />
+                  ))}
                 </div>
 
-                <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange}/>
-
-                <h3 className='form-label' style={{margin: '39px 0 13px 0'}}>Номер телефона</h3>
-                <PhoneNumber value={phoneNumber} onChange={handlePhoneChange} onPhoneSubmit={handlePhoneSubmit}/>
-
-                <button 
-                      className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
-                      disabled={!isValidPhone}
-                      onClick={handlePhoneSubmit}
-                  > Продолжить </button> 
-                
-                <div className="register-link">
-                    У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
+                <div className='resend-code'>
+                  <button type='button' className='resend-link'>
+                    Получить новый код
+                  </button>
                 </div>
+              </div>
 
-            </div>
+              <button
+                type='submit'
+                className={`continue-button ${!isCodeComplete ? 'disabled' : ''}`}
+                disabled={!isCodeComplete}
+              >
+                Продолжить
+              </button>
+            </form>
+          )}
+
+          {/* Ссылка войти */}
+          <div className='register-link'>
+            У вас уже есть аккаунт?{' '}
+            <Link to='/enter' className='register-here' onClick={resetAll}>
+              Войти
+            </Link>
+          </div>
+
         </div>
+      </div>
 
-        <Footer className='footer footer--registr' />
+      <Footer className='footer footer--registr' />
     </div>
   )
 }

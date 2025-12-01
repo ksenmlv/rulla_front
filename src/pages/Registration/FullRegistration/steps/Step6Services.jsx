@@ -19,7 +19,8 @@ export default function Step6Services() {
         otherTeamsInteraction, setOtherTeamsInteraction,
         userProjects, setUserProjects,
         reviews, setReviews,
-        certificates, setCertificates
+        certificates, setCertificates,
+        userLawSubject
     } = useAppContext()
 
     const [userServices, setUserServices] = useState(userService || [{ name: '', price: '' }])
@@ -60,7 +61,7 @@ export default function Step6Services() {
         <div>
             <Header hideElements />
             <div className='reg-container'>
-                <div className='registr-container' style={{ height: 'auto' }}>
+                <div className='registr-container' style={{ height: 'auto', paddingBottom: '57px' }}>
 
                     <div className='title'>
                         <button className='btn-back' onClick={handleBack}>
@@ -70,7 +71,7 @@ export default function Step6Services() {
                     </div>
 
                     <div className='registr-scale'>
-                        <p>6/7</p>
+                        <p>5/6</p>
                         <img src={scale} alt='Registration scale' />
                     </div>
 
@@ -121,7 +122,7 @@ export default function Step6Services() {
                                 <div className='passport-field '>
                                     <div className='registr-selector-wrapper'>
                                         <RegistrSelector 
-                                            placeholder='за че'
+                                            placeholder='за'
                                             subject={['за услугу', 'за метр', 'за м²', 'за м³', 'за шт', 'за час']} 
                                         />
                                     </div>
@@ -204,22 +205,24 @@ export default function Step6Services() {
                         </button>
                     </div>
 
-                    <p style={{ color: '#000000B2', fontSize: '20px', margin: '-50px 0 10px 0', width: '500px', lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> <br></br>
+                    <p style={{ color: '#00000078', fontSize: '16px', margin: '-50px 0 10px 0', width: '500px', lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> <br></br>
 
                     {/* отзывы */}
                     <div className='passport-field' style={{ marginTop: '10px' }}>
                         <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
                         <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
                         <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews({ files })} />
-                        <p style={{ color: '#000000B2', fontSize: '20px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
+                        <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
                     </div>
 
                     {/* сертификаты */}
-                    <div className='passport-field' style={{ marginTop: '25px' }}>
-                        <h3>Сертификаты о повышении квалификации</h3>
-                        <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates({ files })} />
-                        <p style={{ color: '#000000B2', fontSize: '20px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
-                    </div>
+                    {userLawSubject !== 'legal_entity' && (
+                        <div className='passport-field' style={{ marginTop: '25px' }}>
+                            <h3>Сертификаты о повышении квалификации</h3>
+                            <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates({ files })} />
+                            <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
+                        </div>
+                    )}
 
                     <button
                         type='submit'

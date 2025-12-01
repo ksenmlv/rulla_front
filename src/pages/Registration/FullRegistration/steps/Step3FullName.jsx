@@ -6,9 +6,8 @@ import DatePicker from '../../common/Calendar/DatePicker'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
-import LawSubjectSwitcher from '../../common/LawSubjectSwitcher'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale4.svg'
+import scale from '../../../../assets/Main/registr_scale3.svg'
 
 
 export default function Step3FullName() {
@@ -46,6 +45,8 @@ export default function Step3FullName() {
     else setIndividualEntrepreneurData(newData)
   }
 
+
+
   // обработка обновления данных
   const updateField = (field, value) => setActiveData({ ...getActiveData(), [field]: value })
   // вместо старого addFiles
@@ -64,6 +65,16 @@ export default function Step3FullName() {
     const today=new Date()
     return date <= today && date.getDate()===day && date.getMonth()===month-1 && date.getFullYear()===year
   }
+
+  // ИП по умолчанию
+  useEffect(() => {
+    // Если это не юридическое лицо и еще не выбрано ИП/Самозанятый
+    if (userLawSubject !== 'legal_entity' && 
+        userLawSubject !== 'individual_entrepreneur' && 
+        userLawSubject !== 'self-employed') {
+      setUserLawSubject('individual_entrepreneur')
+    }
+  }, [userLawSubject, setUserLawSubject])
 
   // обработка добавления данных
   useEffect(() => {
@@ -147,16 +158,15 @@ export default function Step3FullName() {
     <div>
       <Header hideElements={true}/>
       <div className='reg-container'>
-        <div className='registr-container' style={{ height:'auto', paddingBottom:'10px' }}>
+        <div className='registr-container' style={{ height:'auto', paddingBottom: '27px' }}>
 
           <div className='title'>
             <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад'/></button>
             <h2 className="login-title">Полная регистрация</h2>
           </div>
-          <div className='registr-scale'><p>3/7</p><img src={scale} alt='Registration scale'/></div>
+          <div className='registr-scale'><p>2/6</p><img src={scale} alt='Registration scale'/></div>
 
           {/* переключатели */}
-          <LawSubjectSwitcher currentSubject={userLawSubject} onSubjectChange={setUserLawSubject}/>
           {showIPSelfSwitcher && <div className="role-switcher">
             <button className={`role-option ${userLawSubject==='individual_entrepreneur'?'active':''}`} onClick={()=>handleIPSelfSwitch('individual_entrepreneur')}>ИП</button>
             <button className={`role-option ${userLawSubject==='self-employed'?'active':''}`} onClick={()=>handleIPSelfSwitch('self-employed')}>Самозанятый</button>

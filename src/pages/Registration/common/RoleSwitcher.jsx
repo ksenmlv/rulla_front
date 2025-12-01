@@ -5,14 +5,14 @@ export default function RoleSwitcher({ activeRole, onChangeRole }) {
   return (
     <div className="role-buttons">
       <button 
-        className={`role-button ${activeRole === 'executor' ? 'active' : ''}`} 
-        onClick={() => onChangeRole('executor')}
+        className={`role-button ${activeRole === 'customer' ? 'active' : ''}`} 
+        onClick={() => onChangeRole('customer')}
       > 
         Я заказчик
       </button>
       <button 
-        className={`role-button ${activeRole === 'customer' ? 'active' : ''}`}
-        onClick={() => onChangeRole('customer')}
+        className={`role-button ${activeRole === 'executor' ? 'active' : ''}`}
+        onClick={() => onChangeRole('executor')}
       >
         Я исполнитель
       </button>

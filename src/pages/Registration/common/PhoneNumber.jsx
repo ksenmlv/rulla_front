@@ -53,8 +53,7 @@ export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
   return (    
     <form className="login-form" onSubmit={handleSubmit}>
         <div className="form-group">
-            {/* {userLawSubject === 'legal_entity' ? <h3 className='form-label'>Контактный номер телефона генерального директора</h3> : <h3 className='form-label'>Номер телефона</h3>} */}
-
+          
             <PhoneInput
                 placeholder="Введите номер телефона"
                 value={value}
@@ -69,21 +68,9 @@ export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
                 }}
                 showDisabledDialCodeAndPrefix={false}
                 forceDialCode={true}
-                
             />
         </div>
           
-        {/* 
-        {stepNumber !== 7 && (
-          <button 
-                type="submit" 
-                className={`continue-button ${!isValidPhone ? 'disabled' : ''}`}
-                disabled={!isValidPhone}
-            >
-                Продолжить
-          </button> 
-        )} 
-         */}
 
     </form>
   )

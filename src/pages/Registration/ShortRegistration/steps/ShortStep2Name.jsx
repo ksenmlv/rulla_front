@@ -1,11 +1,11 @@
+import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
-import RegistrSelector from '../../../../components/lists/RegistrSelector'
-import '../../Registration.css'
+
 
 
 export default function ShortStep2Name() {
@@ -96,7 +96,7 @@ export default function ShortStep2Name() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px' }}>
+        <div className='registr-container' style={{ height: '648px'}}>
 
             <div className='title'>
                 <button className='btn-back' onClick={handleBack}>
@@ -110,7 +110,7 @@ export default function ShortStep2Name() {
               <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={localName} onChange={handleNameChange}/>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3>Электронная почта</h3>
+                  <h3>Почта</h3>
                   {isSubmitted  && emailError && (
                       <span style={{
                           color: '#ff4444',
@@ -141,21 +141,49 @@ export default function ShortStep2Name() {
             </div>
 
             {/* checkbox с политикой конфиденциальности */}
-            <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(!isCheckedPolicy)}>
+            <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(!isCheckedPolicy)} style={{marginBottom:'5px'}}>
               <div 
                 className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`} 
                 onClick={() => setIsCheckedPolicy(!isCheckedPolicy)} >
-                  {isCheckedPolicy && <span className="inner-square"></span>}
+                  {isCheckedPolicy && <svg 
+                                        width="14" 
+                                        height="10" 
+                                        viewBox="0 0 14 10" 
+                                        fill="none"
+                                        className="check-icon"
+                                      >
+                                        <path 
+                                          d="M1 5L5 9L13 1" 
+                                          stroke="white" 
+                                          strokeWidth="2" 
+                                          strokeLinecap="round" 
+                                          strokeLinejoin="round"
+                                        />
+                                      </svg>}
               </div>
-              <span className="checkbox-text">Соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и <a className='policy-link'>обработкой персональных данных</a></span>
+              <span className="checkbox-text">Соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и обработкой персональных данных</span>
             </div>
 
             {/* checkbox с маркетингом */}
-            <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} style={{margin: '5px 0 15px 0'}}>
+            <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} style={{margin: '0 0 15px 0'}}>
               <div 
                 className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`} 
                 onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} >
-                  {isCheckedMarketing && <span className="inner-square"></span>}
+                  {isCheckedMarketing && <svg 
+                                            width="14" 
+                                            height="10" 
+                                            viewBox="0 0 14 10" 
+                                            fill="none"
+                                            className="check-icon"
+                                          >
+                                            <path 
+                                              d="M1 5L5 9L13 1" 
+                                              stroke="white" 
+                                              strokeWidth="2" 
+                                              strokeLinecap="round" 
+                                              strokeLinejoin="round"
+                                            />
+                                          </svg>}
               </div>
               <span className="checkbox-text"> Хочу получать рекламные рассылки и специальные предложения </span>
             </div>
