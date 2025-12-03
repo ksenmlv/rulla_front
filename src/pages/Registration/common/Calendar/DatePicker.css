@@ -61,3 +61,17 @@
   padding: 10px;
 }
 
+
+/* Убираем серый фон и hover эффекты у надписи месяца */
+.react-calendar__navigation__label {
+  pointer-events: none !important;
+  background-color: transparent !important;
+  color: #000 !important;
+  font-weight: bold !important;
+}
+
+/* Убираем hover эффект */
+.react-calendar__navigation__label:hover {
+  background-color: transparent !important;
+  cursor: default !important;
+}

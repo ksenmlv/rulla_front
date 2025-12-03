@@ -108,28 +108,36 @@ export default function Step4Passport() {
 
   // валидация формы
   useEffect(() => {
-    let formValid = false
+    let formValid = false;
 
     if(userLawSubject === 'legal_entity'){
-      const fioFilled = directorData.FIO?.trim().length > 0
-      const phoneValid = directorData.phone?.replace(/\D/g,'').length > 10
-      formValid = fioFilled && phoneValid
+      const fioFilled = directorData.FIO?.trim().length > 0;
+      const phoneValid = directorData.phone?.replace(/\D/g,'').length > 10;
+      formValid = fioFilled && phoneValid;
     } else {
+      // проверка на минимум 5 символов для "Кем выдан"
+      const issuedByValid = passportData.issuedBy?.trim().length >= 5;
+      
+      // проверка для "Другое" страна (минимум 3 символа)
+      const otherCountryValid = passportData.citizenship !== 'Другое' || 
+                              (passportData.otherCountry?.trim().length >= 3);
+      
       const fieldsFilled = isRussian
-        ? passportData.series?.trim() && passportData.number?.trim() && passportData.issuedBy?.trim() && passportData.issueDate?.trim()
-        : passportData.number?.trim() && passportData.issuedBy?.trim() && passportData.issueDate?.trim()
+        ? passportData.series?.trim() && passportData.number?.trim() && issuedByValid && passportData.issueDate?.trim()
+        : passportData.number?.trim() && issuedByValid && passportData.issueDate?.trim();
 
-      const dateValid = isValidDate(passportData.issueDate)
-      const scanValid = (passportData.scanPages?.length > 0) && (passportData.scanRegistration?.length > 0)
-      const otherCountryValid = passportData.citizenship !== 'Другое' || (passportData.otherCountry?.trim().length > 0)
-      const seriesValid = !isRussian || (passportData.series?.replace(/\s/g,'').length === 4)
-      const numberValid = isRussian ? passportData.number?.replace(/\D/g,'').length === 6 : passportData.number?.trim().length > 0
+      const dateValid = isValidDate(passportData.issueDate);
+      const scanValid = (passportData.scanPages?.length > 0) && (passportData.scanRegistration?.length > 0);
+      const seriesValid = !isRussian || (passportData.series?.replace(/\s/g,'').length === 4);
+      const numberValid = isRussian 
+        ? passportData.number?.replace(/\D/g,'').length === 6 
+        : passportData.number?.trim().length > 0;
 
-      formValid = Boolean(fieldsFilled && dateValid && scanValid && otherCountryValid && seriesValid && numberValid)
+      formValid = Boolean(fieldsFilled && dateValid && scanValid && otherCountryValid && seriesValid && numberValid && issuedByValid);
     }
 
-    setIsFormValid(formValid)
-  }, [passportData, directorData, dateError, isRussian, userLawSubject])
+    setIsFormValid(formValid);
+  }, [passportData, directorData, dateError, isRussian, userLawSubject]);
 
 
   // обновление директора 
@@ -156,10 +164,22 @@ export default function Step4Passport() {
     updatePassport('series', value)
   }
 
+  // обработчик номера паспорта 
   const handleNumberChange = (e) => {
-    let value = e.target.value
-    if (isRussian) value = value.replace(/\D/g,'').slice(0,6)
-    updatePassport('number', value)
+    let value = e.target.value;
+    if (isRussian) {
+      value = value.replace(/\D/g, '').slice(0, 6);
+    } else {
+      // для иностранных документов только цифры и латиница
+      value = value.replace(/[а-яА-ЯёЁ]/g, '');
+    }
+    updatePassport('number', value);
+  }
+
+  // обработчик поля "Паспорт выдан" (только кириллица, минимум 5 символов)
+  const handleIssuedByChange = (e) => {
+    const value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s.,-]/g, '');
+    updatePassport('issuedBy', value);
   }
 
   const handleBack = () => navigate('/full_registration_step3')
@@ -240,10 +260,10 @@ export default function Step4Passport() {
                   </div>
                   <div className='passport-field'>
                     <h3>Паспорт выдан</h3>
-                    <input value={passportData.issuedBy||''} onChange={(e)=>updatePassport('issuedBy',e.target.value)} placeholder='ГУ МВД России по г. Москве'/>
+                    <input value={passportData.issuedBy||''} onChange={handleIssuedByChange} placeholder='ГУ МВД России по г. Москве'/>
                   </div>
                   <div className='passport-field'>
-                    <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '18px'}}>{dateError}</span>}</h3>
+                    <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3>
                     <DatePicker value={passportData.issueDate||''} onChange={(v)=>handleDateChange(v)} placeholder="00.00.00" error={!!dateError}/>
                   </div>
                 </div>
@@ -256,7 +276,7 @@ export default function Step4Passport() {
                   </div>
                   <div className='passport-field full-width'>
                     <h3>Кем выдан</h3>
-                    <input value={passportData.issuedBy||''} onChange={(e)=>updatePassport('issuedBy',e.target.value)} />
+                    <input value={passportData.issuedBy||''} onChange={handleIssuedByChange} />
                   </div>
                   <div className='passport-field full-width'>
                     <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '18px'}}>{dateError}</span>}</h3>

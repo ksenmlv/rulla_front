@@ -146,7 +146,7 @@ function Enter() {
     <div className='layout'>
       <Header hideElements={true} />
 
-      <div className='enter-container'>
+      <div className='enter-container' style={{marginBottom: '240px'}}>
         <div className='login-container'>
 
           <div className='title'>

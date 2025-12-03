@@ -45,15 +45,12 @@ export default function Step3FullName() {
     else setIndividualEntrepreneurData(newData)
   }
 
-
-
   // обработка обновления данных
   const updateField = (field, value) => setActiveData({ ...getActiveData(), [field]: value })
   // вместо старого addFiles
   const addFiles = (field, newFiles) => {
     setActiveData(prev => ({ ...prev, [field]: newFiles }));
   }
-
 
   // валидация даты
   const validateDate = (dateStr) => {
@@ -84,34 +81,42 @@ export default function Step3FullName() {
     const hasFiles = (field) => Array.isArray(data[field]) && data[field].length > 0;
 
     if (isLegalEntity) {
+      const organizationNameValid = data.organizationName?.trim().length >= 3;
       const innValid = data.INN?.replace(/\D/g,'').length === 10;
       const ogrnValid = data.OGRN?.replace(/\D/g,'').length === 13;
       const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      const registrationAddressValid = data.registrationAddress?.trim().length >= 5; // Исправлено
+      
       valid = Boolean(
-        data.organizationName?.trim() &&
+        organizationNameValid &&
         innValid &&
         ogrnValid &&
         dateValid &&
-        data.registrationAddress?.trim() &&
+        registrationAddressValid && // Исправлено
         hasFiles('extractEGRUL')
       );
     } else if (userLawSubject === 'individual_entrepreneur') {
       const innValid = data.INN?.replace(/\D/g,'').length === 12;
       const ogrnipValid = data.OGRNIP?.replace(/\D/g,'').length === 15;
       const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      const fioValid = data.FIO?.trim().length >= 5;
+      const registrationPlaceValid = data.registrationPlace?.trim().length >= 5;
+      
       valid = Boolean(
-        data.FIO?.trim() &&
+        fioValid &&
         innValid &&
         ogrnipValid &&
         dateValid &&
-        data.registrationPlace?.trim() &&
+        registrationPlaceValid &&
         hasFiles('extractOGRNIP')
       );
     } else if (userLawSubject === 'self-employed') {
       const innValid = data.INN?.replace(/\D/g,'').length === 12;
       const dateValid = data.registrationDate && validateDate(data.registrationDate);
+      const fioValid = data.FIO?.trim().length >= 5;
+      
       valid = Boolean(
-        data.FIO?.trim() &&
+        fioValid &&
         innValid &&
         dateValid &&
         hasFiles('registrationCertificate')
@@ -119,8 +124,7 @@ export default function Step3FullName() {
     }
 
     setIsFormValid(valid);
-  }, [userLawSubject, individualEntrepreneurData, selfEmployedData, legalEntityData, isLegalEntity, ]);
-
+  }, [userLawSubject, individualEntrepreneurData, selfEmployedData, legalEntityData, isLegalEntity]);
 
   const handleFIOChange = e => updateField('FIO', e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s-]/g,''))
   const handleINNChange = e => {
@@ -178,15 +182,15 @@ export default function Step3FullName() {
               <div className='passport-row'><div className='passport-field full-width'><h3>Наименование организации</h3><input ref={organizationNameRef} value={getValue('organizationName')} onChange={handleOrganizationNameChange} placeholder='Введите наименование организации'/></div></div>
               <div className='passport-row'><div className='passport-field full-width'><h3>ИНН <span style={{color:'#666', fontSize:'15px'}}>(10 цифр)</span></h3><input value={getValue('INN')} onChange={handleINNChange} placeholder='00 00 00000 0' maxLength={10}/></div></div>
               <div className='passport-row'><div className='passport-field full-width'><h3>ОГРН <span style={{color:'#666', fontSize:'15px'}}>(13 цифр)</span></h3><input value={getValue('OGRN')} onChange={handleOGRNChange} placeholder='0000000000000' maxLength={13}/></div></div>
-              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/>{dateError&&<span style={{color:'#ff4444'}}>{dateError}</span>}</div></div>
+              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации {dateError&&<span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/></div></div>
               <div className='passport-row'><div className='passport-field full-width'><h3>Адрес регистрации</h3><input value={getValue('registrationAddress')} onChange={e=>updateField('registrationAddress',e.target.value)} placeholder='Укажите юридический адрес'/></div></div>
               <div className='passport-field'><h3>Выписка из ЕГРЮЛ</h3><FileUpload onFilesUpload={(files) => addFiles('extractEGRUL', files)} maxFiles={5} /><p>Добавьте скан документа</p></div>
             </> : <>
               <div className='passport-row'><div className='passport-field full-width'><h3>ФИО</h3><input ref={fioInputRef} value={getValue('FIO')} onChange={handleFIOChange} placeholder='Введите ваше ФИО'/></div></div>
               <div className='passport-row'><div className='passport-field full-width'><h3>ИНН <span style={{color:'#666', fontSize:'15px'}}>(12 цифр)</span></h3><input value={getValue('INN')} onChange={handleINNChange} placeholder='00 00 000000 00' maxLength={12}/></div></div>
               {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>ОГРНИП <span style={{color:'#666', fontSize:'15px'}}>(15 цифр)</span></h3><input value={getValue('OGRNIP')} onChange={handleOGRNIPChange} placeholder='000000000000000' maxLength={15}/></div></div>}
-              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/>{dateError&&<span style={{color:'#ff4444'}}>{dateError}</span>}</div></div>
-              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>Место регистрации</h3><input value={getValue('registrationPlace')} onChange={handleRegistrationPlaceChange} placeholder='Укажите место регистрации'/></div></div>}
+              <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации {dateError&&<span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/></div></div>
+              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>Адрес регистрации</h3><input value={getValue('registrationPlace')} onChange={handleRegistrationPlaceChange} placeholder='Укажите адрес регистрации'/></div></div>}
               {userLawSubject==='individual_entrepreneur'&&<div className='passport-field'><h3>Выписка из ЕГРИП</h3><FileUpload onFilesUpload={files=>addFiles('extractOGRNIP',files)} maxFiles/><p>Добавьте скан документа</p></div>}
               {userLawSubject==='self-employed'&&<div className='passport-field'><h3>Справка о постановке на учет (СЗ)</h3><FileUpload onFilesUpload={files=>addFiles('registrationCertificate',files)} maxFiles/><p>Добавьте скан документа</p></div>}
             </>}

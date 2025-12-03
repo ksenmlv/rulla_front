@@ -29,7 +29,7 @@ export default function Step1_2Branch() {
     <div>
       <Header hideElements={true} />
 
-      <div className='reg-container'>
+      <div className='reg-container' style={{marginBottom: '410px'}}>
         <div className='registr-container' style={{ height: '397px'}}>
           <div className='title'>
             <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад' /></button>

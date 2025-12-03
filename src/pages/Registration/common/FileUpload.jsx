@@ -45,7 +45,7 @@ const FileUpload = ({ onFilesUpload, maxFiles = 1 }) => {
         ref={fileInputRef}
         onChange={handleFileChange}
         multiple
-        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.tiff,.tif,.bmp,.webp"
+        accept=".jpg,.jpeg,.png,.bmp,.webp,.tiff,.tif,.gif,.avif,.heic,.heif,.mp4,.mov,.avi,.mkv,.webm,.m4v"
         style={{ display: 'none' }}
       />
 

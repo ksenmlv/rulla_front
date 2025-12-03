@@ -35,11 +35,12 @@ export default function Step7Contacts() {
     const [selectedService, setSelectedService] = useState('')
     const [emailError, setEmailError] = useState('')
     const [formValid, setFormValid] = useState(false)                      // корректность заполненных полей формы
-    const [isPhoneValid, setIsPhoneValid] = useState(false)
+    const [submitAttempted, setSubmitAttempted] = useState(false)          // была ли попытка отправки
     const [modalValid, setModalValid] = useState(false)                    // корректность заполненных полей модалки
 
-
     const firstServiceInputRef = useRef(null)
+    const phoneInputRef = useRef(null)
+    const nicknameInputRef = useRef(null)
 
     // восстановление локального состояния при монтировании
     useEffect(() => {
@@ -51,14 +52,20 @@ export default function Step7Contacts() {
         setLocalSocialMedia(userSocialMedia || {})
     }, [])
 
-    // валидация формы
+    // валидация формы при изменении полей
     useEffect(() => {
         const phoneValid = localPhone.replace(/\D/g, '').length > 10
         const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
-        setFormValid(phoneValid && emailValid && isCheckedPolicy)
-    }, [localPhone, localEmail, isCheckedPolicy])
-
-    
+        const websiteValid = !localWebsite || localWebsite.trim().length >= 5
+        
+        // Обновляем состояние валидности формы
+        setFormValid(phoneValid && emailValid && isCheckedPolicy && websiteValid)
+        
+        // Сбрасываем ошибку email при вводе
+        if (emailError && emailValid) {
+            setEmailError('')
+        }
+    }, [localPhone, localEmail, isCheckedPolicy, localWebsite])
 
     // валидация модального окна
     useEffect(() => {
@@ -68,25 +75,57 @@ export default function Step7Contacts() {
 
         switch (selectedService) {
             case 'telegram':
-                setModalValid(Boolean(data.phone?.trim() && data.nickname?.trim()));
+                const telegramPhoneValid = data.phone?.replace(/\D/g, '').length > 10;
+                const telegramNicknameValid = data.nickname?.trim().length >= 5;
+                setModalValid(telegramPhoneValid && telegramNicknameValid);
                 break;
             case 'whatsapp':
-                setModalValid(Boolean(data.phone?.trim()));
+                const whatsappPhoneDigits = data.phone?.replace(/\D/g, '') || '';
+                const whatsappPhoneValid = whatsappPhoneDigits.length > 10;
+                setModalValid(whatsappPhoneValid);
                 break;
             case 'vk':
-                setModalValid(Boolean(data.nickname?.trim()));
+                const vkNicknameValid = data.nickname?.trim().length >= 5;
+                setModalValid(vkNicknameValid);
                 break;
             default:
                 setModalValid(false);
         }
     }, [localSocialMedia, selectedService]);
 
-
+    // Автофокус при смене сервиса в модалке
+    useEffect(() => {
+        if (modalVisible) {
+            setTimeout(() => {
+                if (selectedService === 'telegram' || selectedService === 'whatsapp') {
+                    phoneInputRef.current?.focus();
+                } else if (selectedService === 'vk') {
+                    nicknameInputRef.current?.focus();
+                }
+            }, 100);
+        }
+    }, [selectedService, modalVisible]);
 
     const handleBack = () => navigate('/full_registration_step6')
 
     const handleForward = () => {
-        // Сохраняем все данные в контекст
+        setSubmitAttempted(true) // Устанавливаем, что была попытка отправки
+        
+        const phoneValid = localPhone.replace(/\D/g, '').length > 10
+        const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
+        const websiteValid = !localWebsite || localWebsite.trim().length >= 5
+        
+        // Проверяем email
+        if (!emailValid) {
+            setEmailError("Введите корректный email")
+        }
+        
+        // Если форма невалидна - останавливаем выполнение
+        if (!phoneValid || !emailValid || !isCheckedPolicy || !websiteValid) {
+            return 
+        }
+
+        // сохранение данных в контекст
         setUserPhone(localPhone)
         setUserEmail(localEmail)
         setUserWebsite(localWebsite)
@@ -98,6 +137,33 @@ export default function Step7Contacts() {
     }
 
     const validateEmail = (value) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+
+    // Обработчик изменения email
+    const handleEmailChange = (e) => {
+        const value = e.target.value
+        setLocalEmail(value)
+        // Сбрасываем ошибку при начале ввода
+        if (emailError) {
+            setEmailError("")
+        }
+    }
+
+    // Обработчик для сайта (минимум 5 символов)
+    const handleWebsiteChange = (e) => {
+        setLocalWebsite(e.target.value);
+    }
+
+    // Обработчик для никнейма в модалке (минимум 5 символов)
+    const handleNicknameChange = (e, service) => {
+        const value = e.target.value;
+        setLocalSocialMedia(prev => ({
+            ...prev,
+            [service]: {
+                ...prev[service],
+                nickname: value
+            }
+        }));
+    }
 
     // Открытие модалки с выбором сервиса
     const openModal = (service) => {
@@ -113,8 +179,20 @@ export default function Step7Contacts() {
 
     // проверка, заполнены ли данные для социальной сети
     const isSocialMediaFilled = (service) => {
-        return localSocialMedia[service] && 
-               (localSocialMedia[service].phone || localSocialMedia[service].nickname)
+        const data = localSocialMedia[service];
+        if (!data) return false;
+        
+        switch(service) {
+            case 'telegram':
+                return data.phone?.replace(/\D/g, '').length > 10 && 
+                       data.nickname?.trim().length >= 5;
+            case 'whatsapp':
+                return data.phone?.replace(/\D/g, '').length > 10;
+            case 'vk':
+                return data.nickname?.trim().length >= 5;
+            default:
+                return false;
+        }
     }
 
     return (
@@ -153,8 +231,8 @@ export default function Step7Contacts() {
                     <div className='passport-row' style={{ marginTop: '-25px' }}>
                         <div className='passport-field full-width'>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <h3>E-mail</h3>
-                                {emailError && (
+                                {userLawSubject === 'legal_entity' ? <h3>E-mail компании</h3> : <h3>E-mail</h3>}
+                                {submitAttempted && emailError && (
                                     <span style={{
                                         color: '#ff4444',
                                         fontSize: '16px',
@@ -170,12 +248,8 @@ export default function Step7Contacts() {
                                 type="text"
                                 placeholder="Введите почту"
                                 value={localEmail}
-                                onChange={(e) => {
-                                    const value = e.target.value
-                                    setLocalEmail(value)
-                                    if (!validateEmail(value)) setEmailError("Введите корректный email")
-                                    else setEmailError("")
-                                }}
+                                onChange={handleEmailChange}
+                                className={submitAttempted && emailError ? 'error' : ''}
                             />
                         </div>
                     </div>
@@ -218,7 +292,8 @@ export default function Step7Contacts() {
                         <input
                             value={localWebsite || ''}
                             placeholder='Вставьте ссылку на ваш сайт'
-                            onChange={(e) => setLocalWebsite(e.target.value)}
+                            onChange={handleWebsiteChange}
+                            className={submitAttempted && localWebsite && localWebsite.trim().length < 5 ? 'error' : ''}
                         />
                     </div>
 
@@ -242,7 +317,7 @@ export default function Step7Contacts() {
                                                   </svg>}
                         </div>
                         <span className="checkbox-text">
-                            Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и <a className='policy-link'>обработкой персональных данных</a>
+                            Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и обработкой персональных данных
                         </span>
                     </div>
 
@@ -268,7 +343,7 @@ export default function Step7Contacts() {
                     </div>
 
                     <button
-                        type="submit"
+                        type="button"
                         className={`continue-button ${!formValid ? 'disabled' : ''}`}
                         onClick={handleForward}
                         style={{ marginTop: '7px' }}
@@ -317,6 +392,7 @@ export default function Step7Contacts() {
                                 </h3>
                                 
                                 <PhoneNumber
+                                    ref={phoneInputRef}
                                     value = {localSocialMedia[selectedService]?.phone || ''}
                                     onChange = {(value) =>
                                         setLocalSocialMedia(prev => ({
@@ -335,20 +411,14 @@ export default function Step7Contacts() {
                         {(selectedService === 'telegram' || selectedService === 'vk') && (
                             <div className='passport-field full-width' >
                                 <h3 style={{ fontSize: '24px', fontWeight: '500',  textAlign: 'left' }}>
-                                    Никнейм
+                                    Ссылка
                                 </h3>
                                 <input
+                                    ref={nicknameInputRef}
                                     value={localSocialMedia[selectedService]?.nickname || ''}
-                                    placeholder='@никнейм'
-                                    onChange={(e) =>
-                                        setLocalSocialMedia(prev => ({
-                                            ...prev,
-                                            [selectedService]: {
-                                                ...prev[selectedService],
-                                                nickname: e.target.value
-                                            }
-                                        }))
-                                    }
+                                    placeholder='Введите ссылку'
+                                    onChange={(e) => handleNicknameChange(e, selectedService)}
+                                    className={localSocialMedia[selectedService]?.nickname && localSocialMedia[selectedService].nickname.trim().length < 5 ? 'error' : ''}
                                 />
                             </div>
                         )}

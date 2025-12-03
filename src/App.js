@@ -1,7 +1,27 @@
 import './styles/App.css';
 import { AppProvider } from './contexts/AppContext';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
+
+
+// Компонент для прокрутки вверх при смене страницы
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant' // или 'smooth' для плавной прокрутки
+    });
+    
+    // поддержка старых браузеров
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname]);
+
+  return null;
+}
 
 // Ленивая загрузка компонентов (убедитесь, что пути корректны!)
 const Main = lazy(() => import('./pages/Main/Main'));
@@ -21,6 +41,8 @@ function App() {
   return (
     <Router>
       <AppProvider>
+        <ScrollToTop />
+
         <Suspense fallback={<div>Загрузка...</div>}>
           <Routes>
             <Route path="/" element={<Main />} />

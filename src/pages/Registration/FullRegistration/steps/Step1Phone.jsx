@@ -41,7 +41,7 @@ export default function Step1Phone() {
 
   // ---------- ВАЛИДАЦИОННЫЕ ФУНКЦИИ ----------
   const isValidEmail = useCallback((email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email), [])
-  const isValidPhone = useCallback((phone) => phone.replace(/\D/g, '').length === 11, [])
+  const isValidPhone = useCallback((phone) => phone.replace(/\D/g, '').length > 10, [])
 
   // ---------- ВАЛИДАЦИЯ КОНТАКТА ----------
   const validateContact = useCallback((value) => {
@@ -247,7 +247,7 @@ export default function Step1Phone() {
     <div>
       <Header hideElements={true} />
 
-      <div className='reg-container'>
+      <div className='reg-container' style={{marginBottom: step === 2 && '230px'}}>
         <div className='registr-container' style={{ height: step === 1 ? '660px' : '570px' }}>
           <div className='title'>
             <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад' /></button>

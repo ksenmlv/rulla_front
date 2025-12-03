@@ -9,7 +9,7 @@ import Footer from '../../../../components/Footer/Footer'
 
 
 export default function ShortStep2Name() {
-  const { userName, userRegion, setUserName, setUserRegion, userEmail, setUserEmail, setPhoneNumber } = useAppContext()
+  const { userName, setUserName, userEmail, setUserEmail, setPhoneNumber } = useAppContext()
 
   const navigate = useNavigate()
   const nameInputRef = useRef(null)
@@ -110,7 +110,7 @@ export default function ShortStep2Name() {
               <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={localName} onChange={handleNameChange}/>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3>Почта</h3>
+                  <h3>E-mail</h3>
                   {isSubmitted  && emailError && (
                       <span style={{
                           color: '#ff4444',

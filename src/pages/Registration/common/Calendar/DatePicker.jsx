@@ -20,7 +20,6 @@ export default function CustomDatePicker({ value, onChange, error }) {
     setOpen(false);
   };
 
-  // закрываем календарь при клике вне его
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -28,6 +27,18 @@ export default function CustomDatePicker({ value, onChange, error }) {
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
   }, []);
+
+  // Кастомный формат навигации
+  const formatNavigationLabel = ({ date, view }) => {
+    if (view === 'month') {
+      const months = [
+        'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+      ];
+      return `${months[date.getMonth()]} ${date.getFullYear()}`;
+    }
+    return '';
+  };
 
   return (
     <div className="date-picker-wrapper" ref={ref}>
@@ -38,7 +49,6 @@ export default function CustomDatePicker({ value, onChange, error }) {
         placeholder="00.00.00"
       />
 
-      {/* Иконка календаря внутри инпута */}
       <img
         src={calendarIcon}
         alt="calendar"
@@ -50,7 +60,19 @@ export default function CustomDatePicker({ value, onChange, error }) {
         <div className="calendar-popup">
           <Calendar 
             onClickDay={handleSelect}
-            className="custom-calendar" // Добавляем класс для кастомизации
+            className="custom-calendar"
+            // Отключаем переключение вида
+            maxDetail="month"
+            minDetail="month"
+            // Отключаем клик по навигации
+            navigationLabel={formatNavigationLabel}
+            // Отключаем обработчик клика по навигации
+            onClickNav={undefined}
+            prevLabel="‹"
+            nextLabel="›"
+            // Скрываем иконки переключения вида
+            view="month"
+            showNeighboringMonth={false}
           />
         </div>
       )}

@@ -173,7 +173,7 @@ export default function ShortStep1Phone() {
     <div>
       <Header hideElements={true} />
 
-      <div className='reg-container'>
+      <div className='reg-container' style={{marginBottom: '240px'}}>
         <div className='registr-container' style={{ height: '565px' }}>
 
           {/* Заголовок */}

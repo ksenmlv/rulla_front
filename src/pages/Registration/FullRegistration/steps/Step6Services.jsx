@@ -38,13 +38,45 @@ export default function Step6Services() {
 
     // валидация формы
     useEffect(() => {
-        const allServicesFilled = userServices.every(s => s.name.trim() && s.price.trim())
-        const interactionValid = interaction.status === 'yes' ? interaction.text.trim() : interaction.status === 'no'
-        // const allProjectsFilled = projects.every(p => p.text.trim())
-        // const hasReviews = reviews?.files?.length > 0
-        const hasCertificates = certificates?.files?.length > 0
-        setIsFormValid(allServicesFilled && interactionValid && hasCertificates)
-    }, [userServices, interaction, projects, reviews, certificates])
+    // название услуги минимум 3 символа
+    const allServicesFilled = userServices.every(s => 
+        s.name.trim().length >= 3 && s.price.trim()
+    );
+    
+    // цена содержит цифры
+    const allPricesValid = userServices.every(s => 
+        s.price.replace(/\D/g, '').length > 0
+    );
+    
+    // все проекты имеют минимум 5 символов
+    const allProjectsValid = projects.every(p => 
+        p.text.trim().length >= 5
+    );
+    
+    const interactionValid = interaction.status === 'yes' 
+        ? interaction.text.trim() 
+        : interaction.status === 'no';
+    
+    setIsFormValid(allServicesFilled && allPricesValid && allProjectsValid && interactionValid);
+    }, [userServices, interaction, projects]);
+
+
+    // обработчик названия услуги (минимум 3 символа)
+    const handleServiceNameChange = (index, value) => {
+        updateItem(setUserServices, index, 'name', value);
+    }
+
+    // обработчик цены (только цифры)
+    const handleServicePriceChange = (index, value) => {
+        // только цифры
+        const digits = value.replace(/\D/g, '');
+        updateItem(setUserServices, index, 'price', digits);
+    }
+
+    // обработчик текста проекта (минимум 5 символов)
+    const handleProjectTextChange = (index, value) => {
+        updateItem(setProjects, index, 'text', value);
+    }
 
     const handleBack = () => navigate('/full_registration_step5')
 
@@ -101,7 +133,7 @@ export default function Step6Services() {
                                         ref={i === 0 ? firstServiceInputRef : null}
                                         placeholder='Введите название услуги'
                                         value={s.name}
-                                        onChange={(e) => updateItem(setUserServices, i, 'name', e.target.value)}
+                                        onChange={(e) => handleServiceNameChange(i, e.target.value)} 
                                     />
                                 </div>
                             </div>
@@ -111,7 +143,7 @@ export default function Step6Services() {
                                     <input
                                         placeholder='от'
                                         value={s.price}
-                                        onChange={(e) => updateItem(setUserServices, i, 'price', e.target.value)}
+                                        onChange={(e) => handleServicePriceChange(i, e.target.value)}
                                         style={{ paddingRight: '50px' }}
                                     />
                                     <span style={{
@@ -131,6 +163,7 @@ export default function Step6Services() {
 
                         </div>
                     ))}
+
                     <div className='btn-plus'>
                         <button onClick={() => addItem(setUserServices, { name: '', price: '' })} style={{marginTop: '-5px'}}>
                             <img src={plus} alt='Add more' />Добавить еще
@@ -152,17 +185,6 @@ export default function Step6Services() {
                             </div>
                         ))}
 
-                        {interaction.status === 'yes' && (
-                            <>
-                                <h3 style={{ marginTop: '10px' }}>С кем можете взаимодействовать?</h3>
-                                <textarea
-                                    placeholder='Опишите подробнее'
-                                    value={interaction.text}
-                                    onChange={(e) => setInteraction({ ...interaction, text: e.target.value })}
-                                    className='country-input'
-                                />
-                            </>
-                        )}
                     </div>
 
                     {/* реализованные проекты */}
@@ -182,7 +204,7 @@ export default function Step6Services() {
 
                             {i === 0 && <>
                                 <h3 style={{fontSize: '24px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>            
-                                <p style={{ color: '#000000B2', fontSize: '20px', margin: '0 0 10px 0' }}>Подробно опишите ваши проекты и добавьте фото/видео </p>
+                                <p style={{ color: '#000000B2', fontSize: '20px', margin: '0 0 10px 0'}}>Подробно опишите ваши проекты и добавьте фото/видео </p>
                             </>} 
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '142px', height: 'auto' }}>
@@ -190,15 +212,16 @@ export default function Step6Services() {
                                     <FileUpload maxFiles={10}/>
                                 </div>
                                 <textarea
-                                    placeholder='Добавьте комментарий'
+                                    placeholder='Опишите подробности проекта (бюджет, сроки, поставленные задачи и др.)'
                                     value={p.text}
-                                    onChange={(e) => updateItem(setProjects, i, 'text', e.target.value)}
+                                    onChange={(e) => handleProjectTextChange(i, e.target.value)} 
                                     className='country-input'
-                                    style={{ width: '491px', height: 'auto' }}
+                                    style={{ width: '491px', height: 'auto', lineHeight: '1.2' }}
                                 />
                             </div>
                         </div>
                     ))}
+
                     <div className='btn-plus'>
                         <button onClick={() => addItem(setProjects, { files: [], text: '' })}>
                             <img src={plus} alt='Add more' />Добавить еще
