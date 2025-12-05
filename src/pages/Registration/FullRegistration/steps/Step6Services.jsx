@@ -23,7 +23,7 @@ export default function Step6Services() {
         userLawSubject
     } = useAppContext()
 
-    const [userServices, setUserServices] = useState(userService || [{ name: '', price: '' }])
+    const [userServices, setUserServices] = useState(userService || [{ name: '', price: '', unit: '' }])
     const [projects, setProjects] = useState(userProjects || [{ files: [], text: '' }])
     const [interaction, setInteraction] = useState(otherTeamsInteraction || { status: '', text: '' })
     const [isFormValid, setIsFormValid] = useState(false)
@@ -38,27 +38,17 @@ export default function Step6Services() {
 
     // валидация формы
     useEffect(() => {
-    // название услуги минимум 3 символа
-    const allServicesFilled = userServices.every(s => 
-        s.name.trim().length >= 3 && s.price.trim()
-    );
-    
-    // цена содержит цифры
-    const allPricesValid = userServices.every(s => 
-        s.price.replace(/\D/g, '').length > 0
-    );
-    
-    // все проекты имеют минимум 5 символов
-    const allProjectsValid = projects.every(p => 
-        p.text.trim().length >= 5
-    );
-    
-    const interactionValid = interaction.status === 'yes' 
-        ? interaction.text.trim() 
-        : interaction.status === 'no';
-    
-    setIsFormValid(allServicesFilled && allPricesValid && allProjectsValid && interactionValid);
-    }, [userServices, interaction, projects]);
+        // название услуги минимум 3 символа
+        const allServicesFilled = userServices.every(s =>
+            s.name.trim().length >= 3 &&
+            s.price.trim() &&
+            s.unit.trim() 
+        );
+        
+        const interactionValid = interaction.status === 'yes' || interaction.status === 'no';
+        
+        setIsFormValid(allServicesFilled && interactionValid);
+    }, [userServices, interaction]);
 
 
     // обработчик названия услуги (минимум 3 символа)
@@ -156,6 +146,8 @@ export default function Step6Services() {
                                         <RegistrSelector 
                                             placeholder='за'
                                             subject={['за услугу', 'за метр', 'за м²', 'за м³', 'за шт', 'за час']} 
+                                            selected={s.unit} 
+                                            onSelect={(value) => updateItem(setUserServices, i, 'unit', value)}
                                         />
                                     </div>
                                 </div>
@@ -165,7 +157,7 @@ export default function Step6Services() {
                     ))}
 
                     <div className='btn-plus'>
-                        <button onClick={() => addItem(setUserServices, { name: '', price: '' })} style={{marginTop: '-5px'}}>
+                        <button onClick={() => addItem(setUserServices, { name: '', price: '', unit: '' })} style={{marginTop: '-5px'}}>
                             <img src={plus} alt='Add more' />Добавить еще
                         </button>
                     </div>
@@ -216,7 +208,7 @@ export default function Step6Services() {
                                     value={p.text}
                                     onChange={(e) => handleProjectTextChange(i, e.target.value)} 
                                     className='country-input'
-                                    style={{ width: '491px', height: 'auto', lineHeight: '1.2' }}
+                                    style={{ width: '491px', height: 'auto', lineHeight: '1.2', fontSize: '18px' }}
                                 />
                             </div>
                         </div>

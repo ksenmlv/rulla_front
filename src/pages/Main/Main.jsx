@@ -58,7 +58,7 @@ function Main() {
                 
                 {/* первый блок до разделителя */}
                 <div className='first-block'>
-                    <img src={back} alt='background' className='back_on_top' />
+                    <img rel="preload" src={back} alt='background' className='back_on_top' />
                     <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
                     <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
 

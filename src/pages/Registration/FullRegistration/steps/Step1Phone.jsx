@@ -10,7 +10,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 
 export default function Step1Phone() {
   const navigate = useNavigate()
-  const { stepNumber, setStepNumber, userLawSubject, setUserLawSubject } = useAppContext()
+  const { phoneNumber, setPhoneNumber, userEmail, setUserEmail, stepNumber, setStepNumber, userLawSubject, setUserLawSubject } = useAppContext()
 
   // ---------- ЛОКАЛЬНЫЕ СОСТОЯНИЯ ----------
   const [step, setStep] = useState(() => Number(localStorage.getItem("reg_step")) || 1)
@@ -85,6 +85,7 @@ export default function Step1Phone() {
     localStorage.removeItem('reg_code')
   }, [])
 
+  // обработчика переключателя роли (заказчик/исполнитель)
   const handleRoleChange = useCallback((newRole) => {
     setRole(newRole)
     if (newRole === 'customer') {
@@ -93,16 +94,29 @@ export default function Step1Phone() {
     }
   }, [resetAll, navigate])
 
+  // обработчик контакта
   const handleContactChange = useCallback((value) => {
     setContact(value)
     validateContact(value)
   }, [validateContact])
 
+
+  // обработчик отправки формы (сохранения данных)
   const handleSubmit = useCallback((e) => {
     e.preventDefault()
 
     if (step === 1) {
-      if (isValidContact) setStep(2)
+      if (isValidContact) {
+        // сохранение контакта в контекст
+        if (contactType === 'phone') {
+          setPhoneNumber(contact)
+          setUserEmail('') 
+        } else {
+          setUserEmail(contact) 
+          setPhoneNumber('')    // чтобы не мешало
+        }
+        setStep(2)
+      }
       return
     }
 
@@ -110,12 +124,12 @@ export default function Step1Phone() {
       localStorage.removeItem("reg_step")
       localStorage.removeItem("reg_contact")
       localStorage.removeItem("reg_code")
-      // setStepNumber(stepNumber + 1)
+      console.log('Phone:', phoneNumber, 'email:', userEmail)
       navigate('/full_registration_step1_2')
-      // setStep(1)
     }
-  }, [step, isValidContact, isCodeComplete, setStepNumber, stepNumber, navigate])
+  }, [step, isValidContact, isCodeComplete, contact, contactType, navigate, setPhoneNumber, setUserEmail])
 
+  // обработчик кода смс
   const handleCodeChange = useCallback((index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...smsCode]
@@ -194,7 +208,7 @@ export default function Step1Phone() {
       <button
         className={`continue-button ${!isValidContact ? 'disabled' : ''}`}
         disabled={!isValidContact}
-        onClick={() => isValidContact && setStep(2)}
+        onClick={handleSubmit}
         style={{ marginTop: '10px' }}
       >
         Продолжить

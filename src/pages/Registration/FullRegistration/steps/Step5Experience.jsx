@@ -19,6 +19,7 @@ export default function Step5Experience() {
     userLicense, setUserLicense,
     userEducationalDiplom, setUserEducationalDiplom,
     userCriminalRecord, setUserCriminalRecord,
+    contractWork, setContractWork,
     userLawSubject
   } = useAppContext()
 
@@ -128,12 +129,36 @@ export default function Step5Experience() {
             {userLawSubject !== 'legal_entity' && renderRadioField('Наличие диплома о профессиональном образовании', userEducationalDiplom, setUserEducationalDiplom, 'Добавьте скан диплома')}
             {renderRadioField('Судимости/текущие суды', userCriminalRecord, setUserCriminalRecord)}
 
+            {/* Чекбокс */}
+            <div className="checkbox-wrapper" onClick={() => setContractWork(prev => !prev)} style={{ margin: '20px 0 0 0' }}>
+                <div className={`custom-checkbox ${contractWork ? 'checked' : ''}`}>
+                    {contractWork && <svg 
+                                            width="14" 
+                                            height="10" 
+                                            viewBox="0 0 14 10" 
+                                            fill="none"
+                                            className="check-icon"
+                                          >
+                                            <path 
+                                              d="M1 5L5 9L13 1" 
+                                              stroke="white" 
+                                              strokeWidth="2" 
+                                              strokeLinecap="round" 
+                                              strokeLinejoin="round"
+                                            />
+                                          </svg>}
+                </div>
+                <span style={{fontSize: '20px', color: '#000', fontWeight: '500'}}>
+                    Готов работать по договору
+                </span>
+            </div>
+
             <button 
               type="submit" 
               className={`continue-button ${!isFormValid ? 'disabled' : ''}`} 
               onClick={handleForward}
               disabled={!isFormValid}
-              style={{ margin: '50px 0 0 0' }}
+              style={{ margin: '30px 0 0 0' }}
             >
               Продолжить
             </button>

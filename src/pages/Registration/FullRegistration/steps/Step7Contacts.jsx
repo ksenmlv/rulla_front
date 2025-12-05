@@ -21,7 +21,8 @@ export default function Step7Contacts() {
         userEmail, setUserEmail,
         userSocialMedia, setUserSocialMedia,
         userWebsite, setUserWebsite,
-        userLawSubject
+        userLawSubject,
+        phoneNumber               // для отображения в соц сетях
     } = useAppContext()
 
     // Локальный стейт для всех полей
@@ -46,11 +47,14 @@ export default function Step7Contacts() {
     useEffect(() => {
         setStepNumber(7)
         firstServiceInputRef.current?.focus()
-        setLocalPhone(userPhone)
-        setLocalEmail(userEmail)
-        setLocalWebsite(userWebsite)
+
+        // загрузка данных из контекста в локальные состояния
+        setLocalPhone(userPhone || '')
+        setLocalEmail(userEmail || '')
+        setLocalWebsite(userWebsite || '')
         setLocalSocialMedia(userSocialMedia || {})
-    }, [])
+    }, [userPhone, userEmail, userWebsite, userSocialMedia, setStepNumber])
+
 
     // валидация формы при изменении полей
     useEffect(() => {
@@ -58,26 +62,42 @@ export default function Step7Contacts() {
         const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
         const websiteValid = !localWebsite || localWebsite.trim().length >= 5
         
-        // Обновляем состояние валидности формы
         setFormValid(phoneValid && emailValid && isCheckedPolicy && websiteValid)
         
-        // Сбрасываем ошибку email при вводе
         if (emailError && emailValid) {
             setEmailError('')
         }
     }, [localPhone, localEmail, isCheckedPolicy, localWebsite])
 
+
+    // восстановление телефона при открытии модалки
+    useEffect(() => {
+        if (modalVisible && selectedService && (selectedService === 'whatsapp')) {
+            // если еще нет телефона
+            if (!localSocialMedia[selectedService]?.phone && localPhone) {
+                setLocalSocialMedia(prev => ({
+                    ...prev,
+                    [selectedService]: {
+                        ...prev[selectedService],
+                        phone: localPhone 
+                    }
+                }));
+            }
+        }
+    }, [modalVisible, selectedService, localPhone]);
+
     // валидация модального окна
     useEffect(() => {
+        console.log('Phone:', phoneNumber)
+
         if (!selectedService) return setModalValid(false);
 
         const data = localSocialMedia[selectedService] || {};
 
         switch (selectedService) {
             case 'telegram':
-                const telegramPhoneValid = data.phone?.replace(/\D/g, '').length > 10;
                 const telegramNicknameValid = data.nickname?.trim().length >= 5;
-                setModalValid(telegramPhoneValid && telegramNicknameValid);
+                setModalValid(telegramNicknameValid);
                 break;
             case 'whatsapp':
                 const whatsappPhoneDigits = data.phone?.replace(/\D/g, '') || '';
@@ -93,13 +113,13 @@ export default function Step7Contacts() {
         }
     }, [localSocialMedia, selectedService]);
 
-    // Автофокус при смене сервиса в модалке
+    // автофокус при смене сервиса в модалке
     useEffect(() => {
         if (modalVisible) {
             setTimeout(() => {
-                if (selectedService === 'telegram' || selectedService === 'whatsapp') {
+                if ( selectedService === 'whatsapp') {
                     phoneInputRef.current?.focus();
-                } else if (selectedService === 'vk') {
+                } else if (selectedService === 'telegram' || selectedService === 'vk') {
                     nicknameInputRef.current?.focus();
                 }
             }, 100);
@@ -109,18 +129,16 @@ export default function Step7Contacts() {
     const handleBack = () => navigate('/full_registration_step6')
 
     const handleForward = () => {
-        setSubmitAttempted(true) // Устанавливаем, что была попытка отправки
+        setSubmitAttempted(true) // устанавливаем, что была попытка отправки
         
         const phoneValid = localPhone.replace(/\D/g, '').length > 10
         const emailValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(localEmail)
         const websiteValid = !localWebsite || localWebsite.trim().length >= 5
         
-        // Проверяем email
         if (!emailValid) {
             setEmailError("Введите корректный email")
         }
         
-        // Если форма невалидна - останавливаем выполнение
         if (!phoneValid || !emailValid || !isCheckedPolicy || !websiteValid) {
             return 
         }
@@ -184,8 +202,7 @@ export default function Step7Contacts() {
         
         switch(service) {
             case 'telegram':
-                return data.phone?.replace(/\D/g, '').length > 10 && 
-                       data.nickname?.trim().length >= 5;
+                return data.nickname?.trim().length >= 5;
             case 'whatsapp':
                 return data.phone?.replace(/\D/g, '').length > 10;
             case 'vk':
@@ -385,7 +402,7 @@ export default function Step7Contacts() {
                         </div>
 
                         {/* телефон — только для tg и whatsapp */}
-                        {(selectedService === 'telegram' || selectedService === 'whatsapp') && (
+                        {( selectedService === 'whatsapp') && (
                             <div className='passport-field full-width' style={{marginBottom: '-50px'}}>
                                 <h3 style={{ fontSize: '24px', fontWeight: '500', textAlign:'left' }}>
                                     Номер телефона
@@ -393,7 +410,7 @@ export default function Step7Contacts() {
                                 
                                 <PhoneNumber
                                     ref={phoneInputRef}
-                                    value = {localSocialMedia[selectedService]?.phone || ''}
+                                    value={localSocialMedia[selectedService]?.phone || phoneNumber}
                                     onChange = {(value) =>
                                         setLocalSocialMedia(prev => ({
                                             ...prev,

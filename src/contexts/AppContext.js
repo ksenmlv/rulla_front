@@ -62,9 +62,10 @@ export const AppProvider = ({ children }) => {
   const [userLicense, setUserLicense] = useState({ status: '', files: [] });
   const [userEducationalDiplom, setUserEducationalDiplom] = useState({ status: '', files: [] });
   const [userCriminalRecord, setUserCriminalRecord] = useState({ status: '', text: '' });
+  const [contractWork, setContractWork] = useState(false)
 
   // 6 этап регистрации
-  const [userService, setUserService] = useState([{ name: '', price: '' }])
+  const [userService, setUserService] = useState([{ name: '', price: '', unit: '' }])
   const [otherTeamsInteraction, setOtherTeamsInteraction] = useState({ status: '', text: '' })
   const [userProjects, setUserProjects] = useState([{ files: [], text: '' }])
   const [reviews, setReviews] = useState({ files: [] })
@@ -79,6 +80,7 @@ export const AppProvider = ({ children }) => {
     vk: { phone: '', nickname: '' }
   })
   const [userWebsite, setUserWebsite] = useState('')
+
 
 
   const [stepNumber, setStepNumber] = useState(1)
@@ -125,6 +127,8 @@ export const AppProvider = ({ children }) => {
     setUserEducationalDiplom,
     userCriminalRecord, 
     setUserCriminalRecord,
+    contractWork, 
+    setContractWork,
     userService, 
     setUserService,
     otherTeamsInteraction, 
@@ -165,6 +169,7 @@ export const AppProvider = ({ children }) => {
     userLicense,
     userEducationalDiplom, 
     userCriminalRecord, 
+    contractWork,
     userService,
     otherTeamsInteraction, 
     userProjects, 

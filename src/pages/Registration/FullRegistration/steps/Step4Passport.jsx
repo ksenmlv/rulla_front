@@ -111,7 +111,7 @@ export default function Step4Passport() {
     let formValid = false;
 
     if(userLawSubject === 'legal_entity'){
-      const fioFilled = directorData.FIO?.trim().length > 0;
+      const fioFilled = directorData.FIO?.trim().length >= 5;
       const phoneValid = directorData.phone?.replace(/\D/g,'').length > 10;
       formValid = fioFilled && phoneValid;
     } else {
@@ -178,7 +178,7 @@ export default function Step4Passport() {
 
   // обработчик поля "Паспорт выдан" (только кириллица, минимум 5 символов)
   const handleIssuedByChange = (e) => {
-    const value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s.,-]/g, '');
+    const value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,-]/g, '');
     updatePassport('issuedBy', value);
   }
 

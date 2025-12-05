@@ -9,10 +9,11 @@ const RegistrSelector = ({
   multiple = false,
   maxSelect = Infinity
 }) => {
+
   const [isOpen, setIsOpen] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+
+  const [searchValue, setSearchValue] = useState('');          // single mode
+  const [realSearchValue, setRealSearchValue] = useState('');  // multiple mode
 
   const [selectedActivity, setSelectedActivity] = useState('');
   const [selectedList, setSelectedList] = useState([]);
@@ -23,6 +24,11 @@ const RegistrSelector = ({
   const scrollThumbRef = useRef(null);
   const scrollTrackRef = useRef(null);
 
+  const [isDragging, setIsDragging] = useState(false);
+
+
+  // --------------------------- INIT & SYNC -----------------------------------
+
   useEffect(() => {
     if (multiple) {
       setSelectedList(Array.isArray(selected) ? selected : []);
@@ -32,10 +38,13 @@ const RegistrSelector = ({
     }
   }, [selected, multiple]);
 
+
+  // Закрытие при клике вне области
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
+
         if (!multiple && !subject.includes(searchValue)) {
           setSearchValue(selectedActivity || '');
         }
@@ -46,41 +55,40 @@ const RegistrSelector = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchValue, selectedActivity, subject, multiple]);
 
-  // Обновление позиции ползунка при скролле
+
+  // -------------------------- SCROLL THUMB UPDATE ----------------------------
+
   const updateScrollThumb = useCallback(() => {
     if (!dropdownListRef.current || !scrollThumbRef.current) return;
 
     const { scrollTop, scrollHeight, clientHeight } = dropdownListRef.current;
     const scrollableHeight = scrollHeight - clientHeight;
-    
+
     if (scrollableHeight > 0) {
       const progress = scrollTop / scrollableHeight;
-      const trackHeight = 195; // Высота трека минус отступы
+
+      const trackHeight = 195;
       const thumbHeight = 60;
       const maxTranslate = trackHeight - thumbHeight;
+
       const translateY = progress * maxTranslate;
-      
-      if (scrollThumbRef.current) {
-        scrollThumbRef.current.style.setProperty('--thumb-position', `${translateY}px`);
-      }
+
+      scrollThumbRef.current.style.setProperty('--thumb-position', `${translateY}px`);
     } else {
-      if (scrollThumbRef.current) {
-        scrollThumbRef.current.style.setProperty('--thumb-position', '0px');
-      }
+      scrollThumbRef.current.style.setProperty('--thumb-position', '0px');
     }
   }, []);
 
-  // Инициализация и обновление скроллбара
   useEffect(() => {
     if (isOpen && dropdownListRef.current) {
       updateScrollThumb();
       dropdownListRef.current.addEventListener('scroll', updateScrollThumb);
-      
-      // Прокрутка к выбранному элементу
+
       if (!multiple && selectedActivity && selectedOptionRef.current) {
         setTimeout(() => {
           const dropdown = dropdownListRef.current;
           const selectedElement = selectedOptionRef.current;
+
           if (dropdown && selectedElement) {
             dropdown.scrollTop = selectedElement.offsetTop - dropdown.offsetTop;
             updateScrollThumb();
@@ -96,32 +104,31 @@ const RegistrSelector = ({
     };
   }, [isOpen, selectedActivity, multiple, updateScrollThumb]);
 
-  // Обработка перетаскивания ползунка
+
+  // ---------------------------- DRAG SCROLLBAR -------------------------------
+
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging || !dropdownListRef.current || !scrollTrackRef.current) return;
 
       e.preventDefault();
-      
+
       const track = scrollTrackRef.current;
       const trackRect = track.getBoundingClientRect();
+
       const dropdown = dropdownListRef.current;
       const { scrollHeight, clientHeight } = dropdown;
       const scrollableHeight = scrollHeight - clientHeight;
 
-      // Вычисляем новую позицию
       const mouseY = e.clientY;
       const relativeY = mouseY - trackRect.top;
       const progress = (relativeY / trackRect.height) * 100;
       const clampedProgress = Math.min(Math.max(progress, 0), 100);
 
-      // Прокручиваем контент
       dropdown.scrollTop = (clampedProgress / 100) * scrollableHeight;
     };
 
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
+    const handleMouseUp = () => setIsDragging(false);
 
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
@@ -134,17 +141,20 @@ const RegistrSelector = ({
     };
   }, [isDragging]);
 
+
   const handleThumbMouseDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
 
+
   const handleTrackClick = (e) => {
     if (!dropdownListRef.current || !scrollTrackRef.current) return;
 
     const track = scrollTrackRef.current;
     const trackRect = track.getBoundingClientRect();
+
     const dropdown = dropdownListRef.current;
     const { scrollHeight, clientHeight } = dropdown;
     const scrollableHeight = scrollHeight - clientHeight;
@@ -157,27 +167,15 @@ const RegistrSelector = ({
     dropdown.scrollTop = (clampedProgress / 100) * scrollableHeight;
   };
 
-  const handleSelectSingle = (item) => {
-    if (onSelect) onSelect(item);
-    setSelectedActivity(item);
-    setSearchValue(item);
-    setIsOpen(false);
-  };
 
-  const handleSelectMultiple = (item) => {
-    let updated;
-    if (selectedList.includes(item)) {
-      updated = selectedList.filter(i => i !== item);
-    } else {
-      if (selectedList.length >= maxSelect) return;
-      updated = [...selectedList, item];
-    }
-    if (onSelect) onSelect(updated);
-    setSelectedList(updated);
-  };
+  // ----------------------------- INPUT LOGIC ---------------------------------
 
   const handleInputChange = (e) => {
-    setSearchValue(e.target.value);
+    if (multiple) {
+      setRealSearchValue(e.target.value);
+    } else {
+      setSearchValue(e.target.value);
+    }
     setIsOpen(true);
   };
 
@@ -188,14 +186,61 @@ const RegistrSelector = ({
     }
   };
 
-  const filteredSubject = searchValue
-    ? subject.filter(item => item.toLowerCase().startsWith(searchValue.toLowerCase()))
-    : subject;
 
-  const inputValue = multiple ? selectedList.join(', ') : (searchValue || selectedActivity);
+  // ----------------------------- FILTERED DATA -------------------------------
+
+  const filteredSubject = multiple
+    ? (realSearchValue
+        ? subject.filter(item =>
+            item.toLowerCase().startsWith(realSearchValue.toLowerCase())
+          )
+        : subject)
+    : (searchValue
+        ? subject.filter(item =>
+            item.toLowerCase().startsWith(searchValue.toLowerCase())
+          )
+        : subject);
+
+
+
+  // ----------------------------- SELECTION -----------------------------------
+
+  const handleSelectSingle = (item) => {
+    if (onSelect) onSelect(item);
+    setSelectedActivity(item);
+    setSearchValue(item);
+    setIsOpen(false);
+  };
+
+  const handleSelectMultiple = (item) => {
+    let updated;
+
+    if (selectedList.includes(item)) {
+      updated = selectedList.filter(i => i !== item);
+    } else {
+      if (selectedList.length >= maxSelect) return;
+      updated = [...selectedList, item];
+    }
+
+    if (onSelect) onSelect(updated);
+    setSelectedList(updated);
+
+    setRealSearchValue('');
+  };
+
+
+  // ------------------------------ INPUT VALUE --------------------------------
+
+  const inputValue = multiple
+    ? (isOpen ? realSearchValue : selectedList.join(', '))
+    : (isOpen ? searchValue : selectedActivity);
+
+
+  // ------------------------------ RENDER -------------------------------------
 
   return (
     <div className="activity-input-container" ref={dropdownRef}>
+
       <input
         type="text"
         className={`activity-input ${isOpen ? 'active' : ''}`}
@@ -218,11 +263,13 @@ const RegistrSelector = ({
       {isOpen && (
         <div className="dropdown-wrapper">
           <div className="activity-dropdown">
-            <div 
-              className="dropdown-content" 
+
+            <div
+              className="dropdown-content"
               ref={dropdownListRef}
               style={{ paddingRight: '10px' }}
             >
+
               {filteredSubject.length > 0 ? (
                 filteredSubject.map((item, index) => {
                   const isSelected = multiple ? selectedList.includes(item) : item === selectedActivity;
@@ -239,54 +286,54 @@ const RegistrSelector = ({
                       }}
                       style={{ display: 'flex', gap: '10px' }}
                     >
-                    {multiple && (
-                      <div className="custom-checkbox-wrapper">
-                        <div className={`custom-checkbox ${isSelected ? 'checked' : ''}`}>
-                          {isSelected && (
-                            <svg 
-                              width="14" 
-                              height="10" 
-                              viewBox="0 0 14 10" 
-                              fill="none"
-                              className="check-icon"
-                            >
-                              <path 
-                                d="M1 5L5 9L13 1" 
-                                stroke="white" 
-                                strokeWidth="2" 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-                          )}
+
+                      {multiple && (
+                        <div className="custom-checkbox-wrapper">
+                          <div className={`custom-checkbox ${isSelected ? 'checked' : ''}`}>
+                            {isSelected && (
+                              <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                                <path
+                                  d="M1 5L5 9L13 1"
+                                  stroke="white"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                />
+                              </svg>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+
                       {item}
                     </div>
                   );
                 })
               ) : (
-                <div className="activity-option" style={{ color: '#999' }}>Ничего не найдено</div>
+                <div className="activity-option" style={{ color: '#999' }}>
+                  Ничего не найдено
+                </div>
               )}
+
             </div>
 
-            {/* Кастомный скроллбар */}
             <div className="custom-scrollbar">
-              <div 
-                className="scroll-track" 
+              <div
+                className="scroll-track"
                 ref={scrollTrackRef}
                 onClick={handleTrackClick}
               />
-              <div 
-                className="scroll-thumb" 
+              <div
+                className="scroll-thumb"
                 ref={scrollThumbRef}
                 onMouseDown={handleThumbMouseDown}
               />
             </div>
+
           </div>
         </div>
       )}
+
     </div>
   );
 };
