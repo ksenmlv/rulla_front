@@ -11,7 +11,7 @@ import plus from '../../../../assets/Main/plus.svg'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
 
 
-export default function Step6Services() {
+export default function Step5Services() {
     const navigate = useNavigate()
     const { 
         stepNumber, setStepNumber,
@@ -23,9 +23,7 @@ export default function Step6Services() {
         userLawSubject
     } = useAppContext()
 
-    const [userServices, setUserServices] = useState(userService || [{ name: '', price: '', unit: '' }])
-    const [projects, setProjects] = useState(userProjects || [{ files: [], text: '' }])
-    const [interaction, setInteraction] = useState(otherTeamsInteraction || { status: '', text: '' })
+
     const [isFormValid, setIsFormValid] = useState(false)
 
     // фокус на первое поле
@@ -36,47 +34,45 @@ export default function Step6Services() {
     const removeItem = (setter, index) => setter(prev => prev.filter((_, i) => i !== index))
     const updateItem = (setter, index, field, value) => setter(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item))
 
+
     // валидация формы
     useEffect(() => {
-        // название услуги минимум 3 символа
-        const allServicesFilled = userServices.every(s =>
+        // услуги
+        const allServicesFilled = userService.every(s =>
             s.name.trim().length >= 3 &&
             s.price.trim() &&
             s.unit.trim() 
         );
         
-        const interactionValid = interaction.status === 'yes' || interaction.status === 'no';
+        const interactionValid = otherTeamsInteraction.status === 'yes' || otherTeamsInteraction.status === 'no'
         
         setIsFormValid(allServicesFilled && interactionValid);
-    }, [userServices, interaction]);
+    }, [userService, otherTeamsInteraction]);
 
 
     // обработчик названия услуги (минимум 3 символа)
     const handleServiceNameChange = (index, value) => {
-        updateItem(setUserServices, index, 'name', value);
+        updateItem(setUserService, index, 'name', value);
     }
 
     // обработчик цены (только цифры)
     const handleServicePriceChange = (index, value) => {
         // только цифры
         const digits = value.replace(/\D/g, '');
-        updateItem(setUserServices, index, 'price', digits);
+        updateItem(setUserService, index, 'price', digits);
     }
 
     // обработчик текста проекта (минимум 5 символов)
     const handleProjectTextChange = (index, value) => {
-        updateItem(setProjects, index, 'text', value);
+        updateItem(setUserProjects, index, 'text', value);
     }
 
-    const handleBack = () => navigate('/full_registration_step5')
+    const handleBack = () => navigate('/full_registration_step4')
 
     const handleForward = () => {
-        setUserService(userServices)
-        setOtherTeamsInteraction(interaction)
-        setUserProjects(projects)
-        console.log(userServices, interaction, projects)
+        console.log(userService, otherTeamsInteraction, userProjects, reviews, certificates)
         setStepNumber(stepNumber + 1)
-        navigate('/full_registration_step7')
+        navigate('/full_registration_step6')
     }
 
     return (
@@ -102,14 +98,14 @@ export default function Step6Services() {
                     </p>
 
                     {/* услуги */}
-                    {userServices.map((s, i) => (
+                    {userService.map((s, i) => (
                         <div key={i} style={{ position: 'relative', marginBottom: '25px' }}>
 
                             {/* показываем крестик, когда больше 1 элемента */}
-                            {userServices.length > 1 && (
+                            {userService.length > 1 && (
                                 <button 
                                     className='file-remove' 
-                                    onClick={() => removeItem(setUserServices, i)}
+                                    onClick={() => removeItem(setUserService, i)}
                                     style={i === 0 ? { top: '42px' } : {}}
                                 >
                                     ✕
@@ -147,7 +143,7 @@ export default function Step6Services() {
                                             placeholder='за'
                                             subject={['за услугу', 'за метр', 'за м²', 'за м³', 'за шт', 'за час']} 
                                             selected={s.unit} 
-                                            onSelect={(value) => updateItem(setUserServices, i, 'unit', value)}
+                                            onSelect={(value) => updateItem(setUserService, i, 'unit', value)}
                                         />
                                     </div>
                                 </div>
@@ -157,7 +153,7 @@ export default function Step6Services() {
                     ))}
 
                     <div className='btn-plus'>
-                        <button onClick={() => addItem(setUserServices, { name: '', price: '', unit: '' })} style={{marginTop: '-5px'}}>
+                        <button onClick={() => addItem(setUserService, { name: '', price: '', unit: '' })} style={{marginTop: '-5px'}}>
                             <img src={plus} alt='Add more' />Добавить еще
                         </button>
                     </div>
@@ -169,8 +165,8 @@ export default function Step6Services() {
                             <div className='radio-option' key={val} style={{ marginBottom: '10px' }}>
                                 <input
                                     type='radio' id={val} name='interaction' value={val}
-                                    checked={interaction.status === val}
-                                    onChange={() => setInteraction(val === 'yes' ? { ...interaction, status: 'yes' } : { status: 'no', text: '' })}
+                                    checked={otherTeamsInteraction.status === val}
+                                    onChange={() => setOtherTeamsInteraction(val === 'yes' ? { ...otherTeamsInteraction, status: 'yes' } : { status: 'no', text: '' })}
                                     style={{ margin: '0 10px 0 0' }}
                                 />
                                 <label htmlFor={val}>{val === 'yes' ? 'Да' : 'Нет'}</label>
@@ -180,14 +176,14 @@ export default function Step6Services() {
                     </div>
 
                     {/* реализованные проекты */}
-                    {projects.map((p, i) => (
+                    {userProjects.map((p, i) => (
                         <div key={i} style={{ position: 'relative', marginTop: '20px' }}>
 
                             {/* показываем крестик, когда больше 1 элемента */}
-                            {projects.length > 1 && (
+                            {userProjects.length > 1 && (
                                 <button 
                                     className='file-remove' 
-                                    onClick={() => removeItem(setProjects, i)}
+                                    onClick={() => removeItem(setUserProjects, i)}
                                     style={i === 0 ? { top: '70px' } : {}}
                                 >
                                     ✕
@@ -201,7 +197,7 @@ export default function Step6Services() {
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '142px', height: 'auto' }}>
                                 <div className='file-upload-area' style={{ width: '203px' }}>
-                                    <FileUpload maxFiles={10}/>
+                                    <FileUpload maxFiles={10} onFilesUpload={(files) => updateItem(setUserProjects, i, 'files', files)}/>
                                 </div>
                                 <textarea
                                     placeholder='Опишите подробности проекта (бюджет, сроки, поставленные задачи и др.)'
@@ -215,7 +211,7 @@ export default function Step6Services() {
                     ))}
 
                     <div className='btn-plus'>
-                        <button onClick={() => addItem(setProjects, { files: [], text: '' })}>
+                        <button onClick={() => addItem(setUserProjects, { files: [], text: '' })}>
                             <img src={plus} alt='Add more' />Добавить еще
                         </button>
                     </div>
@@ -226,7 +222,7 @@ export default function Step6Services() {
                     <div className='passport-field' style={{ marginTop: '10px' }}>
                         <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
                         <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
-                        <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews({ files })} />
+                        <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews(prev => ({ ...prev, files }))} />
                         <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
                     </div>
 
@@ -234,7 +230,7 @@ export default function Step6Services() {
                     {userLawSubject !== 'legal_entity' && (
                         <div className='passport-field' style={{ marginTop: '25px' }}>
                             <h3>Сертификаты о повышении квалификации</h3>
-                            <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates({ files })} />
+                            <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates(prev => ({ ...prev, files }))} />
                             <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
                         </div>
                     )}

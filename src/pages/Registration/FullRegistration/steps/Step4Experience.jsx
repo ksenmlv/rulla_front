@@ -10,7 +10,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale5.svg'
 
 
-export default function Step5Experience() {
+export default function Step4Experience() {
   const navigate = useNavigate()
   const { 
     stepNumber, setStepNumber,
@@ -24,13 +24,13 @@ export default function Step5Experience() {
   } = useAppContext()
 
   const handleBack = () => {
-    navigate('/full_registration_step4')
+    navigate('/full_registration_step3')
   }
 
   const handleForward = () => {
     console.log(userExperience, specialistsNumber, userLicense, userEducationalDiplom, userCriminalRecord)
     setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step6')
+    navigate('/full_registration_step5')
   }
 
   const updateField = (setter, field, value) => setter(prev => ({ ...prev, [field]: value }))
@@ -38,7 +38,7 @@ export default function Step5Experience() {
   // проверка на валидность формы
   const isFormValid = 
     !!userExperience &&
-    (!!specialistsNumber || userLawSubject === 'self-employed') &&
+    (userLawSubject === 'self-employed' ? true : !!specialistsNumber) &&
     userLicense?.status &&
     userCriminalRecord?.status &&
     (userLawSubject === 'legal_entity' || userEducationalDiplom?.status) &&

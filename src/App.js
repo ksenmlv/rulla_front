@@ -28,14 +28,14 @@ const Main = lazy(() => import('./pages/Main/Main'));
 const Enter = lazy(() => import('./pages/Enter/Enter'));
 const ShortStep1Phone = lazy(() => import('./pages/Registration/ShortRegistration/steps/ShortStep1Phone'));
 const ShortStep2Name = lazy(() => import('./pages/Registration/ShortRegistration/steps/ShortStep2Name'));
-const Step1Phone = lazy(() => import('./pages/Registration/FullRegistration/steps/Step1Phone'));
-const Step1_2Branch = lazy(() => import('./pages/Registration/FullRegistration/steps/Step1_2Branch'));
-const Step2Activity = lazy(() => import('./pages/Registration/FullRegistration/steps/Step2Activity'));
-const Step3FullName = lazy(() => import('./pages/Registration/FullRegistration/steps/Step3FullName'));
-const Step4Passport = lazy(() => import('./pages/Registration/FullRegistration/steps/Step4Passport'));
-const Step5Experience = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Experience'));
-const Step6Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Services'));
-const Step7Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step7Contacts'));
+const Step0Phone = lazy(() => import('./pages/Registration/FullRegistration/steps/Step0Phone'));
+const Step0_1Branch = lazy(() => import('./pages/Registration/FullRegistration/steps/Step0_1Branch'));
+const Step1Activity = lazy(() => import('./pages/Registration/FullRegistration/steps/Step1Activity'));
+const Step2FullName = lazy(() => import('./pages/Registration/FullRegistration/steps/Step2FullName'));
+const Step3Passport = lazy(() => import('./pages/Registration/FullRegistration/steps/Step3Passport'));
+const Step4Experience = lazy(() => import('./pages/Registration/FullRegistration/steps/Step4Experience'));
+const Step5Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Services'));
+const Step6Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Contacts'));
 
 function App() {
   return (
@@ -49,14 +49,14 @@ function App() {
             <Route path="/enter" element={<Enter />} />
             <Route path="/simplified_registration_step1" element={<ShortStep1Phone />} />
             <Route path="/simplified_registration_step2" element={<ShortStep2Name />} />
-            <Route path="/full_registration_step1" element={<Step1Phone />} />
-            <Route path="/full_registration_step1_2" element={<Step1_2Branch/>} />
-            <Route path="/full_registration_step2" element={<Step2Activity />} />
-            <Route path="/full_registration_step3" element={<Step3FullName />} />
-            <Route path="/full_registration_step4" element={<Step4Passport />} />
-            <Route path="/full_registration_step5" element={<Step5Experience />} /> 
-            <Route path="/full_registration_step6" element={<Step6Services />} />
-            <Route path="/full_registration_step7" element={<Step7Contacts />} /> 
+            <Route path="/full_registration_step0" element={<Step0Phone />} />
+            <Route path="/full_registration_step0_1" element={<Step0_1Branch/>} />
+            <Route path="/full_registration_step1" element={<Step1Activity />} />
+            <Route path="/full_registration_step2" element={<Step2FullName />} />
+            <Route path="/full_registration_step3" element={<Step3Passport />} />
+            <Route path="/full_registration_step4" element={<Step4Experience />} /> 
+            <Route path="/full_registration_step5" element={<Step5Services />} />
+            <Route path="/full_registration_step6" element={<Step6Contacts />} /> 
           </Routes>
         </Suspense>
       </AppProvider>

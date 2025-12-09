@@ -19,13 +19,13 @@ export default function ShortStep1Phone() {
   const [isValidPhone, setIsValidPhone] = useState(false)
   const [submitAttempted, setSubmitAttempted] = useState(false)
 
-  // --- шаги (1 — телефон, 2 — код)
+  // шаги (1 — телефон, 2 — код)
   const [step, setStep] = useState(() => {
     const saved = localStorage.getItem('regShortStep')
     return saved ? Number(saved) : 1
   })
 
-  // --- восстановление значений при загрузке
+  // восстановление значений при загрузке
   useEffect(() => {
     const savedPhone = localStorage.getItem('regShortPhone')
     if (savedPhone) {
@@ -40,7 +40,7 @@ export default function ShortStep1Phone() {
     }
   }, [])
 
-  // --- сохранение состояния в storage
+  // сохранение состояния в storage
   useEffect(() => {
     localStorage.setItem('regShortStep', step)
   }, [step])
@@ -57,9 +57,7 @@ export default function ShortStep1Phone() {
 
   const codeArray = Array.isArray(smsCode) ? smsCode : ['', '', '', '']
 
-  // ======================================================================
-  // RESET ALL — как во входе
-  // ======================================================================
+  // сброс всех значений
   const resetAll = () => {
     setPhoneNumber('')
     setSmsCode(['', '', '', ''])
@@ -72,9 +70,7 @@ export default function ShortStep1Phone() {
     localStorage.removeItem('regShortCode')
   }
 
-  // ======================================================================
-  // Ввод телефона
-  // ======================================================================
+  // ввод телефона
   const handlePhoneChange = (value) => {
     setPhoneNumber(value)
 
@@ -84,9 +80,7 @@ export default function ShortStep1Phone() {
 
   const isCodeComplete = codeArray.every((d) => d)
 
-  // ======================================================================
-  // Обработка отправки
-  // ======================================================================
+  // обработка отправки
   const handleSubmit = (e) => {
     e.preventDefault()
 
@@ -115,9 +109,7 @@ export default function ShortStep1Phone() {
     }
   }
 
-  // ======================================================================
-  // Код SMS
-  // ======================================================================
+  // смс код
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
       const newCode = [...codeArray]
@@ -143,21 +135,17 @@ export default function ShortStep1Phone() {
     if (e.key === 'Enter' && isCodeComplete) handleSubmit(e)
   }
 
-  // ======================================================================
-  // Роль
-  // ======================================================================
+
+  // обработчик переключения роли
   const handleRoleChange = (newRole) => {
     setRole(newRole)
     if (newRole === 'executor') {
-      // сброс как в Enter, чтобы не тянуть старый ввод
       resetAll()
-      navigate('/full_registration_step1')
+      navigate('/full_registration_step0')
     }
   }
 
-  // ======================================================================
-  // Назад
-  // ======================================================================
+  // назад
   const handleBack = () => {
     if (step === 2) {
       setSmsCode(['', '', '', ''])
@@ -176,7 +164,6 @@ export default function ShortStep1Phone() {
       <div className='reg-container' style={{marginBottom: '240px'}}>
         <div className='registr-container' style={{ height: '565px' }}>
 
-          {/* Заголовок */}
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
               <img src={arrow} alt='Назад' />
@@ -249,7 +236,7 @@ export default function ShortStep1Phone() {
             </form>
           )}
 
-          {/* Ссылка войти */}
+          {/* ссылка на вход */}
           <div className='register-link'>
             У вас уже есть аккаунт?{' '}
             <Link to='/enter' className='register-here' onClick={resetAll}>

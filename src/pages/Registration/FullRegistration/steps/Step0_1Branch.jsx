@@ -1,14 +1,13 @@
 import '../../Registration.css'
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import icon from '../../../../assets/Main/icon_branch_form.svg'
 
 
-export default function Step1_2Branch() {
+export default function Step0_1Branch() {
   const navigate = useNavigate()
 
   const handleLater = () => {
@@ -18,11 +17,11 @@ export default function Step1_2Branch() {
 
   const handleForward = () => {
     alert('Начало полной регистрации исполнителя')
-    navigate('/full_registration_step2')
+    navigate('/full_registration_step1')
   }
 
   const handleBack = () => {
-    navigate('/full_registration_step1')
+    navigate('/full_registration_step0')
   }
 
   return (

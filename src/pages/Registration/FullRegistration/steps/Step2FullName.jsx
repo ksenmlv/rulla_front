@@ -10,7 +10,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale3.svg'
 
 
-export default function Step3FullName() {
+export default function Step2FullName() {
   const navigate = useNavigate()
   const {
     stepNumber, setStepNumber,
@@ -47,7 +47,7 @@ export default function Step3FullName() {
 
   // обработка обновления данных
   const updateField = (field, value) => setActiveData({ ...getActiveData(), [field]: value })
-  // вместо старого addFiles
+
   const addFiles = (field, newFiles) => {
     setActiveData(prev => ({ ...prev, [field]: newFiles }));
   }
@@ -65,7 +65,7 @@ export default function Step3FullName() {
 
   // ИП по умолчанию
   useEffect(() => {
-    // Если это не юридическое лицо и еще не выбрано ИП/Самозанятый
+    // если не юридическое лицо и еще не выбрано ИП/Самозанятый
     if (userLawSubject !== 'legal_entity' && 
         userLawSubject !== 'individual_entrepreneur' && 
         userLawSubject !== 'self-employed') {
@@ -85,14 +85,14 @@ export default function Step3FullName() {
       const innValid = data.INN?.replace(/\D/g,'').length === 10;
       const ogrnValid = data.OGRN?.replace(/\D/g,'').length === 13;
       const dateValid = data.registrationDate && validateDate(data.registrationDate);
-      const registrationAddressValid = data.registrationAddress?.trim().length >= 5; // Исправлено
+      const registrationAddressValid = data.registrationAddress?.trim().length >= 5;
       
       valid = Boolean(
         organizationNameValid &&
         innValid &&
         ogrnValid &&
         dateValid &&
-        registrationAddressValid && // Исправлено
+        registrationAddressValid && 
         hasFiles('extractEGRUL')
       );
     } else if (userLawSubject === 'individual_entrepreneur') {
@@ -100,14 +100,14 @@ export default function Step3FullName() {
       const ogrnipValid = data.OGRNIP?.replace(/\D/g,'').length === 15;
       const dateValid = data.registrationDate && validateDate(data.registrationDate);
       const fioValid = data.FIO?.trim().length >= 5;
-      const registrationPlaceValid = data.registrationPlace?.trim().length >= 5;
+      const registrationAddressValid = data.registrationAddress?.trim().length >= 5;
       
       valid = Boolean(
         fioValid &&
         innValid &&
         ogrnipValid &&
         dateValid &&
-        registrationPlaceValid &&
+        registrationAddressValid &&
         hasFiles('extractOGRNIP')
       );
     } else if (userLawSubject === 'self-employed') {
@@ -134,7 +134,7 @@ export default function Step3FullName() {
   }
   const handleOGRNChange = e => updateField('OGRN', e.target.value.replace(/\D/g,'').slice(0,13))
   const handleOGRNIPChange = e => updateField('OGRNIP', e.target.value.replace(/\D/g,'').slice(0,15))
-  const handleRegistrationPlaceChange = e => updateField('registrationPlace', e.target.value)
+  const handleRegistrationAddressChange = e => updateField('registrationAddress', e.target.value)
   const handleOrganizationNameChange = e => updateField('organizationName', e.target.value)
   const handleDateChange = value => {
     let digits=value.replace(/\D/g,'').slice(0,6)
@@ -144,16 +144,16 @@ export default function Step3FullName() {
   }
 
   const handleIPSelfSwitch = type => {
-    if(type==='self-employed' && userLawSubject==='individual_entrepreneur') setIndividualEntrepreneurData({ FIO:'', INN:'', OGRNIP:'', registrationDate:'', registrationPlace:'', extractOGRNIP:[] })
+    if(type==='self-employed' && userLawSubject==='individual_entrepreneur') setIndividualEntrepreneurData({ FIO:'', INN:'', OGRNIP:'', registrationDate:'', registrationAddres:'', extractOGRNIP:[] })
     else if(type==='individual_entrepreneur' && userLawSubject==='self-employed') setSelfEmployedData({ FIO:'', INN:'', registrationDate:'', registrationCertificate:[] })
     setUserLawSubject(type)
   }
 
-  const handleBack = () => navigate('/full_registration_step2')
+  const handleBack = () => navigate('/full_registration_step1')
   const handleForward = () => { 
     console.log(userLawSubject, 'ИП', individualEntrepreneurData, 'СЗ', selfEmployedData, 'Физ', legalEntityData)
     setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step4') 
+    navigate('/full_registration_step3') 
   }
 
   const getValue = field => getActiveData()[field]||''
@@ -190,7 +190,7 @@ export default function Step3FullName() {
               <div className='passport-row'><div className='passport-field full-width'><h3>ИНН <span style={{color:'#666', fontSize:'15px'}}>(12 цифр)</span></h3><input value={getValue('INN')} onChange={handleINNChange} placeholder='00 00 000000 00' maxLength={12}/></div></div>
               {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>ОГРНИП <span style={{color:'#666', fontSize:'15px'}}>(15 цифр)</span></h3><input value={getValue('OGRNIP')} onChange={handleOGRNIPChange} placeholder='000000000000000' maxLength={15}/></div></div>}
               <div className='passport-row'><div className='passport-field full-width'><h3>Дата регистрации {dateError&&<span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3><DatePicker value={getValue('registrationDate')} onChange={handleDateChange} placeholder='00.00.00' error={!!dateError}/></div></div>
-              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>Адрес регистрации</h3><input value={getValue('registrationPlace')} onChange={handleRegistrationPlaceChange} placeholder='Укажите адрес регистрации'/></div></div>}
+              {userLawSubject==='individual_entrepreneur'&&<div className='passport-row'><div className='passport-field full-width'><h3>Адрес регистрации</h3><input value={getValue('registrationAddress')} onChange={handleRegistrationAddressChange} placeholder='Укажите адрес регистрации'/></div></div>}
               {userLawSubject==='individual_entrepreneur'&&<div className='passport-field'><h3>Выписка из ЕГРИП</h3><FileUpload onFilesUpload={files=>addFiles('extractOGRNIP',files)} maxFiles/><p>Добавьте скан документа</p></div>}
               {userLawSubject==='self-employed'&&<div className='passport-field'><h3>Справка о постановке на учет (СЗ)</h3><FileUpload onFilesUpload={files=>addFiles('registrationCertificate',files)} maxFiles/><p>Добавьте скан документа</p></div>}
             </>}

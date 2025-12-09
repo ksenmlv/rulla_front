@@ -59,16 +59,19 @@ function Main() {
                 {/* первый блок до разделителя */}
                 <div className='first-block'>
                     <img rel="preload" src={back} alt='background' className='back_on_top' />
+
+                    {/* локация для мобилки */}
+                        { isMobile &&  (   
+                            <div className='location-wrapper'>
+                                <img src={icon_location} alt='location' className='location-icon'/>
+                                <TownSelect className='town-select'/>
+                            </div>
+                        )}
+
                     <h1>Найдите надежных мастеров для ремонта за 5 минут!</h1>
                     <p>Маркетплейс строительных услуг от проверенных исполнителей</p>
 
-                    {/* локация для мобилки */}
-                    { isMobile &&             
-                        <div className='location-wrapper  d-md-flex align-items-center'>
-                            <img src={icon_location} alt='location' className='location-icon'/>
-                            <TownSelect className='town-select'/>
-                        </div>
-                    }
+
 
                     <button className='icon_conn'>
                         <img src={icon_connection} alt='connection' />
@@ -80,7 +83,7 @@ function Main() {
                         <button className='clear-button' style={{ display: 'none' }}>×</button>
                     </div>
 
-                    <Link to='/full_registration_step1'><button className='btn-search'>Найти</button></Link>
+                    <Link to='/full_registration_step0'><button className='btn-search'>Найти</button></Link>
                 </div>
 
                 <img src={separator} alt='separator' className='separator'/>

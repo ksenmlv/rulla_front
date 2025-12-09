@@ -56,7 +56,7 @@ const FileUpload = ({ onFilesUpload, maxFiles = 1 }) => {
       >
         {files.length === 0 ? (
           <div className="file-upload-content">
-            <img src={file_loader} alt="File loader" className="file-upload-icon" />
+            <img rel='preload' src={file_loader} alt="File loader" className="file-upload-icon" />
             <span className="file-upload-text">Загрузить файл</span>
           </div>
         ) : (

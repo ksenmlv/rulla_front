@@ -12,7 +12,7 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale4.svg'
 
 
-export default function Step4Passport() {
+export default function Step3Passport() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, passportData, setPassportData, directorData, setDirectorData, userLawSubject } = useAppContext()
 
@@ -21,8 +21,7 @@ export default function Step4Passport() {
   const [dateError, setDateError] = useState('')
 
   const seriesRef = useRef(null)
-  const countryRef = useRef(null)
-  const numberRef = useRef(null)
+  const otherCountryRef  = useRef(null)
   const directorFIORef = useRef(null)
 
   const isRussian = passportData.citizenship === 'Российская федерация'
@@ -35,22 +34,9 @@ export default function Step4Passport() {
   useEffect(() => {
     setTimeout(() => {
       if (isRussian) seriesRef.current?.focus()
-      else if (isNotRussian) countryRef.current?.focus()
+      else if (isNotRussian) otherCountryRef .current?.focus()
     }, 100)
   }, [passportData.citizenship, isRussian])
-
-  // загрузка данных из localStorage при первом рендере
-  useEffect(() => {
-    const savedPassport = localStorage.getItem("passportData")
-    if (savedPassport) setPassportData(JSON.parse(savedPassport))
-
-    const savedDirector = localStorage.getItem("directorData")
-    if (savedDirector) setDirectorData(JSON.parse(savedDirector))
-  }, [])
-
-  // запись в localStorage при каждом изменении 
-  useEffect(() => localStorage.setItem("passportData", JSON.stringify(passportData)), [passportData])
-  useEffect(() => localStorage.setItem("directorData", JSON.stringify(directorData)), [directorData])
 
   // обновление данных паспорта
   const updatePassport = (field, value) => {
@@ -145,17 +131,12 @@ export default function Step4Passport() {
 
   // обработчик выбора страны
   const handleCountryChange = (country) => {
-    setPassportData({
+    setPassportData(prev => ({
+      ...prev,
       citizenship: country,
-      otherCountry: '',
-      cisCountry: '',
-      series: '',
-      number: '',
-      issuedBy: '',
-      issueDate: '',
-      scanPages: [],
-      scanRegistration: []
-    })
+      otherCountry: country === 'Другое' ? prev.otherCountry : '',
+      cisCountry: country === 'Страны СНГ' ? prev.cisCountry : '',
+    }))
   }
 
   const handleSeriesChange = (e) => {
@@ -182,11 +163,11 @@ export default function Step4Passport() {
     updatePassport('issuedBy', value);
   }
 
-  const handleBack = () => navigate('/full_registration_step3')
+  const handleBack = () => navigate('/full_registration_step2')
   const handleForward = () => {
     console.log('Паспортные данные:', passportData, 'Данные директора', directorData)
-    setStepNumber(stepNumber +1 )
-    navigate('/full_registration_step5')
+    setStepNumber(stepNumber + 1)
+    navigate('/full_registration_step4')
   }
 
   return (
@@ -230,7 +211,7 @@ export default function Step4Passport() {
               {/* инпут для названия страны (Другое) */}
               {passportData.citizenship === 'Другое' && (
                 <textarea 
-                  ref={countryRef} 
+                  ref={otherCountryRef } 
                   placeholder='Введите название страны' 
                   value={passportData.otherCountry||''} 
                   onChange={(e)=>updatePassport('otherCountry', e.target.value)} 
@@ -272,7 +253,7 @@ export default function Step4Passport() {
                 <div className='passport-row'>
                   <div className='passport-field full-width'>
                     <h3 style={{ marginTop: passportData.citizenship === 'Страны СНГ' ? '-25px' : '0px' }}>Номер документа</h3>
-                    <input ref={numberRef} value={passportData.number||''} placeholder='Введите номер документа' maxLength={20} onChange={handleNumberChange}/>
+                    <input value={passportData.number||''} placeholder='Введите номер документа' maxLength={20} onChange={handleNumberChange}/>
                   </div>
                   <div className='passport-field full-width'>
                     <h3>Кем выдан</h3>
@@ -304,7 +285,7 @@ export default function Step4Passport() {
 
 
           {/* контакты директора для физ лиц */}
-          {userLawSubject == 'legal_entity' && (
+          {userLawSubject === 'legal_entity' && (
             <div className='passport-row'>
               <div className='passport-field full-width' style={{marginBottom: '-50px'}}>
                   <h3>Номер телефона руководителя</h3>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import logo from '../../assets/Header/logo.png'
 import icon_location from '../../assets/Header/icon_location.png'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -12,6 +12,14 @@ import { Link, useNavigate } from 'react-router-dom'
  function Header({ hideElements = false }) {
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  // Отслеживаем изменение размера окна
+  useEffect (() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
   
   // меню для мобилки
   const toggleMenu = () => {
@@ -42,10 +50,12 @@ import { Link, useNavigate } from 'react-router-dom'
           <div className='header-right d-flex align-items-center'>
 
             {/* локация + кнопка войти */}
-            <div className='location-wrapper d-md-flex align-items-center'>
-                <img src={icon_location} alt='location' className='location-icon'/>
-                <TownSelect className='town-select'/>
-            </div>
+            { !isMobile && (
+              <div className='location-wrapper d-md-flex align-items-center'>
+                  <img src={icon_location} alt='location' className='location-icon'/>
+                  <TownSelect className='town-select'/>
+              </div>
+            )}
 
             <button className='btn-orange ms-5' onClick={handleEnterClick}>Войти</button>
 

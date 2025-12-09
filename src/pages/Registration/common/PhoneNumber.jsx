@@ -8,7 +8,7 @@ import '../Registration.css'
 
 export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
   const navigate = useNavigate()
-  const { phoneNumber, setPhoneNumber, stepNumber, userLawSubject } = useAppContext()
+  const { phoneNumber } = useAppContext()
   const [isValidPhone, setIsValidPhone] = useState(false)
   const inputRef = useRef()
 

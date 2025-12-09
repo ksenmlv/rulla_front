@@ -13,14 +13,16 @@ export const AppProvider = ({ children }) => {
   const [phoneNumber, setPhoneNumber] = useState('')
   const [smsCode, setSmsCode] = useState('')
   const [userName, setUserName] = useState('')
-
-  // 2 этап
+  const [contactType, setContactType] = useState('')                  // phone/email для физ лиц
+  const [temporaryContact, setTemporaryContact] = useState()          // временный контакт для проверки
+ 
+  // 1 этап
   const [userRegion, setUserRegion] = useState('')
   const [userActivity, setUserActivity] = useState('')
   const [travelReadiness, setTravelReadiness] = useState(false)
 
-  // 3 этап регистрации
-  const [userLawSubject, setUserLawSubject] = useState('individual_entrepreneur')         // legal_entity || individual_entrepreneur || self_employed
+  // 2 этап регистрации
+  const [userLawSubject, setUserLawSubject] = useState('individual')         // legal_entity || individual || self_employed
   const [individualEntrepreneurData, setIndividualEntrepreneurData] = useState({
       FIO: '',
       INN: '', 
@@ -43,7 +45,7 @@ export const AppProvider = ({ children }) => {
     extractEGRUL: []
   })
 
-  // 4 этап регистрации
+  // 3 этап регистрации
   const [passportData, setPassportData] = useState({
     citizenship: 'Российская федерация', 
     otherCountry: '', // если citizenship === 'other' или 'chf'
@@ -56,7 +58,7 @@ export const AppProvider = ({ children }) => {
   })
   const [directorData, setDirectorData] = useState({FIO: '', phone: ''})
 
-  // 5 этап регистрации
+  // 4 этап регистрации
   const [userExperience, setUserExperience] = useState()
   const [specialistsNumber, setSpecialistsNumber] = useState('')
   const [userLicense, setUserLicense] = useState({ status: '', files: [] });
@@ -64,14 +66,15 @@ export const AppProvider = ({ children }) => {
   const [userCriminalRecord, setUserCriminalRecord] = useState({ status: '', text: '' });
   const [contractWork, setContractWork] = useState(false)
 
-  // 6 этап регистрации
+  // 5 этап регистрации
   const [userService, setUserService] = useState([{ name: '', price: '', unit: '' }])
   const [otherTeamsInteraction, setOtherTeamsInteraction] = useState({ status: '', text: '' })
   const [userProjects, setUserProjects] = useState([{ files: [], text: '' }])
   const [reviews, setReviews] = useState({ files: [] })
   const [certificates, setCertificates] = useState({ files: [] })
 
-  // 7 этап регистрации
+
+  // 6 этап регистрации
   const [userPhone, setUserPhone] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [userSocialMedia, setUserSocialMedia] = useState({
@@ -97,6 +100,10 @@ export const AppProvider = ({ children }) => {
     setSmsCode,
     userName, 
     setUserName,
+    contactType, 
+    setContactType,
+    temporaryContact, 
+    setTemporaryContact,
     userRegion, 
     setUserRegion,
     stepNumber, 
@@ -148,12 +155,13 @@ export const AppProvider = ({ children }) => {
     userWebsite, 
     setUserWebsite,
 
-
   }), [
     selectedCity,
     phoneNumber,
     smsCode,
     userName,
+    contactType,
+    temporaryContact,
     userRegion,
     stepNumber,
     userActivity,
@@ -179,9 +187,10 @@ export const AppProvider = ({ children }) => {
     userEmail, 
     userSocialMedia, 
     userWebsite, 
-
-
   ])
+
+
+  
 
   return (
     <AppContext.Provider value={value}>
