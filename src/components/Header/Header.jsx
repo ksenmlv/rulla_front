@@ -14,7 +14,7 @@ import { Link, useNavigate } from 'react-router-dom'
   const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
-  // Отслеживаем изменение размера окна
+  // отслеживаем изменение размера окна
   useEffect (() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
     window.addEventListener('resize', handleResize)

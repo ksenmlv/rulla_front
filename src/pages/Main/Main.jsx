@@ -28,6 +28,7 @@ import gear2 from '../../assets/Main/gear2.svg'
 import gear3 from '../../assets/Main/gear3.svg'
 import hammer2 from '../../assets/Main/hammer2.svg'
 import stages from '../../assets/Main/line_of_stages.svg'
+import stages_mob from '../../assets/Main/line_stages_mob.svg'
 import stage1 from '../../assets/Main/stage1.svg'
 import stage2 from '../../assets/Main/stage2.svg'
 import stage3 from '../../assets/Main/stage3.svg'
@@ -119,7 +120,7 @@ function Main() {
                 {/* блок "быстро бесплатно безопасно" */}
                 <div className='fast-free-safe'>
                     <div className='fast'>
-                        <img src={rect_blue} alt='rectangle' width={530}/>
+                        { !isMobile && (<img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={gear1} alt='gear wheel' className='fast__img'/>
                         <div className='fast__text'>
                             <h3>Быстро</h3>
@@ -128,7 +129,7 @@ function Main() {
                     </div>
 
                     <div className='free'>
-                        <img src={rect_blue} alt='rectangle' width={530}/>
+                        { !isMobile && (<img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={hammer1} alt='hammer' className='free__img'/>
                         <div className='free__text'>
                             <h3>Бесплатно</h3>
@@ -137,7 +138,7 @@ function Main() {
                     </div>
 
                     <div className='safe'>
-                        <img src={rect_blue} alt='rectangle' width={530}/>
+                        { !isMobile && ( <img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={wrench1} alt='wrench' className='safe__img'/>
                         <div className='safet__text'>
                             <h3>Безопасно</h3>
@@ -162,18 +163,18 @@ function Main() {
                     <div className='blocks'>
                         <div className='block'>
                             <h3>Дизайн интерьеров</h3>
-                            <img src={block_armchair} alt='armchair' className='img-block' />
+                            <img src={block_armchair} alt='armchair' className='img-block armchair' />
                         </div>
                         
                         <div className='block'>
                             <h3>Сантехника</h3>
-                            <img src={block_tap} alt='tap' className='img-block' width={217}/>
+                            <img src={block_tap} alt='tap' className='img-block tap' width={217}/>
                         </div>
                         
                         <div className='block'>
                             <h3>Отделка</h3>
                             <p>Стены/потолки/полы</p>
-                            <img src={block_roller} alt='roller' className='img-block' />
+                            <img src={block_roller} alt='roller' className='img-block roller' />
                         </div>
                         
                         <div className='block'>
@@ -183,17 +184,17 @@ function Main() {
 
                         <div className='block'>
                             <h3>Ремонт коммерческих помещений</h3>
-                            <img src={block_table} alt='table' style={{ bottom:'7px' }} className='img-block' />
+                            <img src={block_table} alt='table' style={{ bottom:'7px' }} className='img-block table' />
                         </div>
                         
                         <div className='block'>
                             <h3>Плиточные работы</h3>
-                            <img src={block_tile} alt='tile' className='img-block' width={411}/>
+                            <img src={block_tile} alt='tile' className='img-block tile' width={411}/>
                         </div>
                         
                         <div className='block'>
                             <h3 style={{ width:'277px' }}>Сборка и ремонт мебели</h3>
-                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block' width={283}/>
+                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block sofa' width={283}/>
                         </div>
                         
                         <div className='block dark'>
@@ -209,31 +210,34 @@ function Main() {
                 <div className='work-stages'>
                     <h1>Как это работает?</h1>
 
-                    <div>
-                        <img src={stages} alt='line of stages' className='line-of-stages' />
-                        <div className='stages-numbers'>
-                            <img src={stage1} alt='stage 1' className='stage1' />
-                            <img src={stage2} alt='stage 2' className='stage2' style={{marginLeft:'9%'}} />
-                            <img src={stage3} alt='stage 3' className='stage3' style={{marginLeft:'8%'}}/>
-                            <img src={stage_final} alt='stage final' className='stage-final' />
-                        </div>
+                    <div className='stages-wrapper'>
 
+                        <div className='stages-vertical'>
+                            <img src={ isMobile ? stages_mob : stages} alt='line of stages' className='line-of-stages' />
+                            <div className='stages-numbers'>
+                                <img src={stage1} alt='stage 1' className='stage1' />
+                                <img src={stage2} alt='stage 2' className='stage2' style={{marginLeft:'9%'}} />
+                                <img src={stage3} alt='stage 3' className='stage3' style={{marginLeft:'8%'}}/>
+                                { !isMobile && (<img src={stage_final} alt='stage final' className='stage-final' /> )}
+                            </div>
+                        </div>
+                    
+                        <div className='stages-text'>
+                            <div style={ !isMobile ? {width:'435px', marginLeft:'5px'} : {width: '240px', marginBottom: '25px'} }>
+                                <h3>Оставьте заявку</h3>
+                                <p>Укажите вид работ, сроки и все детали, чтобы исполнители знали, что нужно делать</p>
+                            </div>
+                            <div style={ !isMobile ? {width:'418px', marginLeft:'15px'} : {width: '240px', marginBottom: '28px'} }>
+                                <h3>Получите предложения</h3>
+                                <p style={ !isMobile ? {width:'409px'} : {} }>Мастера будут оставлять отклики, которые вы увидите в разделе «Мои заказы»</p>
+                            </div>
+                            <div style={ !isMobile ? {width:'498px', marginLeft:'13px'} : {width: '240px'}}>
+                                <h3>Выберите лучшего</h3>
+                                <p>Сравните предложенные варианты и свяжитесь с понравившимся мастером напрямую, чтобы обсудить подробности</p>
+                            </div>
+                        </div>
                     </div>
-                
-                    <div className='stages-text'>
-                        <div style={{ width:'435px', marginLeft:'5px'}}>
-                            <h3>Оставьте заявку</h3>
-                            <p>Укажите вид работ, сроки и все детали, чтобы исполнители знали, что нужно делать</p>
-                        </div>
-                        <div style={{width:'418px', marginLeft:'15px'}}>
-                            <h3>Получите предложения</h3>
-                            <p style={{width:'409px'}}>Мастера будут оставлять отклики, которые вы увидите в разделе «Мои заказы»</p>
-                        </div>
-                        <div style={{width:'498px', marginLeft:'13px'}}>
-                            <h3>Выберите лучшего</h3>
-                            <p>Сравните предложенные варианты и свяжитесь с понравившимся мастером напрямую, чтобы обсудить подробности</p>
-                        </div>
-                    </div>
+                    
                 </div>
 
 

@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../../contexts/AppContext'
 import  './Footer.css'
 import separator from '../../assets/Main/bw_separator2.svg'
+import separator_mob from'../../assets/Main/separator_mob.svg'
 import logo from '../../assets/Main/logo_footer.svg'
 import icon_location from '../../assets/Main/icon_location.svg'
 import icon_vk from '../../assets/Main/icon_vk.svg'
@@ -12,10 +13,19 @@ import gear4 from '../../assets/Main/gear4.svg'
 
 function Footer({ className }) {
   const { selectedCity } = useAppContext()
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  // отслеживаем изменение размера окна
+  useEffect (() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
 
   return (
     <>
-        <img src={separator} alt='separator' className='separator2' />
+        <img src={!isMobile ? separator : separator_mob}  alt='separator' className='separator2' />
 
         <div className={`footer ${className || ''}`}>
             <div className='black-block'>
