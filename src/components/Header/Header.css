@@ -5,7 +5,7 @@
     right: 0;
     z-index: 1000;
     background: white;
-    padding: 25px 110px;
+    padding: 20px 110px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -20,13 +20,15 @@
 .header-logo {
     margin-right: auto;
     cursor: pointer;
+    width: 119px;
+    height: 38px;
 }
 
 .header-items {
     display: flex;
     margin-left: 141px;
     gap: 70px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     color: #151515;
 }
@@ -40,23 +42,23 @@
 .location-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0;
 }
 
 .location-icon {
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
     object-fit: contain;
 }
 
 .btn-orange {
-    width: 280px;
+    width: 252px;
     height: 61px;
     background-color: #DE5A2B;
     color: white;
     border: none;
     border-radius: 7px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     white-space: nowrap;
 }
@@ -66,7 +68,7 @@
     display: none;
     background: none;
     border: none;
-    font-size: 24px;
+    font-size: 20px;
     cursor: pointer;
 }
 

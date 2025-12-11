@@ -15,7 +15,7 @@
 
 .first-block {
     position: relative;
-    margin-top: 113px;
+    margin-top: 105px;
     width: 100%;
     overflow: hidden;
 
@@ -65,7 +65,7 @@
     height: 84px;
     border: 2px solid #CA5931;
     border-radius: 10px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
     padding-left: 40px;
     padding-right: 60px;
@@ -857,7 +857,7 @@
             width: 90px;
         }
         .tap {
-            width: 127px;
+            width: 117px;
         }
         .roller {
             width: 150px;

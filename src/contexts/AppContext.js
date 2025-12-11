@@ -84,9 +84,12 @@ export const AppProvider = ({ children }) => {
   })
   const [userWebsite, setUserWebsite] = useState('')
 
-
-
   const [stepNumber, setStepNumber] = useState(1)
+
+
+
+  // главная страница исполнителя
+  
 
 
 

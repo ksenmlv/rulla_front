@@ -6,7 +6,7 @@
   width: auto;
   min-width: 150px;
   max-width: 400px;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 500;
   cursor: pointer;
 }
@@ -30,8 +30,8 @@
 
 /* Стрелка */
 .town-selector-arrow span {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border: solid black;
   border-width: 0 2px 2px 0;
   padding: 3px;
@@ -164,7 +164,7 @@
 }
 
 .TownSelector__content .simplebar-scrollbar:before {
-  background: #DE5A2B !important;
+  background: #ECA288 !important;
   opacity: 1 !important;
   border-radius: 4px !important;
   left: 1px !important;

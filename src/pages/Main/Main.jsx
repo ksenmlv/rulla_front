@@ -84,7 +84,7 @@ function Main() {
                         <button className='clear-button' style={{ display: 'none' }}>×</button>
                     </div>
 
-                    <Link to='/full_registration_step0'><button className='btn-search'>Найти</button></Link>
+                    <Link to='/main_executor'><button className='btn-search'>Найти</button></Link>
                 </div>
 
                 <img src={separator} alt='separator' className='separator'/>

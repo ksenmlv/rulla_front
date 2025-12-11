@@ -9,7 +9,13 @@ import { Link, useNavigate } from 'react-router-dom'
 
 
 
- function Header({ hideElements = false }) {
+ function Header({
+    hideElements = false,
+    menuItems,
+    rightContent,
+    showLocation = true
+  }) {
+
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)    // для мобильной версии
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -20,15 +26,25 @@ import { Link, useNavigate } from 'react-router-dom'
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [])
-  
-  // меню для мобилки
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
 
-  const handleEnterClick = () => {
-    navigate('/enter')
-  }
+  // дефолтные значения
+  const defaultMenuItems = [
+    { label: 'О платформе', to: '/about' },
+    { label: 'Каталог исполнителей', to: '/executors_catalog' },
+  ]
+  
+  const defaultRightContent = (
+    <button className="btn-orange" onClick={() => navigate('/enter')}>
+      Войти
+    </button>
+  )
+
+  const items = menuItems || defaultMenuItems
+  const contentOnRight = rightContent || defaultRightContent
+
+
+  // меню для мобилки
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
 
   return (
@@ -40,8 +56,17 @@ import { Link, useNavigate } from 'react-router-dom'
 
             {/* декстопные пункты меню */}
             <div className={`header-items ${isMenuOpen ? 'mobile-open' : ''}`}>
-                <a className='text-decoration-none text-dark'>О платформе</a>
-                <a className='text-decoration-none text-dark'>Каталог исполнителей</a>
+                {items.map((item, i) => (
+                  item.to ? (
+                    <Link key={i} to={item.to} className="text-decoration-none text-dark ">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <a key={i} className="text-decoration-none text-dark" onClick={item.onClick} >
+                      {item.label}
+                    </a>
+                  )
+                ))}
             </div>
         </div>
 
@@ -49,15 +74,16 @@ import { Link, useNavigate } from 'react-router-dom'
         {!hideElements && (
           <div className='header-right d-flex align-items-center'>
 
-            {/* локация + кнопка войти */}
-            { !isMobile && (
-              <div className='location-wrapper d-md-flex align-items-center'>
+            {/* локация */}
+            { showLocation && !isMobile && (
+              <div className='location-wrapper d-md-flex align-items-center' style={{marginRight:'30px'}}>
                   <img src={icon_location} alt='location' className='location-icon'/>
                   <TownSelect className='town-select'/>
               </div>
             )}
 
-            <button className='btn-orange ms-5' onClick={handleEnterClick}>Войти</button>
+            {/* кнопка войти/кнопка юзера */}
+            {contentOnRight}
 
             {/* мобильная кнопка */}
             <button className='mobile-menu-btn' onClick={toggleMenu}>☰</button>

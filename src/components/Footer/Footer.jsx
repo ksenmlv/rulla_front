@@ -54,18 +54,22 @@ function Footer({ className }) {
 
                     {/* 2ая колонка */}
                     <div className='second-column'>
-                        <p>Заказчику</p>
-                        <button className='btn-white'>Оставить заявку</button>
-                        <p style={{marginTop:'59px'}}>Исполнителю</p>
-                        <button className='btn-white'>Найти заказы</button>
-                        <button className='btn-black'>Тарифы</button>
+                        <div>
+                            <p>Заказчику</p>
+                            <button className='btn-white'>Оставить заявку</button>
+                        </div>
+                        <div>
+                            <p style={ !isMobile ? {marginTop:'59px'} : {}}>Исполнителю</p>
+                            <button className='btn-white'>Найти заказы</button>
+                            <button className='btn-black'>Тарифы</button>
+                        </div>
                     </div>
 
                     {/* 3ья колонка */}
                     <div className='third-column'>
                         <p>Остались вопросы?</p>
                         <button className='btn-support'>Написать в чат поддержки</button>
-                        <div className='d-flex flex-row'>
+                        <div className='group-buttons d-flex flex-row'>
                             <button className='btn-soc-network'><img src={icon_vk} alt='icon vk'/></button>
                             <button className='btn-soc-network'><img src={icon_inst} alt='icon instagram'/></button>
                             <button className='btn-soc-network'><img src={icon_tg} alt='icon telegram'/></button>

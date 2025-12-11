@@ -36,6 +36,7 @@ const Step3Passport = lazy(() => import('./pages/Registration/FullRegistration/s
 const Step4Experience = lazy(() => import('./pages/Registration/FullRegistration/steps/Step4Experience'));
 const Step5Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Services'));
 const Step6Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Contacts'));
+const MainExecutor = lazy(() => import('./pages/Main/MainExecutor'));
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
             <Route path="/full_registration_step4" element={<Step4Experience />} /> 
             <Route path="/full_registration_step5" element={<Step5Services />} />
             <Route path="/full_registration_step6" element={<Step6Contacts />} /> 
+            <Route path="/main_executor" element={<MainExecutor />} />
           </Routes>
         </Suspense>
       </AppProvider>

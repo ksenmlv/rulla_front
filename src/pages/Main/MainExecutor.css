@@ -1,0 +1,83 @@
+.btn_user {
+    border: none;
+    background: transparent;
+}
+
+.whole-block {
+    h2 {
+        font-size: 48px;
+        font-weight: 700;
+
+    }
+}
+
+
+.task-card-modern {
+  background: #fff;
+  border: 1px solid #919191;
+  border-radius: 10px;
+  padding: 35px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.task-card-modern:hover {
+  transform: translateY(-6px);
+}
+
+
+.task-title-modern {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 5px 0;
+  flex: 1;
+}
+
+.task-category-modern {
+  color: #656565;
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.task-details {
+  flex-grow: 1;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  margin-bottom: 10px;
+  font-size: 24px;
+  font-weight: 500;
+  color: #656565;
+  display: flex;
+  align-items: center;
+}
+
+
+
+.btn-detail {
+  width: 40%;
+  background: #fff;
+  color: #02283D;
+  border: none;
+  font-size: 24px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.3s;
+}
+
+.btn-detail svg {
+  transition: transform 0.3s;
+}
+
+.btn-detail:hover svg {
+  transform: translateX(4px);
+}

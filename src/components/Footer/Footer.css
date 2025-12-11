@@ -92,7 +92,7 @@
         width: 275px;
         height: 56px;
         border: 2px solid #ffffff;
-        background-color: #151515;
+        background-color: #1A1F22;
         border-radius: 5px;
         font-size: 24px;
         font-weight: 700;
@@ -122,7 +122,7 @@
         border-radius: 5px;
         font-size: 24px;
         font-weight: 700;
-        color: #151515;
+        color: #000;
         margin-top: 20px;
     }
 
@@ -203,7 +203,16 @@
 
     .second-column {
         flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
         margin: 20px 0 0 0;
+
+         > div {
+            width: 50%; /* каждая колонка занимает половину */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
 
         p {
             font-size: 20px;
@@ -212,61 +221,61 @@
         }
 
         .btn-white {
-            width: 150px;
+            width: 85%;
             height: 46px;
             border-radius: 7px;
             font-size: 16px;
             font-weight: 600;
-            color: #000;
-            margin-top: 40px;
+            margin-top: 5px;
+            line-height: 1;
         }
 
         .btn-black {
-            width: 275px;
-            height: 56px;
-            border: 2px solid #ffffff;
-            background-color: #151515;
+            width: 85%;
+            height: 46px;
             border-radius: 5px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-top: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
         }
     }
 
     .third-column {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-        margin-left: 175px;
+        margin-left: 0;
 
         p {
-            font-size: 32px;
-            font-weight: 600;
-            color: #ffffff;
-            text-align: left;
-            margin-bottom: 0;
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 30px;
         }
 
         .btn-support {
-            width: 397px;
-            height: 56px;
-            border: none;
-            border-radius: 5px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #151515;
-            margin-top: 20px;
+            width: 70%;
+            height: 46px;
+            border-radius: 7px;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .group-buttons {
+            display: flex;
+            justify-content: right;
+            margin-right: 10px;
         }
 
         .btn-soc-network {
             background: #ffffff;
-            width: 63px;
-            height: 63px;
-            border: none;
-            border-radius: 5px;
+            width: 44px;
+            height: 44px;
+            border-radius: 7px;
             margin-right: 12px;
-            margin-top: 69px;
+            margin-top: 15px;
+            
+
+            img {
+                width: 33px;
+            }
         }
     }
 
