@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useAppContext } from '../../contexts/AppContext'
 import  './Footer.css'
-import separator from '../../assets/Main/bw_separator2.svg'
+import separator from '../../assets/Main/blue_separator.svg'
 import separator_mob from'../../assets/Main/separator_mob.svg'
 import logo from '../../assets/Main/logo_footer.svg'
 import icon_location from '../../assets/Main/icon_location.svg'
-import icon_vk from '../../assets/Main/icon_vk.svg'
-import icon_inst from '../../assets/Main/icon_inst.svg'
-import icon_tg from '../../assets/Main/icon_tg.svg'
+import icon_vk from '../../assets/Main/icon_vk_blue.svg'
+import icon_inst from '../../assets/Main/icon_inst_blue.svg'
+import icon_tg from '../../assets/Main/icon_tg_blue.svg'
 import gear4 from '../../assets/Main/gear4.svg'
 
 
@@ -32,7 +32,7 @@ function Footer({ className }) {
 
                 {/* иконка и гео */}
                 <div className='black-block__title'>
-                    <img src={logo} alt='logo' />
+                    <img src={logo} alt='logo' width={206}/>
                     <p><img src={icon_location} alt='icon of location'/>
                         {selectedCity ? selectedCity.label.split(',')[0].trim() : 'Москва'}
                     </p>
@@ -59,9 +59,11 @@ function Footer({ className }) {
                             <button className='btn-white'>Оставить заявку</button>
                         </div>
                         <div>
-                            <p style={ !isMobile ? {marginTop:'59px'} : {}}>Исполнителю</p>
-                            <button className='btn-white'>Найти заказы</button>
-                            <button className='btn-black'>Тарифы</button>
+                            <p style={ !isMobile ? {marginTop:'70px'} : {}}>Исполнителю</p>
+                            <div style={{display: 'flex', flexDirection: 'column'}}>
+                                <button className='btn-white'>Найти заказы</button>
+                                <button className='btn-blue'>Тарифы</button>
+                            </div>
                         </div>
                     </div>
 

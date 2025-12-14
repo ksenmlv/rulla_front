@@ -1,7 +1,7 @@
 .footer {
     font-family: 'Wix Madefor Display', sans-serif;
     position: relative;
-    height: 762px;
+    height: 683px;
     width: 100%;
     display: flex;
     overflow: hidden;
@@ -22,7 +22,7 @@
 .black-block {
     height: 100%;
     width: 100%;
-    background: #1A1F22;
+    background: #0F242F;
     padding-left: 70px;
     padding-top: 79px;
 }
@@ -43,33 +43,33 @@
 }
 
 .three-columns {
-    margin-top: 65px;
+    margin-top: 40px;
 }
 
 .first-column {
     display: flex;
     flex-direction: column;
     font-family: 'Wix Madefor Text', sans-serif;
-    font-size: 32px;
+    font-size: 24px;
+    font-weight: 600;
     color: #919191;
     text-align: left;
-    line-height: 1.7;
-
+    line-height: 2.3;
 
     p {
         font-family: 'Wix Madefor Display', sans-serif;
         font-weight: 600;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 }
 
 .second-column {
     display: flex;
     flex-direction: column;
-    margin-left: 114px;
+    margin-left: 250px;
 
     p {
-        font-size: 32px;
+        font-size: 24px;
         font-weight: 600;
         color: #ffffff;
         text-align: left;
@@ -77,25 +77,25 @@
     }
 
     .btn-white {
-        width: 275px;
-        height: 56px;
+        width: 247px;
+        height: 49px;
         border: none;
-        border-radius: 5px;
-        font-size: 24px;
-        font-weight: 700;
-        color: #151515;
+        border-radius: 7px;
+        font-size: 20px;
+        font-weight: 500;
+        color: #000000;
         background: #ffffff;
-        margin-top: 20px;
+        margin-top: 15px;
     }
 
-    .btn-black {
-        width: 275px;
-        height: 56px;
+    .btn-blue {
+        width: 247px;
+        height: 49px;
         border: 2px solid #ffffff;
-        background-color: #1A1F22;
-        border-radius: 5px;
-        font-size: 24px;
-        font-weight: 700;
+        background-color: #0F242F;
+        border-radius: 7px;
+        font-size: 20px;
+        font-weight: 500;
         color: #ffffff;
         margin-top: 14px;
     }
@@ -105,10 +105,10 @@
     display: flex;
     flex-direction: column;
     text-align: left;
-    margin-left: 175px;
+    margin-left: 200px;
 
     p {
-        font-size: 32px;
+        font-size: 24px;
         font-weight: 600;
         color: #ffffff;
         text-align: left;
@@ -116,22 +116,22 @@
     }
 
     .btn-support {
-        width: 397px;
-        height: 56px;
+        width: 345px;
+        height: 49px;
         border: none;
-        border-radius: 5px;
-        font-size: 24px;
-        font-weight: 700;
+        border-radius: 7px;
+        font-size: 20px;
+        font-weight: 500;
         color: #000;
         margin-top: 20px;
     }
 
     .btn-soc-network {
         background: #ffffff;
-        width: 63px;
-        height: 63px;
+        width: 55px;
+        height: 55px;
         border: none;
-        border-radius: 5px;
+        border-radius: 7px;
         margin-right: 12px;
         margin-top: 69px;
     }

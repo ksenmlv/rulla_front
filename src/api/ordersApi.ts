@@ -2,7 +2,7 @@ import apiClient from './client'
 import { OrdersResponse, Order, OrderResponse } from '../types/order'
 
 export const ordersApi = {
-  // Список всех заказов (с фильтрами и пагинацией)
+  // список всех заказов (с фильтрами и пагинацией)
   getOrders: async (params?: {
     page?: number
     category?: string
@@ -13,7 +13,7 @@ export const ordersApi = {
   }): Promise<OrdersResponse> => {
     const response = await apiClient.get<OrdersResponse>('/orders.json', { params })
 
-    // Сортировка: сначала новые
+    // сортировка по новизне
     const sortedData = {
       ...response.data,
       data: response.data.data.sort((a, b) =>
@@ -25,19 +25,19 @@ export const ordersApi = {
     return sortedData
   },
 
-  // Один заказ по ID
+  // один заказ по ID
   getOrderById: async (id: number | string): Promise<Order> => {
     const response = await apiClient.get<OrderResponse>(`/orders/${id}`)
     return response.data.data
   },
 
-  // Создание заказа
+  // создание заказа
   createOrder: async (orderData: Partial<Order>): Promise<Order> => {
     const response = await apiClient.post<OrderResponse>('/orders', orderData)
     return response.data.data
   },
 
-  // Удаление (если нужно)
+  // удаление 
   deleteOrder: async (id: number) => {
     await apiClient.delete(`/orders/${id}`)
   }

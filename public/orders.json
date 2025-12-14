@@ -1,24 +1,16 @@
 {
   "data": [
     {
-      "id": 1,
-      "title": "Название заказа",
-      "category": "Категория/подкатегория",
-      "budget": "200 000",
-      "deadline": "6 месяцев",
-      "location": "г. Одинцово, Московская обл.",
-      "views": 120,
-      "publishedAt": "2 сентября 2025г."
-    },
-    {
-      "id": 2,
-      "title": "Ремонт квартиры под ключ",
-      "category": "Ремонт/Квартиры",
-      "budget": "1 500 000",
-      "deadline": "3 месяца",
-      "location": "г. Москва, ЮАО",
-      "views": 89,
-      "publishedAt": "10 декабря 2025г."
+      "id": 4,
+      "title": "Установка межкомнатных дверей",
+      "category": "Отделка/Двери",
+      "budget": "120 000",
+      "deadline": "1 месяц",
+      "location": "г. Москва, СЗАО",
+      "views": 67,
+      "publishedAt": "15 ноября 2025г.",
+      "publishedDate": "2025-11-15T12:00:00Z",
+      "status": "completed"
     },
     {
       "id": 3,
@@ -28,13 +20,39 @@
       "deadline": "2 недели",
       "location": "г. Химки, Московская обл.",
       "views": 45,
-      "publishedAt": "11 декабря 2025г."
+      "publishedAt": "11 декабря 2025г.",
+      "publishedDate": "2025-12-11T12:00:00Z",
+      "status": "in_progress"
+    },
+    {
+      "id": 2,
+      "title": "Ремонт квартиры под ключ",
+      "category": "Ремонт/Квартиры",
+      "budget": "1 500 000",
+      "deadline": "3 месяца",
+      "location": "г. Москва, ЮАО",
+      "views": 89,
+      "publishedAt": "10 декабря 2025г.",
+      "publishedDate": "2025-12-10T12:00:00Z",
+      "status": "active"
+    },
+    {
+      "id": 1,
+      "title": "Название заказа",
+      "category": "Категория/подкатегория",
+      "budget": "200 000",
+      "deadline": "6 месяцев",
+      "location": "г. Одинцово, Московская обл.",
+      "views": 120,
+      "publishedAt": "2 сентября 2025г.",
+      "publishedDate": "2025-09-02T12:00:00Z",
+      "status": "archived"
     }
   ],
   "meta": {
     "currentPage": 1,
     "lastPage": 1,
     "perPage": 20,
-    "total": 3
+    "total": 4
   }
 }

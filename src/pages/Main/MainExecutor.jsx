@@ -14,13 +14,18 @@ import separator from '../../assets/Main/bw_separator.svg'
 import icon_location from '../../assets/Header/icon_location.png'
 import icon_eye from '../../assets/Main/icon_eye.svg'
 import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
+import icon_hammer from '../../assets/Main/icon_hammer.svg'
+import icon_gear from '../../assets/Main/icon_gear.svg'
+import icon_wrench from '../../assets/Main/icon_wrench.svg'
+import icon_gear_wheel from '../../assets/Main/icon_gear_wheel.svg'
+import icon_pliers from '../../assets/Main/icon_pliers.svg'
 
 
 export default function MainExecutor() {
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768)   
-    const [orders, setOrders] = useState([])          // список заказов
-    const [loading, setLoading] = useState(true)      // для "Загрузка..."
-    const [searchQuery, setSearchQuery] = useState('') // что ввёл пользователь     
+    const [orders, setOrders] = useState([])                    // список заказов
+    const [loading, setLoading] = useState(true)                // для "Загрузка..."
+    const [searchQuery, setSearchQuery] = useState('')          // что ввёл пользователь     
 
     // определение ширины устройства
     useEffect(() => {
@@ -59,7 +64,7 @@ export default function MainExecutor() {
             </> }
             menuItems={   [
                 { label: 'Все заказы', to: '/all_orders' },
-                { label: 'Мои заказы', to: '/my_orders' },
+                { label: 'Мои заказы', to: '/executor_my_orders' },
                 { label: 'Тарифы', to: '/pricing_plans' },
             ]}
         />
@@ -80,8 +85,8 @@ export default function MainExecutor() {
                             </div>
                         )}
 
-                    <h1 style={{marginTop: '30vh', width: '50%'}}>Стабильные заказы на ремонт без постоянного поиска клиентов</h1>
-                    <p style={{marginTop: '28vh', width: '50%'}}>Получайте предложения от заказчиков и выбирайте только интересные для себя проекты</p>
+                    <h1 style={{marginTop: '8vh', width: '50%'}}>Стабильные заказы на ремонт без постоянного поиска клиентов</h1>
+                    <p style={{marginTop: '6vh', width: '50%'}}>Получайте предложения от заказчиков и выбирайте только интересные для себя проекты</p>
 
 
 
@@ -89,11 +94,12 @@ export default function MainExecutor() {
                         <img src={icon_connection} alt='connection' />
                     </button>
 
-                    {/* переадресация поправить */}
-                    <Link to='/main_executor'><button className='btn-search' style={{width: '27%'}}>Найти заказы</button></Link>   
+                    {/* переадресация поправить !!!*/}
+                    <Link to='/main_executor'><button className='btn-search' style={{width: '27%', left: '40px'}}>Найти заказы</button></Link>   
                 </div>
 
                 <img src={separator} alt='separator' className='separator'/>
+
 
                 {/* блок "актуальные заказы" */}
                 <div className='whole-block'>
@@ -114,59 +120,129 @@ export default function MainExecutor() {
                     {loading ? (
                         <div className="text-center py-5">Загрузка заказов...</div>
                         ) : orders.length === 0 ? (
-                        <div className="text-center py-5 text-muted">Заказы не найдены</div>
+                        <div className="text-center py-5">Заказы не найдены</div>
                         ) : (
                         <div className="row g-4">
                             {orders.map(order => (
-                            <div key={order.id} className="col-12 col-md-6 col-lg-4 mb-5">
+                            <div key={order.id} className="col-12 col-md-6 col-lg-4">
                                 <div className="task-card-modern">
 
-                                {/* Заголовок со стрелкой */}
-                                <div className="task-header">
-                                    <h3 className="task-title-modern">{order.title}</h3>
-                                </div>
+                                    {/* Заголовок */}
+                                    <div className="task-header">
+                                        <h3 className="task-title-modern">{order.title}</h3>
+                                    </div>
 
-                                <div className="task-category-modern">{order.category}</div>
+                                    <div className="task-category-modern">{order.category}</div>
 
-                                {/* Основная информация */}
-                                <div className="task-details">
-                                    <div className="detail-item" style={{color: '#000000', fontWeight: '600', display: 'flex', alignItems: 'center'}}>
-                                        Бюджет: {order.budget}₽
+                                    {/* Основная информация */}
+                                    <div className="task-details">
+                                        <div className="detail-item" style={{color: '#000000', fontWeight: '600', display: 'flex', alignItems: 'center'}}>
+                                            Бюджет: {order.budget}₽
+                                        </div>
+                                        <div className="detail-item" style={{marginBottom: 0}}>
+                                            Сроки выполнения: {order.deadline}
+                                        </div>
+                                        <div className="detail-item" style={{marginBottom: '25px'}}>
+                                            <img src={icon_location} alt="Иконка локации" className=" me-2" width={20} />
+                                            {order.location}
+                                        </div>
+                                        <div className="detail-item" style={{marginBottom: 0}}>
+                                            <img src={icon_eye} alt="Иконка просмотров" className=" me-2"  width={20} />
+                                            {order.views} просмотров
+                                        </div>
+                                        <div className="detail-item ">
+                                            Опубликовано: {order.publishedAt}
+                                        </div>
                                     </div>
-                                    <div className="detail-item" style={{marginBottom: 0}}>
-                                        Сроки выполнения: {order.deadline}
-                                    </div>
-                                    <div className="detail-item" style={{marginBottom: '25px'}}>
-                                        <img src={icon_location} alt="Иконка локации" className=" me-2" width={20} />
-                                        {order.location}
-                                    </div>
-                                    <div className="detail-item" style={{marginBottom: 0}}>
-                                        <img src={icon_eye} alt="Иконка просмотров" className=" me-2"  width={20} />
-                                        {order.views} просмотров
-                                    </div>
-                                    <div className="detail-item ">
-                                        Опубликовано: {order.publishedAt}
-                                    </div>
-                                </div>
 
-                                {/* Синяя кнопка снизу */}
-                                <button className="btn-detail">
-                                    Подробнее
-                                    <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D'}}/>
-                                </button>
+                                    {/* Синяя кнопка снизу */}
+                                    <button className="btn-detail">
+                                        Подробнее
+                                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D'}}/>
+                                    </button>
 
                                 </div>
                             </div>
                             ))}
                         </div>
                     )}
-                    
+                </div>
+
+
+                {/* блок "Для кого наша платформа" */}
+                <div className='whole-block'>
+                     <h2>Для кого наша платформа</h2>
+
+                     <div className="executor-types-container">
+                        {/* Первый ряд */}
+                        <div className="executor-row">
+                            {/* Частные мастера — 40% */}
+                            <div className="executor-card width-40">
+                                <div className="executor-card__content">
+                                    <h3 className="executor-card__title">Частные мастера</h3>
+                                    <p className="executor-card__description">
+                                    Работайте с клиентами без посредников
+                                    </p>
+                                </div>
+                                <div className="executor-card__icon">
+                                    <img src={icon_hammer} alt='Иконка молотка' />
+                                </div>
+                            </div>
+
+                            {/* Бригады — 60% */}
+                            <div className="executor-card width-60">
+                                <div className="executor-card__content">
+                                    <h3 className="executor-card__title">Бригады</h3>
+                                    <p className="executor-card__description">
+                                    Берите объемные заказы под ключ
+                                    </p>
+                                </div>
+                                <div className="executor-card__icon" style={{top: '54%', right: '28%'}}>
+                                    <img src={icon_gear} alt='Иконка гаечки'/>
+                                </div>
+                                <div style={{position: 'absolute', bottom: '0', right: '0'}}>
+                                    <img src={icon_wrench} alt='Иконка гаечного ключа' />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Второй ряд */}
+                        <div className="executor-row">
+                            {/* Подрядные организации — 60% */}
+                            <div className="executor-card width-60">
+                                <div className="executor-card__content">
+                                    <h3 className="executor-card__title">Подрядные организации</h3>
+                                    <p className="executor-card__description">
+                                    Постоянный поток заказов для вашей компании
+                                    </p>
+                                </div>
+                               <div style={{position: 'absolute', bottom: '0', right: '0'}}>
+                                    <img src={icon_pliers} alt='Иконка плоскогубцев' />
+                                </div>
+                            </div>
+
+                            {/* Генподрядчики — 40% */}
+                            <div className="executor-card width-40">
+                                <div className="executor-card__content">
+                                    <h3 className="executor-card__title">Генподрядчики</h3>
+                                    <p className="executor-card__description">
+                                    Найдите субподрядчиков или дополнительные проекты
+                                    </p>
+                                </div>
+                                <div className="executor-card__icon" style={{top: '15%'}}>
+                                    <img src={icon_gear_wheel} alt='Иконка шестеренки' />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
         
             </div>
         </div>
 
+
+        <Footer />
       
     </div>
   )

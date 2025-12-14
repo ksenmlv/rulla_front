@@ -23,7 +23,7 @@ function ScrollToTop() {
   return null;
 }
 
-// Ленивая загрузка компонентов (убедитесь, что пути корректны!)
+// Ленивая загрузка компонентов 
 const Main = lazy(() => import('./pages/Main/Main'));
 const Enter = lazy(() => import('./pages/Enter/Enter'));
 const ShortStep1Phone = lazy(() => import('./pages/Registration/ShortRegistration/steps/ShortStep1Phone'));
@@ -37,6 +37,7 @@ const Step4Experience = lazy(() => import('./pages/Registration/FullRegistration
 const Step5Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Services'));
 const Step6Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Contacts'));
 const MainExecutor = lazy(() => import('./pages/Main/MainExecutor'));
+const MyOrders = lazy(() => import('./pages/Executor/MyOrders'));
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
             <Route path="/full_registration_step5" element={<Step5Services />} />
             <Route path="/full_registration_step6" element={<Step6Contacts />} /> 
             <Route path="/main_executor" element={<MainExecutor />} />
+            <Route path="/executor_my_orders" element={<MyOrders />} />
           </Routes>
         </Suspense>
       </AppProvider>

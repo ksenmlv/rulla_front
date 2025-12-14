@@ -1,0 +1,121 @@
+/* страница "Мои заказы" */
+.my-orders-page {
+  min-height: 100vh;
+}
+
+.btn_user {
+    border: none;
+    background: transparent;
+}
+
+.page-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 130px 0 30px 0;
+  color: #151515;
+}
+
+.orders-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.tab-button {
+  height: 55px;
+  padding: 0 20px;
+  border: 2px solid transparent;
+  border-radius: 7px;
+  background: #F4F5F5;
+  color: #000000;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.tab-button.active {
+  background: #ffffff;        
+  border: 2px solid #DE5A2B;
+  font-weight: 600;               
+}
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.order-card {
+  background: #ffffff;
+  border: 1px solid #919191;
+  border-radius: 10px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.status-icon {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.order-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #000000;
+}
+
+.order-category {
+  font-size: 24px;
+  color: #656565;
+  margin: 0 0 16px 0;
+}
+
+.order-budget {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000000;
+  margin: 0;
+}
+
+.order-deadline {
+  font-size: 24px;
+  font-weight: 500;
+  color: #656565;
+  margin: 0;
+}
+
+.detail-link {
+  margin-top: auto;
+  padding-top: 30px;
+  color: #02283D;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 24px;
+}
+
+.loading-message,
+.empty-message {
+  text-align: center;
+  padding: 80px 20px;
+  color: #9ca3af;
+  font-size: 18px;
+}
+
+
+.footer {
+    position: relative;
+    width: 100%;
+    bottom: 0;
+}
