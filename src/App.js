@@ -38,6 +38,8 @@ const Step5Services = lazy(() => import('./pages/Registration/FullRegistration/s
 const Step6Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Contacts'));
 const MainExecutor = lazy(() => import('./pages/Main/MainExecutor'));
 const MyOrders = lazy(() => import('./pages/Executor/MyOrders'));
+const AllOrders = lazy(() => import('./pages/Executor/AllOrders'));
+const OrderDetail = lazy(() => import('./pages/Executor/OrderDetail'));
 
 function App() {
   return (
@@ -61,6 +63,8 @@ function App() {
             <Route path="/full_registration_step6" element={<Step6Contacts />} /> 
             <Route path="/main_executor" element={<MainExecutor />} />
             <Route path="/executor_my_orders" element={<MyOrders />} />
+            <Route path="/executor_all_orders" element={<AllOrders />} />
+            <Route path="/executor_order/:id" element={<OrderDetail />} />
           </Routes>
         </Suspense>
       </AppProvider>

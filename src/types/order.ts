@@ -2,19 +2,24 @@ export type Order = {
   id: number
   title: string
   category: string
-  subcategory?: string         
-  budget: string                 // бюджет
-  deadline: string               
-  location: string              
-  cityId?: number                // если нужно для фильтров
-  views: number                  // колво просмотров
-  responsesCount?: number        // количество откликов (можно добавить потом)
-  publishedAt: string            // "2 сентября 2025г." 
-  publishedDate?: string         // ISO для сортировки: "2025-09-02T10:00:00Z"
-  customerId: number
+  subcategory?: string
+  budget: string
+  deadline: string
+  location: string
+  cityId?: number
+  views: number
+  responsesCount?: number
+  publishedAt: string
+  publishedDate?: string
+  customerId?: number
   status: 'active' | 'in_progress' | 'completed' | 'archived'
   description?: string
   images?: string[]
+  customerName?: string          
+  customerRating?: number       
+  customerReviews?: number      
+  requirements?: string[]       
+  materials?: string            
 }
 
 export type OrdersResponse = {

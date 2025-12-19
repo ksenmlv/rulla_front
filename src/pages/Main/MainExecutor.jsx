@@ -22,6 +22,7 @@ import icon_pliers from '../../assets/Main/icon_pliers.svg'
 
 
 export default function MainExecutor() {
+    const navigate = useNavigate()
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768)   
     const [orders, setOrders] = useState([])                    // список заказов
     const [loading, setLoading] = useState(true)                // для "Загрузка..."
@@ -63,7 +64,7 @@ export default function MainExecutor() {
                 <p style={{fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px'}}>Имя пользователя</p>
             </> }
             menuItems={   [
-                { label: 'Все заказы', to: '/all_orders' },
+                { label: 'Все заказы', to: '/executor_all_orders' },
                 { label: 'Мои заказы', to: '/executor_my_orders' },
                 { label: 'Тарифы', to: '/pricing_plans' },
             ]}
@@ -106,7 +107,7 @@ export default function MainExecutor() {
                     <h2 style={{marginTop: '120px'}}>Актуальные заказы</h2>
 
                     {/* контейнер поиска */}
-                     <div className='search-container' style={{position: 'relative', margin: '20px 0 90px 0', display: 'flex', flexDirection: 'row', width: '100%'}} >
+                     <div className='search-container' style={{position: 'relative', margin: '20px 0 40px 0', display: 'flex', flexDirection: 'row', width: '100%'}} >
                         <div style={{width: '75%'}}>
                             <input type='text' placeholder='Найти заказы' className='search-input' style={{marginLeft: '-40px'}} onKeyPress={(e) => e.key === 'Enter' && handleSearch()}/>
                             <img src={icon_search} alt='search' className='search-icon' style={{left: '0'}}/>
@@ -116,6 +117,11 @@ export default function MainExecutor() {
                         <button className='btn-search' onClick={handleSearch} style={{width: '24%', bottom: 0}}>Найти</button>
                     </div>
 
+                    <button onClick={() => navigate('/executor_all_orders')} className="btn-detail" style={{margin: '0 -470px 25px auto'}}>
+                        Все заказы
+                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D', marginLeft: '10px'}}/>
+                    </button>
+
                     {/* ячейки заказов */}
                     {loading ? (
                         <div className="text-center py-5">Загрузка заказов...</div>
@@ -123,7 +129,7 @@ export default function MainExecutor() {
                         <div className="text-center py-5">Заказы не найдены</div>
                         ) : (
                         <div className="row g-4">
-                            {orders.map(order => (
+                            {orders.slice(0, 3).map(order => (
                             <div key={order.id} className="col-12 col-md-6 col-lg-4">
                                 <div className="task-card-modern">
 
@@ -156,9 +162,9 @@ export default function MainExecutor() {
                                     </div>
 
                                     {/* Синяя кнопка снизу */}
-                                    <button className="btn-detail">
+                                    <button className="btn-detail" style={{marginLeft: '-5px'}}>
                                         Подробнее
-                                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D'}}/>
+                                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D',  marginLeft: '10px'}}/>
                                     </button>
 
                                 </div>

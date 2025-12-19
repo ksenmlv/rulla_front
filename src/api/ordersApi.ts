@@ -1,4 +1,4 @@
-import apiClient from './client'
+import apiClientLocal from './clientLocal'
 import { OrdersResponse, Order, OrderResponse } from '../types/order'
 
 export const ordersApi = {
@@ -11,7 +11,7 @@ export const ordersApi = {
     budget_max?: string
     search?: string
   }): Promise<OrdersResponse> => {
-    const response = await apiClient.get<OrdersResponse>('/orders.json', { params })
+    const response = await apiClientLocal.get<OrdersResponse>('/orders.json', { params })
 
     // сортировка по новизне
     const sortedData = {
@@ -27,18 +27,18 @@ export const ordersApi = {
 
   // один заказ по ID
   getOrderById: async (id: number | string): Promise<Order> => {
-    const response = await apiClient.get<OrderResponse>(`/orders/${id}`)
+    const response = await apiClientLocal.get<OrderResponse>(`/orders/${id}`)
     return response.data.data
   },
 
   // создание заказа
   createOrder: async (orderData: Partial<Order>): Promise<Order> => {
-    const response = await apiClient.post<OrderResponse>('/orders', orderData)
+    const response = await apiClientLocal.post<OrderResponse>('/orders', orderData)
     return response.data.data
   },
 
   // удаление 
   deleteOrder: async (id: number) => {
-    await apiClient.delete(`/orders/${id}`)
+    await apiClientLocal.delete(`/orders/${id}`)
   }
 }

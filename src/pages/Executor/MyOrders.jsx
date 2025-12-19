@@ -14,6 +14,7 @@ import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
 
 
 export default function MyOrders() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('all')
@@ -77,8 +78,8 @@ export default function MyOrders() {
                 <p style={{fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px'}}>Имя пользователя</p>
             </> }
             menuItems={   [
-                { label: 'Все заказы', to: '/all_orders' },
-                { label: 'Мои заказы', to: '/my_orders' },
+                { label: 'Все заказы', to: '/executor_all_orders' },
+                { label: 'Мои заказы', to: '/executor_my_orders' },
                 { label: 'Тарифы', to: '/pricing_plans' },
             ]}
         />
@@ -136,10 +137,10 @@ export default function MyOrders() {
                                 <h3 className="order-title">{order.title}</h3>
                                 <p className="order-category">{order.category}</p>
                                 <p className="order-budget">Бюджет: {order.budget}₽</p>
-                                <p className="order-deadline">Сроки выполнения: {order.deadline}</p>
+                                <p style={{fontSize: '24px',  fontWeight: '500', color: '#656565', margin: 0}}>Сроки выполнения: {order.deadline}</p>
 
-                                <Link to={`/order/${order.id}`} className="detail-link">
-                                Подробнее <img src={icon_arrow} alt='Иконка стрелочки' style={{marginLeft: '7px'}}/>
+                                <Link to={`/executor_order/${order.id}`} className="detail-link" style={{marginLeft:0}}>
+                                    Подробнее <img src={icon_arrow} alt='Иконка стрелочки' style={{marginLeft: '7px'}}/>
                                 </Link>
                             </div>
                             );

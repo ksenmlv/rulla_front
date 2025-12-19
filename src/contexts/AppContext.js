@@ -8,6 +8,14 @@ export const useAppContext = () => {
 }
 
 export const AppProvider = ({ children }) => {
+  const [userId, setUserId] = useState('')
+  const [userPhone, setUserPhone] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [regStatus, setRegStatus] = useState('')
+
+
+
   // глобальные состояния
   const [selectedCity, setSelectedCity] = useState(null)
   const [phoneNumber, setPhoneNumber] = useState('')
@@ -75,7 +83,7 @@ export const AppProvider = ({ children }) => {
 
 
   // 6 этап регистрации
-  const [userPhone, setUserPhone] = useState('')
+  // const [userPhone, setUserPhone] = useState('')
   const [userEmail, setUserEmail] = useState('')
   const [userSocialMedia, setUserSocialMedia] = useState({
     telegram: { phone: '', nickname: '' },
@@ -95,6 +103,13 @@ export const AppProvider = ({ children }) => {
 
   // оптимизация значения контекста с помощью useMemo
   const value = useMemo(() => ({
+    userId, setUserId,
+    userPhone, setUserPhone,
+    firstName, setFirstName,
+    lastName, setLastName,
+    regStatus, setRegStatus,
+
+
     selectedCity,
     setSelectedCity,
     phoneNumber, 
@@ -159,6 +174,12 @@ export const AppProvider = ({ children }) => {
     setUserWebsite,
 
   }), [
+    userId, 
+    userPhone, 
+    firstName, 
+    lastName, 
+    regStatus, 
+
     selectedCity,
     phoneNumber,
     smsCode,

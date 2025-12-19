@@ -1,30 +1,42 @@
-import apiClient from './client'
-import { CitiesResponse } from '../types/city'
+import apiClient from './client';
+import { City } from '../types/city'; 
 
-export const citiesApi = {
-    getCities: async(): Promise<CitiesResponse> => {
-        const response = await apiClient.get<CitiesResponse>('/asset/cities')
-        
-        // Сортируем cities по имени с учетом русской локали
-        const sortedData = {
-            ...response.data,
-            data: response.data.data.sort((a, b) => a.name.localeCompare(b.name, 'ru'))
-        }
-        
-        return sortedData
-    }
+// поиск по строке
+export interface CitySearchResult {
+  cityId: string;
+  cityName: string;
+  matchType: 'CITY';
+  matchId: string;
+  matchName: string;
+  score: number;
 }
 
+// ответ от /nearest — один город, структура как в types/city.ts
+export const citiesApi = {
+  // получение всех города
+  getAllCities: async (): Promise<City[]> => {
+    const response = await apiClient.get<City[]>('/geo/cities')
 
+    return response.data.sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru')
+    )
+  },
 
-// // без сортировки
-// import apiClient from './client'
-// import { CitiesResponse } from '../types/city'
+  // поиск по названию
+  searchCities: async (query: string, minScore = 0.1): Promise<CitySearchResult[]> => {
+    if (!query.trim()) return []
 
+    const response = await apiClient.get<CitySearchResult[]>('/geo/cities/search', {
+      params: { q: query.trim(), minScore },
+    })
+    return response.data; 
+  },
 
-// export const citiesApi = {
-//     getCities: async(): Promise<CitiesResponse> => {
-//         const response = await apiClient.get<CitiesResponse>('/asset/cities')
-//         return response.data
-//     }
-// }
+  // ближайший город по координатам
+  getNearestCity: async (lat: number, lon: number): Promise<City> => {
+    const response = await apiClient.get<City>('/geo/cities/nearest', {
+      params: { lat, lon },
+    })
+    return response.data
+  },
+};

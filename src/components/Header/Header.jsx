@@ -3,8 +3,7 @@ import logo from '../../assets/Header/logo.png'
 import icon_location from '../../assets/Header/icon_location.png'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './Header.css'
-import TownSelect from '../lists/TownSelect'
-import { citiesApi } from '../../api/citiesApi.ts'
+import CustomSelector from '../lists/TownSelect'
 import { Link, useNavigate } from 'react-router-dom'
 
 
@@ -78,7 +77,7 @@ import { Link, useNavigate } from 'react-router-dom'
             { showLocation && !isMobile && (
               <div className='location-wrapper d-md-flex align-items-center' style={{marginRight:'30px'}}>
                   <img src={icon_location} alt='location' className='location-icon'/>
-                  <TownSelect className='town-select'/>
+                  <CustomSelector className='town-select'/>
               </div>
             )}
 
