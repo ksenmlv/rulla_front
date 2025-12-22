@@ -117,10 +117,12 @@ export default function MainExecutor() {
                         <button className='btn-search' onClick={handleSearch} style={{width: '24%', bottom: 0}}>Найти</button>
                     </div>
 
-                    <button onClick={() => navigate('/executor_all_orders')} className="btn-detail" style={{margin: '0 -470px 25px auto'}}>
-                        Все заказы
-                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D', marginLeft: '10px'}}/>
-                    </button>
+                    <div style={{display: 'flex', justifyContent: 'flex-end', margin: '0 -47% 20px 0'}}>
+                        <button onClick={() => navigate('/executor_all_orders')} className="btn-detail" >
+                            Все заказы
+                            <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D', marginLeft: '10px'}}/>
+                        </button>
+                    </div>
 
                     {/* ячейки заказов */}
                     {loading ? (
@@ -162,10 +164,10 @@ export default function MainExecutor() {
                                     </div>
 
                                     {/* Синяя кнопка снизу */}
-                                    <button className="btn-detail" style={{marginLeft: '-5px'}}>
+                                    <Link to={`/executor_order/${order.id}`} className="btn-detail">
                                         Подробнее
                                         <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D',  marginLeft: '10px'}}/>
-                                    </button>
+                                    </Link>
 
                                 </div>
                             </div>

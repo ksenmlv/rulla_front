@@ -1,210 +1,216 @@
 import '../../Registration.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
+import icon_close_modal from '../../../../assets/Main/icon_close_modal.svg'
 import React, { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
-
-
+import apiClient from '../../../../api/client' // ваш apiClient с интерсепторами
 
 export default function ShortStep2Name() {
-  const { userName, setUserName, userEmail, setUserEmail, setPhoneNumber } = useAppContext()
-
   const navigate = useNavigate()
+  const { setPhoneNumber } = useAppContext() // если нужно очистить телефон
+
   const nameInputRef = useRef(null)
 
-  const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)                      // чекбокс политики конф
-  const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)               // чекбокс с маркетингом
-  const [emailError, setEmailError] = useState('')
-  const [isSubmitted, setIsSubmitted] = useState(false)                             // состояние для показа ошибки почты
+  const [localName, setLocalName] = useState('')
+  const [localEmail, setLocalEmail] = useState('')
 
-  // локальные состояние
-  const [localEmail, setLocalEmail] = useState(userEmail || '')
-  const [localName, setLocalName] = useState(userName || '')
+  const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)
+  const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)
 
-  // автофокус на первое поле при монтировании компонента
+  const [isLoading, setIsLoading] = useState(false)
+
+  // Модальное окно для ошибок/сообщений
+  const [modalMessage, setModalMessage] = useState(null)
+  const openModal = (msg) => setModalMessage(msg)
+  const closeModal = () => setModalMessage(null)
+
+  // Автофокус на имя
   useEffect(() => {
     nameInputRef.current?.focus()
   }, [])
 
-  // валидация e-mail
-  const validateEmail = (value) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+  // Валидация email
+  const validateEmail = (value) =>
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
 
-  // общая валидность
-  const isFormValid = localName.trim() !== '' && localEmail.trim() !== '' && validateEmail(localEmail) && isCheckedPolicy
+  const isFormValid =
+    localName.trim() !== '' &&
+    localEmail.trim() !== '' &&
+    validateEmail(localEmail) &&
+    isCheckedPolicy
 
-  // ввод имени
+  // Обработчики ввода
   const handleNameChange = (e) => {
     const clean = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ\s]/g, '')
     setLocalName(clean)
   }
 
-  // ввод почты
   const handleEmailChange = (e) => {
-    const value = e.target.value
-    setLocalEmail(value)
-
-    // не показываем ошибку во время набора
-    if (isSubmitted) {
-      setEmailError(validateEmail(value) ? '' : 'Введите корректный email')
-    }
+    setLocalEmail(e.target.value)
   }
 
-
-  // const handleRegionSelect = (selectedRegions) => {
-  //   setUserRegion(selectedRegions.join(', '))
-  // }
-
-
-  // обработка кнопки "Зарегистрироваться"
-  const handleSubmit = () => {
-    setIsSubmitted(true)
-    // если email неверный — не отправляем
+  // Отправка данных на сервер
+  const handleSubmit = async () => {
     if (!validateEmail(localEmail)) {
-      setEmailError("Введите корректный email")
+      openModal('Введите корректный email')
       return
     }
 
     if (!isFormValid) return
 
-    // сохранение контекста при сабмите
-    setUserName(localName)
-    setUserEmail(localEmail)
+    setIsLoading(true)
 
-    console.log('Регистрация:', {
-      name: localName,
-      email: localEmail
-    })
+    try {
+      // Сохранение персональных данных
+      await apiClient.put('/customers/me/personal-data', {
+        firstName: localName.trim(),
+        email: localEmail.trim().toLowerCase(),
+        acceptUserAgreement: true,                         // предполагаем, что принято ранее
+        acceptPrivacyPolicy: isCheckedPolicy,              // обязательно true
+        acceptPersonalDataProcessing: isCheckedPolicy,     // обязательно
+        acceptMarketing: isCheckedMarketing,               // опционально
+      })
 
-    // очистка
-    setPhoneNumber('')
-    setLocalName('')
-    setLocalEmail('')
+      // Получение свежего профиля пользователя
+      const profileResponse = await apiClient.get('/customers/me/profile')
+      const profile = profileResponse.data
 
-    alert('Упрощенная регистрация завершена!')
-    navigate('/')
+      // Вывод в консоль данных профиля
+      console.log('Профиль пользователя после регистрации:', profile)
+
+      // Успех (204 No Content)
+      setPhoneNumber('') // очистка
+      openModal('Регистрация успешно завершена!') // можно заменить на модалку успеха
+      navigate('/') 
+    } catch (err) {
+      console.error('Ошибка сохранения персональных данных:', err)
+
+      let message = err.response?.data?.message || 'Ошибка при сохранении данных'
+
+      if (err.response?.status === 400) {
+        message = 'Проверьте данные или примите обязательные согласия'
+      } else if (err.response?.status === 401) {
+        message = 'Сессия истекла. Пройдите регистрацию заново.'
+        navigate('/simplified_registration_step1')
+      } else if (err.response?.status === 409) {
+        message = 'Персональные данные уже заполнены'
+        navigate('/')
+      } else if (err.response?.status === 429) {
+        message = 'Слишком много попыток. Попробуйте позже.'
+      }
+
+      openModal(message)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleBack = () => {
     navigate('/simplified_registration_step1')
   }
 
-
   return (
     <div>
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: '648px'}}>
-
-            <div className='title'>
-                <button className='btn-back' onClick={handleBack}>
-                    <img src={arrow} alt='Назад' />
-                </button>
-                <h2 className="login-title">Регистрация</h2>
-            </div>
-
-            <div className='input-fields'>
-              <h3>Имя</h3>
-              <input type='text' ref={nameInputRef} placeholder='Введите ваше имя' value={localName} onChange={handleNameChange}/>
-
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <h3>E-mail</h3>
-                  {isSubmitted  && emailError && (
-                      <span style={{
-                          color: '#ff4444',
-                          fontSize: '16px',
-                          fontWeight: '700',
-                          margin: '0 0 7px auto',
-                      }}>
-                          {emailError}
-                      </span>
-                  )}
-              </div>
-
-              <input
-                  type="text"
-                  placeholder="Введите почту"
-                  value={localEmail}
-                  onChange={handleEmailChange}
-              />
-
-              {/* <RegistrSelector
-                subject={['Москва', 'Омск', 'Тюмень', 'Новгород', 'Сочи', 'Ростов']}
-                placeholder="Выберите предмет"
-                multiple={true}
-                maxSelect={2}
-                onSelect={handleRegionSelect}
-              /> */}
-
-            </div>
-
-            {/* checkbox с политикой конфиденциальности */}
-            <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(!isCheckedPolicy)} style={{marginBottom:'5px'}}>
-              <div 
-                className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`} 
-                onClick={() => setIsCheckedPolicy(!isCheckedPolicy)} >
-                  {isCheckedPolicy && <svg 
-                                        width="14" 
-                                        height="10" 
-                                        viewBox="0 0 14 10" 
-                                        fill="none"
-                                        className="check-icon"
-                                      >
-                                        <path 
-                                          d="M1 5L5 9L13 1" 
-                                          stroke="white" 
-                                          strokeWidth="2" 
-                                          strokeLinecap="round" 
-                                          strokeLinejoin="round"
-                                        />
-                                      </svg>}
-              </div>
-              <span className="checkbox-text">Соглашаюсь с <a className='policy-link'>политикой конфеденциальности</a> и обработкой персональных данных</span>
-            </div>
-
-            {/* checkbox с маркетингом */}
-            <div className="checkbox-wrapper" onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} style={{margin: '0 0 15px 0'}}>
-              <div 
-                className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`} 
-                onClick={() => setIsCheckedMarketing(!isCheckedMarketing)} >
-                  {isCheckedMarketing && <svg 
-                                            width="14" 
-                                            height="10" 
-                                            viewBox="0 0 14 10" 
-                                            fill="none"
-                                            className="check-icon"
-                                          >
-                                            <path 
-                                              d="M1 5L5 9L13 1" 
-                                              stroke="white" 
-                                              strokeWidth="2" 
-                                              strokeLinecap="round" 
-                                              strokeLinejoin="round"
-                                            />
-                                          </svg>}
-              </div>
-              <span className="checkbox-text"> Хочу получать рекламные рассылки и специальные предложения </span>
-            </div>
-
-            <button 
-                type="submit" 
-                className={`continue-button ${!isFormValid ? 'disabled' : ''}`}
-                disabled={!isFormValid}
-                onClick={handleSubmit}
-            >
-                Зарегистрироваться
+        <div className='registr-container' style={{ height: '648px' }}>
+          <div className='title'>
+            <button className='btn-back' onClick={handleBack}>
+              <img src={arrow} alt='Назад' />
             </button>
+            <h2 className="login-title">Регистрация</h2>
+          </div>
 
-            <div className="register-link">
-                У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
+          <div className='input-fields'>
+            <h3>Имя</h3>
+            <input
+              type='text'
+              ref={nameInputRef}
+              placeholder='Введите ваше имя'
+              value={localName}
+              onChange={handleNameChange}
+            />
+
+            <h3>E-mail</h3>
+            <input
+              type="text"
+              placeholder="Введите почту"
+              value={localEmail}
+              onChange={handleEmailChange}
+            />
+          </div>
+
+          {/* Обязательный чекбокс */}
+          <div
+            className="checkbox-wrapper"
+            onClick={() => setIsCheckedPolicy(!isCheckedPolicy)}
+            style={{ marginBottom: '5px' }}
+          >
+            <div className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`}>
+              {isCheckedPolicy && (
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                  <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
             </div>
+            <span className="checkbox-text">
+              Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и обработкой персональных данных
+            </span>
+          </div>
 
+          {/* Опциональный чекбокс маркетинга */}
+          <div
+            className="checkbox-wrapper"
+            onClick={() => setIsCheckedMarketing(!isCheckedMarketing)}
+            style={{ margin: '0 0 15px 0' }}
+          >
+            <div className={`custom-checkbox ${isCheckedMarketing ? 'checked' : ''}`}>
+              {isCheckedMarketing && (
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                  <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+            </div>
+            <span className="checkbox-text">
+              Хочу получать рекламные рассылки и специальные предложения
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className={`continue-button ${(!isFormValid || isLoading) ? 'disabled' : ''}`}
+            disabled={!isFormValid || isLoading}
+            onClick={handleSubmit}
+          >
+            {isLoading ? 'Сохранение...' : 'Зарегистрироваться'}
+          </button>
+
+          <div className="register-link">
+            У вас уже есть аккаунт? <Link to="/enter" className="register-here">Войти</Link>
+          </div>
         </div>
       </div>
 
       <Footer className='footer footer--registr' />
+
+      {/* Модальное окно — одинаковое с первым шагом */}
+      {modalMessage && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-window" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close-btn" onClick={closeModal}>
+              <img src={icon_close_modal} alt="Закрыть" />
+            </button>
+            <div className="modal-text">{modalMessage}</div>
+            <button className="modal-action-btn" onClick={closeModal}>
+              Понятно
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

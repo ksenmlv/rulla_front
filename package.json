@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
+    "google-libphonenumber": "^3.2.43",
     "path-browserify": "^1.0.1",
     "react": "^19.1.1",
     "react-calendar": "^6.0.0",

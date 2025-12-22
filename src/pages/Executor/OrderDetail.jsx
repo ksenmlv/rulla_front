@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import { ordersApi } from '../../api/ordersApi.ts'
@@ -9,10 +9,12 @@ import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg'
 import icon_check from '../../assets/Main/icon_checkmark2.svg'  
 import icon_eye from '../../assets/Main/icon_eye.svg'     
 import icon_arrow from '../../assets/Main/icon_arrow_top_blue.svg'     
+import icon_arrow_back from '../../assets/Main/arrow_left.svg'     
 import '../Main/Main.css'
 import '../Executor/Executor.css'
 
 export default function OrderDetail() {
+  const navigate = useNavigate()
   const { id } = useParams()
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -62,8 +64,11 @@ export default function OrderDetail() {
         ]}
       />
 
-       <div className="full-container" style={{marginBottom: '220px', minHeight: 'calc(100vh - 904px)'}}>
+      <img src={icon_arrow_back} onClick={()=> navigate(-1)} alt='Назад' style={{position: 'absolute', top: '155px', left: '110px', cursor: 'pointer', zIndex: 1000}}/>
+
+       <div className="full-container" style={{marginBottom: '220px', minHeight: 'calc(100vh - 904px)', position: 'relative'}}>
             <div className="main-container">
+                
                 <div className="order-detail-card" style={{marginTop: '150px', display: 'flex', flexDirection: 'row'}}>
                     <div style={{maxWidth: '60%'}}>
                         {/* Заголовок */}

@@ -1,0 +1,195 @@
+
+/* модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0000004D;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-window {
+  background-color: white;
+  border-radius: 10px;
+  padding: 70px 80px;
+  width: 90%;
+  max-width: 669px;
+  position: relative;
+  text-align: center;
+}
+
+/* крестик закрытия */
+.modal-window > button:first-child {
+  position: absolute;
+  top: 25px;
+  right: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-text {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  color: #000000;
+}
+
+.modal-action-btn {
+  width: 100%;
+  height: 79px;
+  padding: 16px;
+  background-color: #DE5A2B;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.modal-action-btn:hover {
+  opacity: 0.9;
+}
+
+
+/* модальное окно успешного отклика */
+.response-sent-modal-window {
+  width: 60%;
+  max-width: 1300px;
+  height: 930px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  padding: 40px;
+  position: relative;
+}
+
+.response-sent-modal-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.response-sent-modal-plane {
+  text-align: center;
+  margin: 20px 0 25px 0;
+}
+
+.response-sent-modal-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 25px;
+  color: #000;
+}
+
+.response-sent-modal-chat-btn {
+  width: 450px;
+  padding: 18px;
+  background: #DE5A2B;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 50px;
+  transition: background 0.2s;
+}
+
+.response-sent-modal-chat-btn:hover {
+    opacity: 0.9;
+}
+
+.response-sent-similar-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 500;
+  color: #000;
+}
+
+
+.response-sent-similar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.response-sent-similar-card {
+  padding: 20px;
+  border: 1px solid #E0E0E0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.response-sent-similar-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.response-sent-similar-card .category {
+  color: #656565;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.response-sent-similar-card .budget {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.response-sent-similar-card .details {
+  font-size: 14px;
+  color: #656565;
+  margin-bottom: 15px;
+}
+
+.response-sent-similar-card .location {
+  margin-bottom: 20px;
+}
+
+.response-sent-similar-card .views {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  color: #656565;
+}
+
+.response-sent-similar-card .published {
+  font-size: 14px;
+  color: #656565;
+  margin-bottom: 15px;
+}
+
+.response-sent-similar-card .detail-link {
+  color: #0066FF;
+  font-size: 16px;
+  text-decoration: none;
+  display: block;
+  margin-top: 15px;
+}
+
+.response-sent-similar-card .detail-link:hover {
+  text-decoration: underline;
+}

@@ -1,77 +1,67 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { PhoneInput } from 'react-international-phone'
-import { useAppContext } from '../../../contexts/AppContext'
-import { useNavigate } from 'react-router-dom'
 import 'react-international-phone/style.css'
 import '../Registration.css'
 
-
-export default function PhoneNumber({ value, onChange, onPhoneSubmit }) {
-  const navigate = useNavigate()
-  const { phoneNumber } = useAppContext()
+export default function PhoneNumber({ value, onChange, onValidityChange }) {
+  const inputRef = useRef(null)
   const [isValidPhone, setIsValidPhone] = useState(false)
-  const inputRef = useRef()
 
-  // фокус на инпут при открытии формы
+  // фокус на поле при монтировании
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
   }, [])
 
-  // проверка валидности при монтировании компонента
-  useEffect(() => {
-    if (phoneNumber) {
-      const digitsOnly = phoneNumber.replace(/\D/g, '')
-      setIsValidPhone(digitsOnly.length > 10)
-    }
-  }, [phoneNumber]) 
-
-  // проверка валидности номера тел
-  const handlePhoneChange = (value) => {
-    onChange(value) 
+  // функция валидации
+  const validatePhone = (value) => {
     const digitsOnly = value.replace(/\D/g, '')
-    setIsValidPhone(digitsOnly.length > 10)
+    return digitsOnly.length > 10
   }
 
+  // обработка изменения номера
+  const handlePhoneChange = (value, meta) => {
+    onChange(value, meta)
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    if (isValidPhone) {
-      if (onPhoneSubmit) {
-        onPhoneSubmit()
-      } else {
-        navigate('/')
-      }
-    } else {
-      alert('Пожалуйста, введите корректный номер телефона')
+    const isValid = validatePhone(value)
+    setIsValidPhone(isValid)
+
+    if (onValidityChange) {
+      onValidityChange(isValid)
     }
   }
 
+  // если value меняется извне (например, при возврате на экран)
+  useEffect(() => {
+    if (!value) {
+      setIsValidPhone(false)
+      onValidityChange?.(false)
+      return
+    }
 
-  return (    
-    <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          
-            <PhoneInput
-                placeholder="Введите номер телефона"
-                value={value}
-                ref={inputRef}
-                onChange={handlePhoneChange}
-                defaultCountry="ru"
-                international
-                countryCallingCodeEditable={false}
-                inputClassName='custom-phone-input'
-                countrySelectorStyleProps={{
-                  buttonClassName: "country-selector-button"
-                }}
-                showDisabledDialCodeAndPrefix={false}
-                forceDialCode={true}
-            />
-        </div>
-          
+    const isValid = validatePhone(value)
+    setIsValidPhone(isValid)
+    onValidityChange?.(isValid)
+  }, [value])
 
-    </form>
+  return (
+    <div className="form-group">
+      <PhoneInput
+        ref={inputRef}
+        value={value}
+        onChange={handlePhoneChange}
+        defaultCountry="ru"
+        international
+        forceDialCode
+        countryCallingCodeEditable={false}
+        placeholder="Введите номер телефона"
+        inputClassName="custom-phone-input"
+        countrySelectorStyleProps={{
+          buttonClassName: 'country-selector-button',
+        }}
+        showDisabledDialCodeAndPrefix={false}
+      />
+    </div>
   )
 }

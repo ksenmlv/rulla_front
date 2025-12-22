@@ -6,6 +6,7 @@ import { ordersApi } from '../../api/ordersApi.ts'
 import '../Executor/Executor.css'
 import '../Main/Main.css'
 import '../Main/MainExecutor.css'
+import '../../styles/Modal.css'
 import icon_user from '../../assets/Main/icon_user.svg'
 import icon_location from '../../assets/Header/icon_location.png'
 import icon_eye from '../../assets/Main/icon_eye.svg'
@@ -13,14 +14,25 @@ import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
 import icon_star from '../../assets/Main/icon_star.svg'
 import icon_filter from '../../assets/Main/icon_filter.svg'
 import icon_search from '../../assets/Main/icon_search.svg'
-
+import icon_close_modal from '../../assets/Main/icon_close_modal.svg'
+import icon_plane from '../../assets/Main/icon_successful_response.svg'
 
 
 
 export default function AllOrders() {
+  const navigate = useNavigate()
+
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [showFilters, setShowFilters] = useState(false)
+
+  const [isResponseSentModalOpen, setIsResponseSentModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const openResponseSentModal = () => setIsResponseSentModalOpen(true)
+  const closeResponseSentModal = () => setIsResponseSentModalOpen(false)
+  const openModal = () => setIsModalOpen(true)
+  const closeModal = () => setIsModalOpen(false)
 
   // загрузка заказов   
   useEffect(() => {
@@ -169,13 +181,119 @@ export default function AllOrders() {
                                 </Link>
 
                                 <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '20px'}}>
-                                    <button className="respond-btn" style={{marginTop: '40px'}}> Откликнуться </button>
-                                    <button className="favorite-btn" style={{borderRadius: '7px', marginTop: '40px'}}> <img src={icon_star} alt="В избранное"/> </button>
+                                    <button onClick={openModal} className="respond-btn" style={{marginTop: '40px'}}> Откликнуться </button>
+                                    <button className="favorite-btn" onClick={openResponseSentModal} style={{borderRadius: '7px', marginTop: '40px'}}> <img src={icon_star} alt="В избранное"/> </button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 )}
+
+                {/* модальное окно - отклика нет */}
+                {isModalOpen && (
+                    <div className='modal-overlay' onClick={closeModal} >
+                        <div className='modal-window' onClick={(e) => e.stopPropagation()} >
+                            {/* крестик закрытия */}
+                            <button onClick={closeModal}> <img src={icon_close_modal} alt='Крестик' /> </button>
+
+                            {/* Текст */}
+                            <div className='modal-text' > Для отклика на заказ пройдите <br /> полную регистрацию исполнителя </div>
+
+                            {/* Кнопка */}
+                            <button className='modal-action-btn' onClick={() => {
+                                alert('Переход на регистрацию исполнителя');
+                                closeModal();
+                                navigate('/full_registration_step1')
+                            }}
+                            > Заполнить данные </button>
+                        </div>
+                    </div>
+                )}
+
+
+                {/* модальное окно - отклик есть */}
+                {isResponseSentModalOpen && (
+                    <div className="modal-overlay" onClick={closeResponseSentModal}>
+                        <div className="response-sent-modal-window" onClick={(e) => e.stopPropagation()}>
+                        
+                        <button className="response-sent-modal-close" onClick={closeResponseSentModal}>
+                            <img src={icon_close_modal} alt="Закрыть" />
+                        </button>
+
+                        {/* Иконка самолётика */}
+                        <div  className="response-sent-modal-plane">
+                            <img src={icon_plane} alt='Отклик улетел'/>
+                        </div>
+
+                        {/* Заголовок */}
+                        <h2 className="response-sent-modal-title">
+                            «Ваш отклик отправлен!<br />Перейти в чат по заказу»
+                        </h2>
+
+                        {/* Кнопка "Перейти в чат" */}
+                        <div style={{display: 'flex', justifyContent: 'center'}}>
+                            <button 
+                                className="response-sent-modal-chat-btn"
+                                onClick={() => {
+                                alert('Переход в чат по заказу')
+                                closeResponseSentModal()
+                                // navigate('/chat/order/123') — сюда добавить реальный роут
+                                }}
+                            >
+                                Перейти в чат
+                            </button>
+                        </div>
+
+                        {/* Блок с похожими заказами */}
+                        <div className="response-sent-similar-title">
+                            <p>Вас могут заинтересовать эти заказы:</p>
+                            <button className="btn-detail" style={{marginLeft: 'auto'}}>
+                                Подробнее
+                                <img src={icon_arrow} alt='Стрелка' style={{marginLeft: '10px'}}/>
+                            </button>
+                        </div>
+
+                        {/* Две карточки заказов */}
+                        <div className="response-sent-similar-grid">
+                            {/* Первая карточка */}
+                            <div className="response-sent-similar-card">
+                            <h3>Название заказа</h3>
+                            <p className="task-category-modern">Категория/подкатегория</p>
+                            <p className="budget">Бюджет: 200 000₽</p>
+                            <p className="details">Сроки выполнения: 6 месяцев</p>
+                            <p className="location">г. Одинцово, Московская обл.</p>
+                            <div className="views">
+                                <img src={icon_eye} alt="Просмотры" width={18} />
+                                <span>120 просмотров</span>
+                            </div>
+                            <p className="published">Опубликовано: 2 сентября 2025г.</p>
+                             <button className="btn-detail" style={{marginLeft: 'auto'}}>
+                                Подробнее
+                                <img src={icon_arrow} alt='Стрелка' style={{marginLeft: '10px'}}/>
+                            </button>
+                            </div>
+
+                            {/* Вторая карточка */}
+                            <div className="response-sent-similar-card">
+                            <h3>Название заказа</h3>
+                            <p className="category">Категория/подкатегория</p>
+                            <p className="budget">Бюджет: 200 000₽</p>
+                            <p className="details">Сроки выполнения: 6 месяцев</p>
+                            <p className="location">г. Одинцово, Московская обл.</p>
+                            <div className="views">
+                                <img src={icon_eye} alt="Просмотры" width={18} />
+                                <span>120 просмотров</span>
+                            </div>
+                            <p className="published">Опубликовано: 2 сентября 2025г.</p>
+                             <button className="btn-detail" style={{marginLeft: 'auto'}}>
+                                Подробнее
+                                <img src={icon_arrow} alt='Стрелка' style={{marginLeft: '10px'}}/>
+                            </button>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    )}
 
             </div>
         </div>
