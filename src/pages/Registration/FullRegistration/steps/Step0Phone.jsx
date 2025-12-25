@@ -276,7 +276,7 @@ const handleKeyDown = useCallback((index, e) => {
     <div>
       <Header hideElements={true} />
 
-      <div className='reg-container' style={{marginBottom: registrationStep === 2 && '230px'}}>
+      <div className='reg-container' style={{marginBottom: '237px' }}>
         <div className='registr-container' style={{ height: registrationStep === 1 ? '660px' : '570px' }}>
           <div className='title'>
             <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад' /></button>

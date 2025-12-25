@@ -38,6 +38,7 @@ import icon_location from '../../assets/Header/icon_location.png'
 
 
 function Main() {
+  const navigate = useNavigate()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)        
 
   // определение ширины устройства
@@ -112,7 +113,7 @@ function Main() {
                             </div>
                         </div>
                         
-                        <button className='ready-solution__button'>Создать заказ</button>
+                        <button onClick={()=> navigate('/customer_my_orders')} className='ready-solution__button'>Создать заказ</button>
                     </div> 
 
                 </div>

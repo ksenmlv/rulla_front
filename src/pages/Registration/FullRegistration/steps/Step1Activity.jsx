@@ -30,7 +30,7 @@ export default function Step1Activity() {
     <div>
       <Header hideElements={true} />
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: '654px'}}>
+        <div className='registr-container' style={{minHeight: '654px', marginBottom: '175px'}}>
 
           <div className='title'>
               <button className='btn-back' onClick={handleBack}>

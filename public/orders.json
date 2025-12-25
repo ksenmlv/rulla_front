@@ -8,6 +8,7 @@
       "deadline": "1 месяц",
       "location": "г. Москва, СЗАО",
       "views": 67,
+      "responses": 33,
       "publishedAt": "15 ноября 2025г.",
       "publishedDate": "2025-11-15T12:00:00Z",
       "status": "completed",
@@ -21,7 +22,8 @@
       "images": [
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
         "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
-      ]
+      ],
+      "lockStatus": "open"
     },
     {
       "id": 3,
@@ -31,6 +33,7 @@
       "deadline": "2 недели",
       "location": "г. Химки, Московская обл.",
       "views": 45,
+      "responses": 52,
       "publishedAt": "11 декабря 2025г.",
       "publishedDate": "2025-12-11T12:00:00Z",
       "status": "in_progress",
@@ -43,7 +46,8 @@
       "images": [
         "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800",
         "https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=800"
-      ]
+      ],
+      "lockStatus": "close"
     },
     {
       "id": 2,
@@ -53,6 +57,7 @@
       "deadline": "3 месяца",
       "location": "г. Москва, ЮАО",
       "views": 89,
+      "responses": 98,
       "publishedAt": "10 декабря 2025г.",
       "publishedDate": "2025-12-10T12:00:00Z",
       "status": "active",
@@ -67,7 +72,8 @@
         "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
         "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
         "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800"
-      ]
+      ],
+      "lockStatus": "open"
     },
     {
       "id": 1,
@@ -77,6 +83,7 @@
       "deadline": "8 месяцев",
       "location": "г. Одинцово, Московская обл.",
       "views": 120,
+      "responses": 81,
       "publishedAt": "2 сентября 2025г.",
       "publishedDate": "2025-09-02T12:00:00Z",
       "status": "archived",
@@ -91,13 +98,112 @@
         "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800",
         "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800",
         "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800"
-      ]
+      ],
+      "lockStatus": "close"
+    },
+
+    {
+      "id": 5,
+      "title": "Замена окон в квартире",
+      "category": "Отделка/Окна",
+      "budget": "180 000",
+      "deadline": "3 недели",
+      "location": "г. Санкт-Петербург, Василеостровский р-н",
+      "views": 92,
+      "responses": 41,
+      "publishedAt": "20 декабря 2025г.",
+      "publishedDate": "2025-12-20T10:00:00Z",
+      "status": "active",
+      "customerName": "Ольга Иванова",
+      "customerCompany": "Частное лицо",
+      "customerRating": 4.6,
+      "customerReviews": 15,
+      "requirements": ["Работа под ключ", "Гарантия 5 лет"],
+      "materials": "Предоставит заказчик",
+      "description": "Замена 8 пластиковых окон в 3-комнатной квартире. Окна Rehau Delight, белые, 5-камерные. Требуется демонтаж старых, установка новых, откосы, подоконники, отделка.",
+      "images": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
+      ],
+      "lockStatus": "open"
+    },
+    {
+      "id": 6,
+      "title": "Укладка плитки в ванной",
+      "category": "Отделка/Плитка",
+      "budget": "95 000",
+      "deadline": "10 дней",
+      "location": "г. Казань, Советский р-н",
+      "views": 58,
+      "responses": 29,
+      "publishedAt": "5 января 2026г.",
+      "publishedDate": "2026-01-05T09:00:00Z",
+      "status": "active",
+      "customerName": "Алексей Смирнов",
+      "customerCompany": "Частное лицо",
+      "customerRating": 4.9,
+      "customerReviews": 19,
+      "requirements": ["Аккуратная работа", "Гарантия 3 года"],
+      "materials": "Уже куплены",
+      "description": "Укладка плитки в ванной комнате 8 м² (пол + стены). Плитка 60x60 см, светлая. Требуется демонтаж старой, выравнивание стен, гидроизоляция, укладка, затирка.",
+      "images": [
+        "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=800"
+      ],
+      "lockStatus": "open"
+    },
+    {
+      "id": 7,
+      "title": "Монтаж гипсокартонных потолков",
+      "category": "Отделка/Потолки",
+      "budget": "110 000",
+      "deadline": "2 недели",
+      "location": "г. Екатеринбург, Ленинский р-н",
+      "views": 73,
+      "responses": 36,
+      "publishedAt": "12 января 2026г.",
+      "publishedDate": "2026-01-12T11:00:00Z",
+      "status": "in_progress",
+      "customerName": "Елена Васильева",
+      "customerCompany": "Частное лицо",
+      "customerRating": 4.8,
+      "customerReviews": 11,
+      "requirements": ["Без пыли", "Подсветка"],
+      "materials": "Предоставит исполнитель",
+      "description": "Монтаж многоуровневого гипсокартонного потолка с подсветкой в гостиной 30 м². Требуется ровная поверхность, установка LED-лент.",
+      "images": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800"
+      ],
+      "lockStatus": "close"
+    },
+    {
+      "id": 8,
+      "title": "Сборка мебели IKEA",
+      "category": "Мебель/Сборка",
+      "budget": "45 000",
+      "deadline": "5 дней",
+      "location": "г. Новосибирск, Центральный р-н",
+      "views": 112,
+      "responses": 67,
+      "publishedAt": "18 января 2026г.",
+      "publishedDate": "2026-01-18T14:00:00Z",
+      "status": "active",
+      "customerName": "Сергей Кузнецов",
+      "customerCompany": "Частное лицо",
+      "customerRating": 4.7,
+      "customerReviews": 28,
+      "requirements": ["Аккуратность", "Сборка по инструкции"],
+      "materials": "Мебель IKEA",
+      "description": "Сборка кухни IKEA (20 м.п.) + шкаф-купе 3 м + 4 комода. Требуется аккуратность, проверка уровнем, без повреждений стен.",
+      "images": [
+        "https://images.unsplash.com/photo-1588854337236-6889c631f2c8?w=800"
+      ],
+      "lockStatus": "open"
     }
   ],
   "meta": {
     "currentPage": 1,
     "lastPage": 1,
     "perPage": 20,
-    "total": 4
+    "total": 8
   }
 }

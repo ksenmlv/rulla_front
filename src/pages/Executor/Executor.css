@@ -140,14 +140,115 @@
 .favorite-btn {
   width: 70px;
   height: 70px;
+  border-radius: 12px;
   background: transparent;
-  border: 2px solid #DE5A2B;
+  border: 2px solid #02283D !important;
   cursor: pointer;
 }
 
 .respond-btn:hover {
   background: #c74e24;
 }
+
+
+/* сортировка */
+.sort-container {
+  position: relative;
+  display: inline-block;
+  margin: 0 0 25px auto;
+}
+
+.sort-button {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: white;
+  border: none;
+  font-size: 20px;
+  font-weight: 500;
+  color: #02283D;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-arrow {
+  transition: transform 0.2s;
+}
+
+.sort-container:hover .sort-arrow {
+  transform: rotate(180deg);
+}
+
+.sort-dropdown {
+  width: auto;
+  min-width: 100%;
+  height: auto;
+  position: absolute;
+  top: 100%;
+  left: auto;
+  right: 0;
+  background: white;
+  border: 1px solid #02283D;
+  border-radius: 7px;
+  margin-top: 8px;
+  padding: 10px 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.sort-container:hover .sort-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.sort-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 0;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000000;
+}
+
+.sort-radio {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #919191;
+  border-radius: 50%;
+  background: white;
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.sort-option input:checked + .sort-radio {
+  background: #02283D;
+  border: 2px solid #02283D;
+  background: white;
+}
+
+.sort-option input:checked + .sort-radio::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background: #02283D;
+  border-radius: 50%;
+}
+
+.sort-option input {
+  opacity: 0;
+  position: absolute;
+}
+
 
 /* поиск и фильтр */
 .orders-controls {
@@ -355,14 +456,6 @@
   font-weight: 600;
   cursor: pointer;
   flex-grow: 1;
-}
-
-.favorite-btn {
-  background: transparent;
-  border: 2px solid #DE5A2B;
-  border-radius: 12px;
-  padding: 12px;
-  cursor: pointer;
 }
 
 .order-description h3 {

@@ -37,9 +37,10 @@ const Step4Experience = lazy(() => import('./pages/Registration/FullRegistration
 const Step5Services = lazy(() => import('./pages/Registration/FullRegistration/steps/Step5Services'));
 const Step6Contacts = lazy(() => import('./pages/Registration/FullRegistration/steps/Step6Contacts'));
 const MainExecutor = lazy(() => import('./pages/Main/MainExecutor'));
-const MyOrders = lazy(() => import('./pages/Executor/MyOrders'));
+const ExMyOrders = lazy(() => import('./pages/Executor/MyOrders'));
 const AllOrders = lazy(() => import('./pages/Executor/AllOrders'));
 const OrderDetail = lazy(() => import('./pages/Executor/OrderDetail'));
+const CusMyOrders = lazy(() => import('./pages/Customer/MyOrders'));
 
 function App() {
   return (
@@ -62,9 +63,10 @@ function App() {
             <Route path="/full_registration_step5" element={<Step5Services />} />
             <Route path="/full_registration_step6" element={<Step6Contacts />} /> 
             <Route path="/main_executor" element={<MainExecutor />} />
-            <Route path="/executor_my_orders" element={<MyOrders />} />
+            <Route path="/executor_my_orders" element={<ExMyOrders />} />
             <Route path="/executor_all_orders" element={<AllOrders />} />
             <Route path="/executor_order/:id" element={<OrderDetail />} />
+            <Route path="/customer_my_orders" element={<CusMyOrders />} />
           </Routes>
         </Suspense>
       </AppProvider>

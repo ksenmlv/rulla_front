@@ -13,7 +13,7 @@ import icon_in_progress from '../../assets/Main/icon_order_in_progress.svg'
 import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
 
 
-export default function MyOrders() {
+export default function ExMyOrders() {
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)

@@ -170,7 +170,7 @@ export default function ShortStep1Phone() {
           {step === 1 && (
             <>
               <RoleSwitcher activeRole={role} onChangeRole={handleRoleChange} />
-              <div className="form-group" style={{ marginTop: '39px' }}>
+              <div className="form-group" style={{ marginTop: '35px' }}>
                 <label className="form-label">Номер телефона</label>
                 <PhoneNumber
                   value={phoneValue}
