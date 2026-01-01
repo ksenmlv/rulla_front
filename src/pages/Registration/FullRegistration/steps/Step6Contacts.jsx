@@ -1,5 +1,5 @@
 import '../../Registration.css'
-import React, { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -45,12 +45,12 @@ export default function Step6Contacts() {
         setCertificates
     } = useAppContext()
 
-    const [isCheckedPolicy, setIsCheckedPolicy] = React.useState(false)
-    const [isCheckedMarketing, setIsCheckedMarketing] = React.useState(false)
-    const [modalVisible, setModalVisible] = React.useState(false)
-    const [selectedService, setSelectedService] = React.useState('')
-    const [emailError, setEmailError] = React.useState('')
-    const [submitAttempted, setSubmitAttempted] = React.useState(false)
+    const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)
+    const [isCheckedMarketing, setIsCheckedMarketing] = useState(false)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [selectedService, setSelectedService] = useState('')
+    const [emailError, setEmailError] = useState('')
+    const [submitAttempted, setSubmitAttempted] = useState(false)
 
     // устанавливаем шаг
     useEffect(() => {

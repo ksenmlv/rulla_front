@@ -73,7 +73,7 @@
 }
 .search-input::placeholder {
     color: #000000CF;
-    font-size: 24px;
+    font-size: 20px;
     color: #656565;
     padding-left: 40px;
 }
@@ -92,10 +92,10 @@
     width: 22%;
     height: 84px;
     border: none;
-    border-radius: 10px;
+    border-radius: 7px;
     color: white;
     background-color: #DE5A2B;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 600;
 }
 
@@ -116,7 +116,7 @@
     .ready-solution {
         padding-left: 41px;
         padding-right: 41px;
-        background-color:#DE5A2B;
+        background: linear-gradient(90deg, #E65B29 0%, #FE9823 100%);
         height: 180px;
         width: 100%;
         border-radius: 10px;
@@ -141,8 +141,8 @@
     }
 
     .ready-solution__title {
-        font-size: 36px;
-        font-weight: 500;
+        font-size: 32px;
+        font-weight: 700;
         color: #ffffff;
     }
 
@@ -155,18 +155,19 @@
         text-align: left;
         line-height: 1.3;
         margin-left: 97px;
+        margin-top: -15px;
     }
 
     .ready-solution__button {
-        width: 354px;
-        height: 73px;
+        width: 27%;
+        height: 79px;
         background-color: #fff;
         color: #262E32;
-        font-size: 24px;
-        font-weight: 600;
+        font-size: 20px;
+        font-weight: 700;
         border: none;
-        border-radius: 5px;
-        margin-right: 70px;
+        border-radius: 7px;
+        margin-right: 3%;
     }
 }
 
@@ -175,18 +176,17 @@
 
 /* блок "быстро бесплатно безопасно" */
 .fast-free-safe {
-    padding-top: 20px;
+    margin-top: 20px;
     display: flex;
-    gap: 19px;
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: space-between;
 
-
         h3 {
-            font-size: 36px;
-            font-weight: 600;
+            font-size: 32px;
+            font-weight: 700;
             text-align: left;
-            color: #ffffff;
+            color: #02283D;
             position: absolute;
             top: 32px;
             left: 37px;
@@ -194,9 +194,9 @@
         p {
             font-family: 'Wix Madefor Text', sans-serif;
             font-size: 24px;
-            width: 383px;
+            width: 72%;
             text-align: left;
-            color: #ffffff;
+            color: #656565;
             line-height: 1.3;
             position: absolute;
             left: 37px;
@@ -206,42 +206,49 @@
 
     .fast {
         position: relative;
-        /* width: 553px; */
+        height: 328px;
+        /* min-width: 550px; */
+        width: 32.5%;
+        border: 2px solid #DCE6EB;
+        border-radius: 15px;
+        background-color: #FAFAFA;
 
         .fast__img {
             position: absolute;
             right: 0;
-            top: 0;
+            top: 5%;
         }
     }
 
     .free {
         position: relative;
-        /* width: 555px; */
+        height: 328px;
+        /* min-width: 550px; */
+        width: 32.5%;
+        border: 2px solid #DCE6EB;
+        border-radius: 15px;
+        background-color: #FAFAFA;
 
         .free__img {
             position: absolute;
             top: 20px;
             right: 0;
         }
-
-        p {
-            width: 473px;
-        }
     }
 
     .safe {
         position: relative;
-        /* width: 552px; */
+        height: 328px;
+        /* min-width: 550px; */
+        width: 32.5%;
+        border: 2px solid #DCE6EB;
+        border-radius: 15px;
+        background-color: #FAFAFA;
         
         .safe__img {
             position: absolute;
             top: 0;
-            right: 55px;
-        }
-
-        p {
-            width: 462px;
+            right: 0;
         }
     }
 }
@@ -253,7 +260,7 @@
     margin-bottom: 105px;
 
     h1 {
-        font-size: 52px;
+        font-size: 48px;
         font-weight: 700;
         color: #151515;
         text-align: left;
@@ -268,7 +275,7 @@
     border-radius: 5px;
     background: #F3F3F3;
     box-shadow: 0px 3px 6.7px rgba(0, 0, 0, 0.18);
-    padding-left: 40px;
+    padding-left:28px;
     padding-top: 30px;
     color: #151515;
     position: relative;
@@ -278,15 +285,15 @@
     margin-bottom: 20px;
 
     h2 {
-        font-size: 40px;
-        font-weight: 700;
+        font-size: 32px;
+        font-weight: 600;
         text-align: left;
         top: 30px;
     }
 
     p {
-        font-size: 24px;
-        font-weight: 500;
+        font-size: 20px;
+        font-weight: 600;
         text-align: left;
         margin-top: 12px;
     }
@@ -388,7 +395,7 @@
     }
 
     h1 {
-        font-size: 52px;
+        font-size: 48px;
         font-weight: 700;
         color: #151515;
         text-align: left;
@@ -403,10 +410,10 @@
     .stages-text {
         display: flex;
         justify-content: space-between;
+        margin-top: -25px;
 
         h3 {
-            font-family: 'Wix Madefor Text', sans-serif;
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 600;
             color: #000000;
             text-align: left;
@@ -414,7 +421,6 @@
         }
 
         p {
-            font-family: 'Wix Madefor Text', sans-serif;
             font-size: 24px;
             font-weight: 400;
             text-align: left;
@@ -451,8 +457,8 @@
 
 
         h3 {
-            font-size: 36px;
-            font-weight: 600;
+            font-size: 32px;
+            font-weight: 700;
             margin-bottom: 0;
             margin-top: 37px;
         }
@@ -474,17 +480,18 @@
     }
 
     button {
-        width: 393px;
-        height: 73px;
+        min-width: 450px;
+        /* width: 100%; */
+        height: 79px;
         background: #ffffff;
         color:#262E32;
         border: none;
-        border-radius: 5px;
-        font-size: 24px;
-        font-weight: 600;
+        border-radius: 7px;
+        font-size: 20px;
+        font-weight: 700;
         align-self: center;
         margin-right: 50px;
-        margin-left: 34px;
+        margin-left: 70px;
     }
 }
 
@@ -504,7 +511,7 @@
     position: relative;
 
     h2 {
-        font-size: 52px;
+        font-size: 48px;
         font-weight: 700;
         color: #ffffff;
         margin-left: 0;
@@ -512,19 +519,19 @@
         text-align: left;
     }
     p {
-        font-size: 36px;
+        font-size: 32px;
         font-weight: 500;
         color: #ffffff;
         text-align: left;
     }
 
     button {
-        width: 986px;
-        height: 101px;
-        background: #F1EEEE;
+        width: 30%;
+        height: 84px;
+        background: #fff;
         color: #02283D;
-        font-size: 36px;
-        font-weight: 600;
+        font-size: 24px;
+        font-weight: 700;
         border: none;
         border-radius: 5px;
         margin-top: 130px;

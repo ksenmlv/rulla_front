@@ -14,6 +14,7 @@ const RegistrSelector = ({
 
   const [searchValue, setSearchValue] = useState('');          // single mode
   const [realSearchValue, setRealSearchValue] = useState('');  // multiple mode
+  const [showScrollbar, setShowScrollbar] = useState(false);
 
   const [selectedActivity, setSelectedActivity] = useState('');
   const [selectedList, setSelectedList] = useState([]);
@@ -28,7 +29,6 @@ const RegistrSelector = ({
 
 
   // --------------------------- INIT & SYNC -----------------------------------
-
   useEffect(() => {
     if (multiple) {
       setSelectedList(Array.isArray(selected) ? selected : []);
@@ -57,7 +57,6 @@ const RegistrSelector = ({
 
 
   // -------------------------- SCROLL THUMB UPDATE ----------------------------
-
   const updateScrollThumb = useCallback(() => {
     if (!dropdownListRef.current || !scrollThumbRef.current) return;
 
@@ -106,7 +105,6 @@ const RegistrSelector = ({
 
 
   // ---------------------------- DRAG SCROLLBAR -------------------------------
-
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging || !dropdownListRef.current || !scrollTrackRef.current) return;
@@ -169,7 +167,6 @@ const RegistrSelector = ({
 
 
   // ----------------------------- INPUT LOGIC ---------------------------------
-
   const handleInputChange = (e) => {
     if (multiple) {
       setRealSearchValue(e.target.value);
@@ -188,7 +185,6 @@ const RegistrSelector = ({
 
 
   // ----------------------------- FILTERED DATA -------------------------------
-
   const filteredSubject = multiple
     ? (realSearchValue
         ? subject.filter(item =>
@@ -201,10 +197,15 @@ const RegistrSelector = ({
           )
         : subject);
 
+    useEffect(() => {
+      if (isOpen) {
+        setShowScrollbar(filteredSubject.length > 4);
+      }
+    }, [isOpen, filteredSubject.length]);
+
 
 
   // ----------------------------- SELECTION -----------------------------------
-
   const handleSelectSingle = (item) => {
     if (onSelect) onSelect(item);
     setSelectedActivity(item);
@@ -230,14 +231,12 @@ const RegistrSelector = ({
 
 
   // ------------------------------ INPUT VALUE --------------------------------
-
   const inputValue = multiple
     ? (isOpen ? realSearchValue : selectedList.join(', '))
     : (isOpen ? searchValue : selectedActivity);
 
 
   // ------------------------------ RENDER -------------------------------------
-
   return (
     <div className="activity-input-container" ref={dropdownRef}>
 
@@ -256,7 +255,7 @@ const RegistrSelector = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <svg width="20" height="12" viewBox="0 0 12 8" fill="none">
-          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
 
@@ -317,18 +316,20 @@ const RegistrSelector = ({
 
             </div>
 
-            <div className="custom-scrollbar">
-              <div
-                className="scroll-track"
-                ref={scrollTrackRef}
-                onClick={handleTrackClick}
-              />
-              <div
-                className="scroll-thumb"
-                ref={scrollThumbRef}
-                onMouseDown={handleThumbMouseDown}
-              />
-            </div>
+            {showScrollbar && (
+              <div className="custom-scrollbar">
+                <div
+                  className="scroll-track"
+                  ref={scrollTrackRef}
+                  onClick={handleTrackClick}
+                />
+                <div
+                  className="scroll-thumb"
+                  ref={scrollThumbRef}
+                  onMouseDown={handleThumbMouseDown}
+                />
+              </div>
+            )}
 
           </div>
         </div>

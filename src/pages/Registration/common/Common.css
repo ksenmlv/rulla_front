@@ -158,27 +158,37 @@
 
 
 /* Сетка загруженных файлов */
+/* Сетка загруженных файлов */
 .uploaded-files-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   gap: 16px;
-  margin-top: 10px;
+  margin-top: 16px;
 }
 
 .uploaded-file-item {
-  text-align: center;
+  position: relative;
+  display: inline-block; /* важно для позиционирования крестика */
+}
+
+/* Контейнер с радиусом 10px и обрезкой контента (изображение + название) */
+.file-preview-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 10px; /* единый радиус 10px */
+  overflow: hidden;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: #f0f0f0;
 }
 
 .file-preview {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  background: #f0f0f0;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid #ddd;
+  height: 100%;
 }
 
+/* Изображение/видео/иконка */
 .preview-img,
 .preview-video {
   width: 100%;
@@ -195,31 +205,40 @@
   color: #888;
 }
 
+/* Название файла — снизу внутри карточки */
+.file-name-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0.1));
+  color: #ffffff;
+  font-size: 13px;
+  padding: 14px 8px 8px;
+  text-align: center;
+  line-height: 1.3;
+  word-break: break-all;
+  pointer-events: none;
+}
+
+/* Крестик — вне обрезки, всегда виден, поверх всего */
 .remove-file-btn {
   position: absolute;
-  top: 6px;
-  right: 6px;
-  width: 24px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.9);
-  color: #ff4444;
-  border: none;
+  top: -8px;
+  right: -8px;
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  color: #888888;
+  border: 1px solid #dddddd;
   border-radius: 50%;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.remove-file-btn:hover {
-  background: white;
-}
-
-.file-name {
-  margin-top: 8px;
-  font-size: 13px;
-  color: #333;
-  word-break: break-all;
-  line-height: 1.3;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  z-index: 20; /* выше всего */
+  transition: all 0.2s ease;
 }

@@ -13,12 +13,24 @@ import icon_search from '../../assets/Main/icon_search.svg'
 import separator from '../../assets/Main/bw_separator.svg'
 import icon_location from '../../assets/Header/icon_location.png'
 import icon_eye from '../../assets/Main/icon_eye.svg'
-import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
+import icon_arrow from '../../assets/Main/arrow_right_grey.svg'
 import icon_hammer from '../../assets/Main/icon_hammer.svg'
 import icon_gear from '../../assets/Main/icon_gear.svg'
 import icon_wrench from '../../assets/Main/icon_wrench.svg'
 import icon_gear_wheel from '../../assets/Main/icon_gear_wheel.svg'
 import icon_pliers from '../../assets/Main/icon_pliers.svg'
+import stages from '../../assets/Main/line_of_stages.svg'
+import stages_mob from '../../assets/Main/line_stages_mob.svg'
+import stage1 from '../../assets/Main/stage1.svg'
+import stage2 from '../../assets/Main/stage2.svg'
+import stage3 from '../../assets/Main/stage3.svg'
+import stage_final from '../../assets/Main/stage_final.svg'
+import scales from '../../assets/Main/icon_scales.svg'
+import timer from '../../assets/Main/icon_timer.svg'
+import coins from '../../assets/Main/icon_coins.svg'
+import gear from '../../assets/Main/gear_blue.svg'
+import gear2 from '../../assets/Main/gear2_blue.svg'
+import hammer2 from '../../assets/Main/hammer2.svg'
 
 
 export default function MainExecutor() {
@@ -166,7 +178,7 @@ export default function MainExecutor() {
                                     {/* Синяя кнопка снизу */}
                                     <Link to={`/executor_order/${order.id}`} className="btn-detail">
                                         Подробнее
-                                        <img src={icon_arrow} alt='Иконка стрелочки' style={{color: '#02283D',  marginLeft: '10px'}}/>
+                                        <img src={icon_arrow} alt='Иконка стрелочки' style={{ marginLeft: '10px'}}/>
                                     </Link>
 
                                 </div>
@@ -244,6 +256,92 @@ export default function MainExecutor() {
                         </div>
                     </div>
 
+                </div>
+
+
+                {/* блок "Как это работает" */}
+                <div className='work-stages' style={{marginBottom: '90px'}}>
+                    <h1>Как это работает?</h1>
+
+                    <div className='stages-wrapper'>
+
+                        <div className='stages-vertical'>
+                            <img src={ isMobile ? stages_mob : stages} alt='line of stages' className='line-of-stages' />
+                            <div className='stages-numbers'>
+                                <img src={stage1} alt='stage 1' className='stage1' />
+                                <img src={stage2} alt='stage 2' className='stage2' style={{marginLeft:'9%'}} />
+                                <img src={stage3} alt='stage 3' className='stage3' style={{marginLeft:'8%'}}/>
+                                { !isMobile && (<img src={stage_final} alt='stage final' className='stage-final' /> )}
+                            </div>
+                        </div>
+                    
+                        <div className='stages-text'>
+                            <div style={ !isMobile ? {maxWidth: '470px', marginLeft:'5px'} : {width: '240px', marginBottom: '25px'} }>
+                                <h3>Зарегистрируйтесь</h3>
+                                <p>Заполните все данные в личном кабинете и пройдите проверку сервиса</p>
+                            </div>
+                            <div style={ !isMobile ? {width:'460px', marginLeft:'7px'} : {width: '240px', marginBottom: '28px'} }>
+                                <h3>Найдите заказы</h3>
+                                <p style={ !isMobile ? {maxWidth:'455px'} : {} }>Просматривайте заказы в разделе «Все заказы», откликайтесь на подходящие и получайте предложения от заказчиков напрямую </p>
+                            </div>
+                            <div style={ !isMobile ? {width:'495px', marginLeft:'0'} : {width: '240px'}}>
+                                <h3>Работа и оплата</h3>
+                                <p>Обсуждайте детали с клиентом, выполняйте заказ и получайте деньги напрямую без посредников </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{display: 'flex', justifyContent: 'end', marginTop: '20px'}}>
+                        <button style={{height: '95px', maxWidth: '495px', width: '30%', border: 'none', borderRadius: '10px', color: 'white', backgroundColor: '#DE5A2B', fontSize: '24px', fontWeight: '600'}}>Найти заказы</button>
+                    </div>
+                </div>
+
+
+                {/* блок "Преимущества платформы" */}
+                <div className='whole-block'>
+                    <h2 style={{margin: '120px 0 40px 0'}}>Преимущества платформы</h2>
+
+                    <div className="benefits-grid">      
+                        <div className="benefit-card">
+                            <h3>Стабильные заказы</h3>
+                            <img src={scales} alt="Стабильность" className="benefit-icon" />
+                            <p style={{marginBottom: '10%'}}>Постоянный поток заказов<br />для вашей компании</p>
+                        </div>
+                        
+                        <div className="benefit-card">
+                            <h3>Быстрый отклик</h3>
+                            <img src={timer} alt="Скорость" className="benefit-icon" />
+                            <p>Для того, чтобы взять заказ, вам нужно<br />нажать только одну кнопку «Откликнуться»</p>
+                        </div>
+                        
+                        <div className="benefit-card">
+                            <h3>Выгодные тарифы</h3>
+                            <img src={coins} alt="Тарифы" className="benefit-icon" />
+                            <p>У вас будет определенное количество<br />откликов в соответствии с тарифом<br />(не нужно платить за каждый отклик)<br />по адекватной цене</p>
+                        </div>
+                    </div>
+
+                    <div className="call-to-action">
+                        <div className="cta-text">
+                            <h2>Начните зарабатывать больше</h2>
+                            <p>с проверенными заказчиками!</p>
+                        </div>
+                        <img src={gear} alt="Заработок" className="cta-icon" />
+                        <img src={gear2} alt="Заработок" className="cta2-icon" />
+                    </div>
+                </div>
+
+
+                {/* блок "оставьте заявку" */}
+                <div className='request d-flex flex-column'>
+                    <div>
+                        <h2>А если есть вопросы — </h2>
+                        <p>напишите нам, мы поможем! </p>
+                    </div>
+                    <div className='d-flex justify-content-start'>
+                        <button>Связаться с менеджером</button>
+                    </div>
+                    <img src={hammer2} alt='hammer' />
                 </div>
         
             </div>

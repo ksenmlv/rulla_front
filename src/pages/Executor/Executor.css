@@ -253,16 +253,15 @@
 /* поиск и фильтр */
 .orders-controls {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin: 0 0 30px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .search-bar {
   position: relative;
   flex: 1;
-  max-width: 70%;
+  max-width: 75%;
 }
 
 .search-input-top {

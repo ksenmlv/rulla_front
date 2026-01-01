@@ -63,6 +63,18 @@
     white-space: nowrap;
 }
 
+.btn-blue {
+    width: 183px;
+    height: 54px;
+    background-color: #fff;
+    color: #02283D;
+    border: 2px solid #02283D;
+    border-radius: 7px;
+    font-size: 20px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 /* скрываем кнопку меню на десктопе */
 .mobile-menu-btn {
     display: none;

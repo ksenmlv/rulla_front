@@ -33,7 +33,7 @@ import { Link, useNavigate } from 'react-router-dom'
   ]
   
   const defaultRightContent = (
-    <button className="btn-orange" onClick={() => navigate('/enter')}>
+    <button className="btn-blue" onClick={() => navigate('/enter')}>
       Войти
     </button>
   )

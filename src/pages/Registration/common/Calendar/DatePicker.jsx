@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./DatePicker.css";
-import calendarIcon from "../../../../assets//Main//icon_calendar.png"
+import calendarIcon from "../../../../assets/Main/icon_calendar.png";
 
-export default function CustomDatePicker({ value, onChange, error }) {
+export default function CustomDatePicker({ value, onChange, placeholder = "00.00.00", error }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
+  // Форматирование даты при выборе из календаря
   const handleSelect = (date) => {
     const formatted =
       String(date.getDate()).padStart(2, "0") +
@@ -20,6 +21,7 @@ export default function CustomDatePicker({ value, onChange, error }) {
     setOpen(false);
   };
 
+  // Закрытие календаря при клике вне
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
@@ -28,7 +30,20 @@ export default function CustomDatePicker({ value, onChange, error }) {
     return () => document.removeEventListener("click", handler);
   }, []);
 
-  // Кастомный формат навигации
+  // Маска ввода (как в Step3Passport)
+  const handleInputChange = (e) => {
+    let inputValue = e.target.value.replace(/\D/g, '').slice(0, 6); // только цифры, макс 6
+    let formatted = inputValue;
+
+    if (inputValue.length > 4) {
+      formatted = inputValue.slice(0, 2) + '.' + inputValue.slice(2, 4) + '.' + inputValue.slice(4);
+    } else if (inputValue.length > 2) {
+      formatted = inputValue.slice(0, 2) + '.' + inputValue.slice(2);
+    }
+
+    onChange(formatted);
+  };
+
   const formatNavigationLabel = ({ date, view }) => {
     if (view === 'month') {
       const months = [
@@ -45,32 +60,29 @@ export default function CustomDatePicker({ value, onChange, error }) {
       <input
         className={`date-input ${error ? "date-input--error" : ""}`}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="00.00.00"
+        onChange={handleInputChange} // ← теперь маска работает
+        placeholder={placeholder}
+        maxLength={10}
       />
 
       <img
         src={calendarIcon}
-        alt="calendar"
+        alt="календарь"
         className="calendar-icon"
         onClick={() => setOpen(!open)}
       />
 
       {open && (
         <div className="calendar-popup">
-          <Calendar 
+          <Calendar
             onClickDay={handleSelect}
             className="custom-calendar"
-            // Отключаем переключение вида
             maxDetail="month"
             minDetail="month"
-            // Отключаем клик по навигации
             navigationLabel={formatNavigationLabel}
-            // Отключаем обработчик клика по навигации
             onClickNav={undefined}
             prevLabel="‹"
             nextLabel="›"
-            // Скрываем иконки переключения вида
             view="month"
             showNeighboringMonth={false}
           />

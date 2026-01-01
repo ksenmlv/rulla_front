@@ -71,36 +71,41 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10 }) => {
         <div className="uploaded-files-grid">
           {files.map((file, index) => (
             <div key={index} className="uploaded-file-item">
-              <div className="file-preview">
-                {isImage(file) ? (
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt={file.name}
-                    className="preview-img"
-                  />
-                ) : isVideo(file) ? (
-                  <video className="preview-video">
-                    <source src={URL.createObjectURL(file)} />
-                  </video>
-                ) : (
-                  <div className="file-icon">📄</div>
-                )}
+              {/* Обёртка с радиусом и обрезкой контента */}
+              <div className="file-preview-wrapper">
+                <div className="file-preview">
+                  {isImage(file) ? (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt={file.name}
+                      className="preview-img"
+                    />
+                  ) : isVideo(file) ? (
+                    <video className="preview-video" muted>
+                      <source src={URL.createObjectURL(file)} />
+                    </video>
+                  ) : (
+                    <div className="file-icon">📄</div>
+                  )}
 
-                <button
-                  type="button"
-                  className="remove-file-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemoveFile(index);
-                  }}
-                >
-                  ✕
-                </button>
+                  {/* Название внутри превью */}
+                  <div className="file-name-overlay" title={file.name}>
+                    {shortenFileName(file.name, 24)}
+                  </div>
+                </div>
               </div>
 
-              <div className="file-name" title={file.name}>
-                {shortenFileName(file.name)}
-              </div>
+              {/* Крестик вне обрезки — всегда виден и поверх всего */}
+              <button
+                type="button"
+                className="remove-file-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveFile(index);
+                }}
+              >
+                ✕
+              </button>
             </div>
           ))}
         </div>

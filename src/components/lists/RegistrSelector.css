@@ -73,7 +73,8 @@
   color: #000;
   border: 1px solid #919191;
   border-radius: 10px;
-  height: 210px;
+  height: auto;
+  max-height: 210px;
   position: relative;
   overflow: hidden; /* Скрываем переполнение */
 }

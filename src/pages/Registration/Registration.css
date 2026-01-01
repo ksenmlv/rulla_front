@@ -18,7 +18,7 @@
   padding: 45px;
   background: #FFFFFF;
   border-radius: 10px;
-  border: 3px solid #DE5A2B;
+  border: 1px solid #919191;
   font-family: 'Wix Madefor Display', sans-serif;
 }
 
@@ -262,7 +262,7 @@
 .custom-checkbox {
   width: 21px;
   height: 21px;
-  border: 2px solid #ECA288;
+  border: 2px solid #919191;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -273,14 +273,9 @@
   position: relative;
 }
 
-.custom-checkbox:hover {
-  border-color: #DE5A2B;
-  background-color: rgba(222, 90, 43, 0.05);
-}
-
 .custom-checkbox.checked {
-  border-color: #DE5A2B;
-  background-color: #DE5A2B;
+  border-color: #02283D;
+  background-color: #02283D;
 }
 
 .check-icon {
@@ -388,13 +383,13 @@
   width: 21px;
   height: 21px;
   cursor: pointer;
-  accent-color: #DE5A2B;
+  accent-color: #02283D;
 }
 
 /* Кастомные стили для радиобаттона для лучшей поддержки браузеров */
 .radio-option input[type="radio"]:checked {
-  background-color: #DE5A2B;
-  border-color: #DE5A2B;
+  background-color: #02283D;
+  border-color: #02283D;
 }
 
 .radio-option label {
@@ -486,7 +481,7 @@
     border: 1px solid #ECA288;
     border-radius: 10px;
     padding: 0 18px;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 500;
     color: #000;
     background-color: #F4F5F5;
@@ -496,7 +491,7 @@
 .passport-field input::placeholder {
     color: #4B4B4B;
     opacity: 0.7;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .passport-field input:focus {

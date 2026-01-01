@@ -9,10 +9,9 @@ import icon_connection from '../../assets/Main/icon_connection.png'
 import icon_search from '../../assets/Main/icon_search.svg'
 import separator from '../../assets/Main/bw_separator.svg'
 import checkmark from '../../assets/Main/icon_checkmark.svg'
-import rect_blue from '../../assets/Main/rect-blue.jpg'
-import gear1 from '../../assets/Main/gear1.svg'
-import hammer1 from '../../assets/Main/hammer1.svg'
-import wrench1 from '../../assets/Main/wrench1.svg'
+import gear1 from '../../assets/Main/gear_wheel_.svg'
+import hammer1 from '../../assets/Main/hammer_.svg'
+import wrench1 from '../../assets/Main/wrench_.svg'
 import arrow_r from '../../assets/Main/arrow_right.svg'
 import block_house from '../../assets/Main/block_house.png'
 import block_armchair from '../../assets/Main/block_armchair.png'
@@ -32,7 +31,7 @@ import stages_mob from '../../assets/Main/line_stages_mob.svg'
 import stage1 from '../../assets/Main/stage1.svg'
 import stage2 from '../../assets/Main/stage2.svg'
 import stage3 from '../../assets/Main/stage3.svg'
-import stage_final from '../../assets/Main/stage_final.jpg'
+import stage_final from '../../assets/Main/stage_final.svg'
 import icon_location from '../../assets/Header/icon_location.png'
 
 
@@ -100,7 +99,7 @@ function Main() {
                         <div className='ready-solution__content'>
 
                             <div className='ready-solution__header'>
-                                <div className='ready-solution__icon'>
+                                <div className='ready-solution__icon' style={{marginTop: '15px'}}>
                                     <img src={checkmark} alt='checkmark' className='checkmark'/>
                                 </div>
                                 <div className='ready-solution__title'>
@@ -121,16 +120,14 @@ function Main() {
                 {/* блок "быстро бесплатно безопасно" */}
                 <div className='fast-free-safe'>
                     <div className='fast'>
-                        { !isMobile && (<img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={gear1} alt='gear wheel' className='fast__img'/>
                         <div className='fast__text'>
-                            <h3>Быстро</h3>
+                            <h3>Стабильные заказы</h3>
                             <p>Создайте заявку и получите первые отклики от подрядчиков в течение 10 минут</p>
                         </div>
                     </div>
 
                     <div className='free'>
-                        { !isMobile && (<img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={hammer1} alt='hammer' className='free__img'/>
                         <div className='free__text'>
                             <h3>Бесплатно</h3>
@@ -139,7 +136,6 @@ function Main() {
                     </div>
 
                     <div className='safe'>
-                        { !isMobile && ( <img src={rect_blue} alt='rectangle' width={530} className='rect_blue'/> )}
                         <img src={wrench1} alt='wrench' className='safe__img'/>
                         <div className='safet__text'>
                             <h3>Безопасно</h3>
@@ -156,14 +152,14 @@ function Main() {
                     <div className='block-large'>
                         <div>
                             <h2>Ремонт “Под ключ”</h2>
-                            <p>Посмотреть <img src={arrow_r} alt='arrow' /></p>
+                            <p>Смотреть отклики <img src={arrow_r} alt='arrow' /></p>
                         </div>
                         <img src={block_house} alt='house' className='img-house'/>
                     </div>
 
                     <div className='blocks'>
                         <div className='block'>
-                            <h3>Дизайн интерьеров</h3>
+                            <h3>Проектирование и дизайн</h3>
                             <img src={block_armchair} alt='armchair' className='img-block armchair' />
                         </div>
                         
@@ -228,11 +224,11 @@ function Main() {
                                 <h3>Оставьте заявку</h3>
                                 <p>Укажите вид работ, сроки и все детали, чтобы исполнители знали, что нужно делать</p>
                             </div>
-                            <div style={ !isMobile ? {width:'418px', marginLeft:'15px'} : {width: '240px', marginBottom: '28px'} }>
+                            <div style={ !isMobile ? {width:'418px', marginLeft:'10px'} : {width: '240px', marginBottom: '28px'} }>
                                 <h3>Получите предложения</h3>
                                 <p style={ !isMobile ? {width:'409px'} : {} }>Мастера будут оставлять отклики, которые вы увидите в разделе «Мои заказы»</p>
                             </div>
-                            <div style={ !isMobile ? {width:'498px', marginLeft:'13px'} : {width: '240px'}}>
+                            <div style={ !isMobile ? {width:'488px', marginLeft:'13px'} : {width: '240px'}}>
                                 <h3>Выберите лучшего</h3>
                                 <p>Сравните предложенные варианты и свяжитесь с понравившимся мастером напрямую, чтобы обсудить подробности</p>
                             </div>

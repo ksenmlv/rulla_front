@@ -17,9 +17,7 @@ export const citiesApi = {
   getAllCities: async (): Promise<City[]> => {
     const response = await apiClient.get<City[]>('/geo/cities')
 
-    return response.data.sort((a, b) =>
-      a.name.localeCompare(b.name, 'ru')
-    )
+    return response.data
   },
 
   // поиск по названию

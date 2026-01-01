@@ -30,8 +30,8 @@
 
 /* Стрелка */
 .town-selector-arrow span {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border: solid black;
   border-width: 0 2px 2px 0;
   padding: 3px;
@@ -54,7 +54,7 @@
   width: 450px;
   height: 355px;
   background: white;
-  border: 2px solid #DE5A2B;
+  border: 1px solid #919191;
   border-radius: 15px;
   margin-top: 5px;
   overflow: hidden;
@@ -86,16 +86,11 @@
 .town-selector-input {
   width: 100%;
   padding: 10px 12px 10px 40px;
-  background: #FFF9F7;
-  border: 1px solid #ECA288;
+  background: #fff;
+  border: 2px solid #DCE6EB;
   border-radius: 8px;
   font-size: 16px;
   outline: none;
-}
-
-.town-selector-input:focus {
-  border-color: #DE5A2B;
-  box-shadow: 0 0 0 2px rgba(222, 90, 43, 0.2);
 }
 
 /* Список */
@@ -114,7 +109,7 @@
 }
 
 .town-selector-item.highlighted {
-  background: #F3F3F3;
+  background: #F6F6F9;
 }
 
 .town-selector-item.selected {
@@ -153,7 +148,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 4px;
-  background: rgba(236, 162, 136, 0.3); /* #ECA288 с прозрачностью */
+  background:#DCE6EB;
   border-radius: 2px;
 }
 
@@ -164,7 +159,7 @@
 }
 
 .TownSelector__content .simplebar-scrollbar:before {
-  background: #ECA288 !important;
+  background: #02283D !important;
   opacity: 1 !important;
   border-radius: 4px !important;
   left: 1px !important;

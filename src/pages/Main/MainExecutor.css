@@ -18,7 +18,7 @@
 
 .task-card-modern {
   background: #fff;
-  border: 1px solid #02283D;
+  border: 1px solid #919191;
   border-radius: 10px;
   padding: 35px;
   height: 100%;
@@ -60,7 +60,7 @@
 .btn-detail {
   width: 40%;
   background: #fff;
-  color: #02283D;
+  color: #919191;
   border: none;
   font-size: 24px;
   font-weight: 600;
@@ -100,8 +100,8 @@
 .executor-card {
   height: 326px;
   position: relative;
-  background: #ffffff;
-  border: 2px solid #02283D;
+  background: #FAFAFA;
+  border: 2px solid #DCE6EB;
   border-radius: 15px;
   padding: 25px 25px 10px 25px;
   overflow: hidden;
@@ -144,3 +144,99 @@
 
 
 
+/* блок преимущества */
+/* верхняя строка: три равных блока */
+.benefits-grid {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.benefit-card {
+  height: 328px;
+  flex: 1;
+  background: #FAFAFA;
+  border: 2px solid #DCE6EB;
+  border-radius: 15px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.benefit-card h3 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #02283D;
+}
+
+.benefit-icon {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+}
+
+.benefit-card p {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #656565;
+  margin-top: auto;
+  margin-bottom: 0;
+}
+
+/* нижний блок на всю ширину */
+.call-to-action {
+  height: 159px;
+  background: #FAFAFA;
+  border: none;
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.cta-text h2 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #02283D;
+  margin: 0;
+}
+
+.cta-text p {
+  font-size: 24px;
+  color: #656565;
+  margin: 0 0 5px 0;
+}
+
+.cta-icon {
+  position: absolute;
+  top: 0;
+  right: 22%;
+}
+
+.cta2-icon {
+  position: absolute;
+  top: 0;
+  right: 9%;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 900px) {
+  .benefits-grid {
+    flex-direction: column;
+  }
+  
+  .call-to-action {
+    flex-direction: column;
+    text-align: center;
+    gap: 24px;
+  }
+  
+  .cta-icon {
+    order: -1;
+  }
+}
