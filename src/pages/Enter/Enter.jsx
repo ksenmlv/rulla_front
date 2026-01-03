@@ -43,7 +43,13 @@ function Enter() {
   // Модальное окно
   const [modalMessage, setModalMessage] = useState(null)
   const openModal = (msg) => setModalMessage(msg)
-  const closeModal = () => setModalMessage(null)
+
+  const closeModal = () => {
+    setModalMessage(null)
+    setTimeout(() => {
+      document.getElementById('code-0')?.focus()
+    }, 100)
+  }
 
   // Таймер повторной отправки
   const [resendTimer, setResendTimer] = useState(0)
@@ -195,6 +201,18 @@ function Enter() {
     return length >= 7 && length <= 13 // для остальных стран
   }
 
+  // автофокус на 1ое поле смс кода
+  useEffect(() => {
+    if (step === 2) {
+      // Небольшая задержка, чтобы DOM успел отрисоваться
+      const timer = setTimeout(() => {
+        document.getElementById('code-0')?.focus()
+      }, 100)
+
+      return () => clearTimeout(timer)
+    }
+  }, [step])
+
   return (
     <div className="layout">
       <Header hideElements={true} />
@@ -238,34 +256,34 @@ function Enter() {
                 <label className="form-label">
                   {activeRole === 'customer' ? 'Номер телефона' : 'Номер телефона или почта'}
                 </label>
-{activeRole === 'customer' ? (
-  <PhoneNumber
-    value={customerPhone}
-    onChange={(value, meta) => {
-      setCustomerPhone(value)
+                {activeRole === 'customer' ? (
+                  <PhoneNumber
+                    value={customerPhone}
+                    onChange={(value, meta) => {
+                      setCustomerPhone(value)
 
-      const raw = value.replace(/\D/g, '')
-      const dialCode = meta.country?.dialCode || '7'
-      const numberWithoutCountry = raw.startsWith(dialCode)
-        ? raw.slice(dialCode.length)
-        : raw
+                      const raw = value.replace(/\D/g, '')
+                      const dialCode = meta.country?.dialCode || '7'
+                      const numberWithoutCountry = raw.startsWith(dialCode)
+                        ? raw.slice(dialCode.length)
+                        : raw
 
-      setPhoneNumberOnly(numberWithoutCountry)
-      setCountryCode(dialCode)
-    }}
-    onValidityChange={setIsCustomerPhoneValid} // теперь будет обновляться!
-    // onPhoneSubmit не нужен здесь, т.к. submit обрабатывается формой Enter
-  />
-) : (
-  <input
-    type="text"
-    value={executorContact}
-    onChange={(e) => handleExecutorContactChange(e.target.value)}
-    placeholder="Введите номер телефона или email"
-    className="custom-phone-input"
-    style={{ paddingLeft: '12px' }}
-  />
-)}
+                      setPhoneNumberOnly(numberWithoutCountry)
+                      setCountryCode(dialCode)
+                    }}
+                    onValidityChange={setIsCustomerPhoneValid} // теперь будет обновляться!
+                    // onPhoneSubmit не нужен здесь, т.к. submit обрабатывается формой Enter
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    value={executorContact}
+                    onChange={(e) => handleExecutorContactChange(e.target.value)}
+                    placeholder="Введите номер телефона или email"
+                    className="custom-phone-input"
+                    style={{ paddingLeft: '12px' }}
+                  />
+                )}
               </div>
             )}
 
@@ -313,7 +331,7 @@ function Enter() {
 
                 {activeRole === 'customer' && (
                   <div className="resend-code">
-                    <button type="button" onClick={handleResend} className="resend-link" disabled={!canResend || isLoading}>
+                    <button type="button" onClick={handleResend} className="resend-link" disabled={!canResend || isLoading} style={{color: '#666'}}>
                       {canResend ? 'Отправить код повторно' : `Повторно через ${resendTimer} сек`}
                     </button>
                   </div>

@@ -1,0 +1,18 @@
+.btn_user {
+    border: none;
+    background: transparent;
+}
+
+.btn-create-order {
+    position: absolute;
+    bottom: 8%;
+    left: 40px;
+    width: 32%;
+    height: 79px;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    background-color: #DE5A2B;
+    font-size: 24px;
+    font-weight: 600;
+}
