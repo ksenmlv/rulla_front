@@ -1,5 +1,5 @@
 import '../../Registration.css'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -12,12 +12,14 @@ export default function Step1Activity() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, userRegion, setUserRegion, userActivity, setUserActivity, travelReadiness, setTravelReadiness } = useAppContext()
 
+   const fioInputRef = useRef(null)
+
   // проверка на заполненность всех полей
   const isFormComplete = userActivity && userRegion && userRegion.length > 0
 
 
   const handleBack = () => {
-    navigate('/full_registration_step0')
+    navigate('/full_registration_step0_1')
   }
 
   const handleForward = () => {
@@ -29,6 +31,7 @@ export default function Step1Activity() {
   return (
     <div>
       <Header hideElements={true} />
+
       <div className='reg-container'>
         <div className='registr-container' style={{minHeight: '654px', marginBottom: '175px'}}>
 
@@ -44,14 +47,14 @@ export default function Step1Activity() {
               <img src={scale} alt='Registration scale' />
           </div>
 
-          <div className='input-fields' style={{marginBottom:'40px'}}>
-              <h3 style={{marginBottom:'10px'}}>Вид деятельности</h3>
-              <RegistrSelector 
-                placeholder={'Укажите деятельность'} 
-                subject={[ 'Название деятельности 1','Название деятельности 2','Название деятельности 3','Название деятельности 4','Название деятельности 5','Название деятельности 6','Название деятельности 7','Название деятельности 8','Название деятельности 9','Название деятельности 10','Название деятельности 11','Название деятельности 12','Название деятельности 13','Название деятельности 14','Название деятельности 15','Название деятельности 16','Название деятельности 17','Название деятельности 18','Название деятельности 19','Название деятельности 20']}
-                selected={userActivity}
-                onSelect={setUserActivity}
-                style={{marginBottom:'20px'}} />
+  
+             
+              {/* <div className='passport-row'>
+                <div className='passport-field full-width'>
+                  <h3>ФИО</h3>
+                  <input ref={fioInputRef} value={getValue('FIO')} onChange={handleFIOChange} placeholder='Введите ваше ФИО'/>
+                </div>
+              </div> */}
 
               <h3 style={{marginBottom:'10px'}}>Регион</h3>
               <RegistrSelector 
@@ -62,7 +65,6 @@ export default function Step1Activity() {
                 multiple={true}
                 maxSelect={5}
                 style={{marginBottom:'20px'}}/>
-          </div>
 
           <div className="checkbox-wrapper" onClick={() => setTravelReadiness(!travelReadiness)} style={{justifyContent: 'flex-start', margin: '-50px 0 40px 0'}}>
               <div className={`custom-checkbox ${travelReadiness ? 'checked' : ''}`} >

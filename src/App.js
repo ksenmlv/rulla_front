@@ -42,6 +42,7 @@ const ExMyOrders = lazy(() => import('./pages/Executor/MyOrders'));
 const AllOrders = lazy(() => import('./pages/Executor/AllOrders'));
 const OrderDetail = lazy(() => import('./pages/Executor/OrderDetail'));
 const CusMyOrders = lazy(() => import('./pages/Customer/MyOrders'));
+const Catalog = lazy(() => import('./pages/Executor/Catalog'));
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
             <Route path="/executor_all_orders" element={<AllOrders />} />
             <Route path="/executor_order/:id" element={<OrderDetail />} />
             <Route path="/customer_my_orders" element={<CusMyOrders />} />
+            <Route path="/executor_catalog" element={<Catalog />} />
           </Routes>
         </Suspense>
       </AppProvider>

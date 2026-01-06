@@ -35,11 +35,11 @@ export default function Step0_1Branch() {
             <img rel="preload" src={icon} alt='Картинка' style={{display: 'block'}} />
           </div>
 
-          <p style={{fontSize:'20px', fontWeight: '500', color: '#000', lineHeight: '1.3', width: '604px', textAlign: 'center', margin: '0 auto'}}>Для получения возможности отклика на заказы, необходимо пройти полную регистрацию – нажмите “Продолжить”, чтобы сделать это сейчас.</p>
+          <p style={{fontSize:'20px', fontWeight: '500', color: '#000', lineHeight: '1.3', width: '604px', textAlign: 'center', margin: '0 auto'}}>Для получения возможности отклика на заказы, необходимо пройти полную регистрацию – нажмите “<Link to='/full_registration_step1' className="register-here" style={{fontSize: '20px', textDecoration: 'none'}}>Продолжить</Link>”, чтобы сделать это сейчас.</p>
 
           <div style={{display: 'flex', gap: '20px', marginTop: '40px'}}>
             <button 
-              className='continue-button' style={{width: '50%', backgroundColor: '#fff', color: '#DE5A2B', border: '2px solid #DE5A2B'}}  
+              className='continue-button' style={{width: '50%', backgroundColor: '#fff', color: '#02283D', border: '2px solid #02283D'}}  
               onClick={handleLater}> Позже
             </button>
             <button 

@@ -29,7 +29,7 @@ import { Link, useNavigate } from 'react-router-dom'
   // дефолтные значения
   const defaultMenuItems = [
     { label: 'О платформе', to: '/about' },
-    { label: 'Каталог исполнителей', to: '/executors_catalog' },
+    { label: 'Каталог исполнителей', to: '/executor_catalog' },
   ]
   
   const defaultRightContent = (

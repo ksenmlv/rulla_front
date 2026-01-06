@@ -508,3 +508,42 @@
 }
 
 
+/* главная каталога исполнителей */
+.manager-connect {
+  height: 200px;
+  margin-top: 140px;
+  clip-path: polygon(0 0, 95% 0, 100% 40%, 100% 100%, 0 100%);
+  background: linear-gradient(88.33deg, #02283D 1.42%, #134E6D 94%);
+  box-shadow: 0px 4px 4px 0px #00000040;
+
+
+    button {
+      min-width: 430px;
+      /* width: 100%; */
+      margin-right: 80px;
+      margin-left: 70px;
+  }
+
+  .manager-connect__text {
+      align-content: center;
+      margin-left: 40px;
+
+      h3 {
+        margin-top: 10px;
+      }
+
+      p {
+        margin-top: 0;
+      }
+  }
+
+  .manager-connect__pics {
+      .gear2 {
+          vertical-align: top;
+          margin-right: -40px;
+      }
+      .gear3 {
+          margin-top: 50px;
+      }
+    }
+}

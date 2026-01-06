@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import '../../Registration.css'
+import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -6,24 +7,24 @@ import Footer from '../../../../components/Footer/Footer'
 import RoleSwitcher from '../../common/RoleSwitcher'
 import PhoneNumber from '../../common/PhoneNumber'
 import apiClient from '../../../../api/client'
-import '../../Registration.css'
 import '../../../Enter/Enter.css'
 import '../../../../styles/Modal.css'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import icon_close_modal from '../../../../assets/Main/icon_close_modal.svg'
 
-
 export default function ShortStep1Phone() {
   const navigate = useNavigate()
-  const { setSmsCode, setPhoneNumber, setUserId, setUserPhone, setFirstName, setLastName, setRegStatus } = useAppContext()
 
   const [role, setRole] = useState('customer')
   const [step, setStep] = useState(1) // 1 — телефон, 2 — код
-  const [phoneValue, setPhoneValue] = useState('') // маскированный номер для отображения
+  const [phoneValue, setPhoneValue] = useState('')
   const [countryCode, setCountryCode] = useState('7')
   const [phoneNumberOnly, setPhoneNumberOnly] = useState('')
   const [isPhoneValid, setIsPhoneValid] = useState(false)
-  const [smsCode, setLocalSmsCode] = useState(['', '', '', '']) // локально, потом можно синхронизировать с контекстом если нужно
+
+  // Локальный SMS-код 
+  const [smsCode, setSmsCode] = useState(['', '', '', ''])
+
   const [isLoading, setIsLoading] = useState(false)
   const [resendTimer, setResendTimer] = useState(0)
   const [canResend, setCanResend] = useState(true)
@@ -31,7 +32,23 @@ export default function ShortStep1Phone() {
   // Модальное окно
   const [modalMessage, setModalMessage] = useState(null)
   const openModal = (msg) => setModalMessage(msg)
-  const closeModal = () => setModalMessage(null)
+  const closeModal = () => {
+    setModalMessage(null)
+    // Возвращаем фокус на первое поле кода после закрытия модалки
+    setTimeout(() => {
+      document.getElementById('code-0')?.focus()
+    }, 100)
+  }
+
+  // Автофокус на первое поле кода при переходе на шаг 2
+  useEffect(() => {
+    if (step === 2 && !modalMessage) {
+      const timer = setTimeout(() => {
+        document.getElementById('code-0')?.focus()
+      }, 150)
+      return () => clearTimeout(timer)
+    }
+  }, [step, modalMessage])
 
   // Таймер повторной отправки
   useEffect(() => {
@@ -43,14 +60,14 @@ export default function ShortStep1Phone() {
     }
   }, [resendTimer])
 
-  // Кастомная валидация телефона (точно как в Enter)
+  // Валидация телефона
   const customPhoneValidation = (phone, { country }) => {
     const nationalNumber = phone.replace(/\D/g, '').slice(country.dialCode.length)
     const length = nationalNumber.length
     if (country.iso2 === 'ru' || country.dialCode === '7') {
-      return length === 10 // строго 10 цифр для России/Казахстана
+      return length === 10
     }
-    return length >= 7 && length <= 13 // для остальных стран
+    return length >= 7 && length <= 13
   }
 
   // Запрос SMS-кода
@@ -63,7 +80,7 @@ export default function ShortStep1Phone() {
         phoneNumber: phoneNumberOnly,
       })
 
-      if (response.data && response.data.code && process.env.NODE_ENV === 'development') {
+      if (response.data?.code && process.env.NODE_ENV === 'development') {
         openModal(`Код для теста: ${response.data.code}`)
       }
 
@@ -72,11 +89,7 @@ export default function ShortStep1Phone() {
       setResendTimer(60)
     } catch (err) {
       const message = err.response?.data?.message || 'Не удалось отправить код'
-      if (err.response?.status === 429) {
-        openModal('Слишком частые запросы. Подождите немного.')
-      } else {
-        openModal(message)
-      }
+      openModal(err.response?.status === 429 ? 'Слишком частые запросы. Подождите немного.' : message)
     } finally {
       setIsLoading(false)
     }
@@ -97,25 +110,20 @@ export default function ShortStep1Phone() {
       const { accessToken } = response.data
       localStorage.setItem('accessToken', accessToken)
 
-      // Получаем профиль
+      // Получаем профиль для определения следующего шага
       const profileRes = await apiClient.get('/customers/me/profile')
       const profile = profileRes.data
 
-      setUserId(profile.userId || '')
-      setUserPhone(profile.phone || phoneValue)
-      setFirstName(profile.firstName || '')
-      setLastName(profile.lastName || '')
-      setRegStatus(profile.regStatus || '')
-
+      // Редирект в зависимости от статуса регистрации
       if (profile.regStatus === 'REQUIRED_PERSONAL_DATA') {
         navigate('/simplified_registration_step2')
       } else {
-        navigate('/customer_dashboard') // или '/' — как у вас принято
+        navigate('/customer_dashboard') // ПОСМОТРЕТЬ!!!!!!!!!!!!!!
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Неверный код'
       openModal(message)
-      setLocalSmsCode(['', '', '', ''])
+      setSmsCode(['', '', '', ''])
     } finally {
       setIsLoading(false)
     }
@@ -126,7 +134,7 @@ export default function ShortStep1Phone() {
     setRole(newRole)
     if (newRole === 'executor') {
       setPhoneValue('')
-      setLocalSmsCode(['', '', '', ''])
+      setSmsCode(['', '', '', ''])
       navigate('/full_registration_step0')
     }
   }
@@ -134,9 +142,8 @@ export default function ShortStep1Phone() {
   // Назад
   const handleBack = () => {
     if (step === 2) {
-      setLocalSmsCode(['', '', '', ''])
+      setSmsCode(['', '', '', ''])
       setStep(1)
-      closeModal()
       return
     }
     setPhoneValue('')
@@ -150,9 +157,7 @@ export default function ShortStep1Phone() {
     }
   }
 
-  const isContinueDisabled =
-    isLoading ||
-    (step === 1 ? !isPhoneValid : smsCode.some((d) => d === ''))
+  const isContinueDisabled = isLoading || (step === 1 ? !isPhoneValid : smsCode.some(d => d === ''))
 
   return (
     <div>
@@ -219,7 +224,7 @@ export default function ShortStep1Phone() {
                         if (/^\d?$/.test(val)) {
                           const newCode = [...smsCode]
                           newCode[i] = val
-                          setLocalSmsCode(newCode)
+                          setSmsCode(newCode)
                           if (val && i < 3) {
                             document.getElementById(`code-${i + 1}`)?.focus()
                           }
@@ -231,7 +236,6 @@ export default function ShortStep1Phone() {
                         }
                       }}
                       className="code-input"
-                      autoFocus={i === 0}
                     />
                   ))}
                 </div>
