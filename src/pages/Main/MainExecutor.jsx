@@ -333,15 +333,15 @@ export default function MainExecutor() {
 
 
                 {/* блок "оставьте заявку" */}
-                <div className='request d-flex flex-column'>
+                <div className='request d-flex flex-column' style={{height: '370px'}}>
                     <div>
                         <h2>А если есть вопросы — </h2>
                         <p>напишите нам, мы поможем! </p>
                     </div>
-                    <div className='d-flex justify-content-start'>
-                        <button>Связаться с менеджером</button>
+                    <div className='d-flex justify-content-start' style={{marginTop: '-65px'}}>
+                        <button>Связаться с поддержкой</button>
                     </div>
-                    <img src={hammer2} alt='hammer' />
+                    <img src={hammer2} alt='hammer' style={{right: '-50px', top: '-10px'}}/>
                 </div>
         
             </div>

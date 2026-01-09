@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import arrow_left from '../../assets/Main/arrow_left.svg'
 import RegistrSelector from '../../components/lists/RegistrSelector'
 import FileUpload from '../Registration/common/FileUpload'
@@ -7,56 +7,98 @@ import DatePicker from '../../pages/Registration/common/Calendar/DatePicker'
 import '../Main/Main.css'
 import '../Customer/Customer.css'
 import '../Executor/Executor.css'
-// import '../Registration/Registration.css'
 import progress_bar from '../../assets/Main/progress_bar.svg'
 
-export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
+import apiClient from '../../api/client' 
+
+export default function CreateOrderForm({ onClose, onCreate }) {
   const [step, setStep] = useState(1)
 
-  // шаг 1
-  const [category, setCategory] = useState('')
-  const [task, setTask] = useState('')
+  // Каталог с бэкенда
+  const [catalog, setCatalog] = useState('')                        // категории 
+  const [topCategories, setTopCategories] = useState('')            // подкатегории
+  const [loadingCatalog, setLoadingCatalog] = useState(true)
+  const [catalogError, setCatalogError] = useState(null)
+
+  // Выбранные значения
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedService, setSelectedService] = useState([]) // массив для множественного выбора
+
+  // остальные поля формы
   const [location, setLocation] = useState('')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
-
-  // шаг 2
   const [budget, setBudget] = useState('')
   const [requirements, setRequirements] = useState([])
   const [materials, setMaterials] = useState('')
   const [description, setDescription] = useState('')
   const [images, setImages] = useState([])
   const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)
-  
-  // валидация второго шага
-  const [isStepTwoValid, setIsStepTwoValid] = useState(false)
 
-  // ошибки дат
+  // валидация
+  const [isStepTwoValid, setIsStepTwoValid] = useState(false)
   const [startDateError, setStartDateError] = useState('')
   const [endDateError, setEndDateError] = useState('')
 
-  const categories = [...new Set(existingOrders.map(o => o.category))]
-  const tasks = existingOrders.filter(o => o.category === category).map(o => o.title)
+  // Загрузка каталога услуг 
+  useEffect(() => {
+    const fetchCatalog = async () => {
+      try {
+        setLoadingCatalog(true)
+        setCatalogError(null)
 
+        const response = await apiClient.get('/public/services/catalog')
+        const data = response.data || []
 
-  /* ДАТЫ */
+        // Только верхний уровень категорий (названия)
+        const topLevel = data.map(cat => cat.name)
+        setTopCategories(topLevel)
+
+        // Полный каталог для фильтрации
+        setCatalog(data)
+      } catch (err) {
+        console.error('Ошибка загрузки каталога:', err)
+        setCatalogError('Не удалось загрузить категории и услуги. Попробуйте позже.')
+      } finally {
+        setLoadingCatalog(false)
+      }
+    }
+
+    fetchCatalog()
+  }, [])
+
+  // Фильтрация услуг по выбранной категории 
+  const filteredServices = useMemo(() => {
+    if (!selectedCategory || loadingCatalog || catalogError) return []
+
+    const selectedCat = catalog.find(cat => cat.name === selectedCategory)
+    if (!selectedCat) return []
+
+    const services = []
+
+    const collectServices = (node) => {
+      if (node.services?.length) {
+        services.push(...node.services.map(s => s.name))
+      }
+      if (node.children?.length) {
+        node.children.forEach(collectServices)
+      }
+    }
+
+    collectServices(selectedCat)
+    return [...new Set(services)]
+  }, [selectedCategory, catalog, loadingCatalog, catalogError])
+
+  // Валидация дат 
   const isValidDate = (dateStr) => {
     if (!dateStr) return false
-
     const digits = dateStr.replace(/\D/g, '')
     if (digits.length !== 6) return false
-
     const day = parseInt(digits.slice(0, 2))
     const month = parseInt(digits.slice(2, 4))
     const year = parseInt('20' + digits.slice(4, 6))
-
     const date = new Date(year, month - 1, day)
-
-    return (
-      date.getDate() === day &&
-      date.getMonth() === month - 1 &&
-      date.getFullYear() === year
-    )
+    return date.getDate() === day && date.getMonth() === month - 1 && date.getFullYear() === year
   }
 
   const parseDate = (dateStr) => {
@@ -70,7 +112,6 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
   const handleDateChange = (value, type) => {
     const digits = value.replace(/\D/g, '').slice(0, 6)
     let formatted = digits
-
     if (digits.length > 4) {
       formatted = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4)
     } else if (digits.length > 2) {
@@ -79,49 +120,37 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
 
     if (type === 'start') {
       setStartDate(formatted)
-
       if (digits.length === 6) {
-        const valid = isValidDate(formatted)
-        setStartDateError(valid ? '' : 'Некорректная дата')
+        setStartDateError(isValidDate(formatted) ? '' : 'Некорректная дата')
       } else {
         setStartDateError('')
       }
     } else {
       setEndDate(formatted)
-
       if (digits.length === 6) {
-        const valid = isValidDate(formatted)
-        setEndDateError(valid ? '' : 'Некорректная дата')
+        setEndDateError(isValidDate(formatted) ? '' : 'Некорректная дата')
       } else {
         setEndDateError('')
       }
     }
   }
 
-
-  /* ПРОВЕРКА ПОРЯДКА ДАТ  */
   const isDateOrderValid = () => {
-    if (
-      startDate.replace(/\D/g, '').length !== 6 ||
-      endDate.replace(/\D/g, '').length !== 6
-    ) return true
-
+    if (startDate.replace(/\D/g, '').length !== 6 || endDate.replace(/\D/g, '').length !== 6)
+      return true
     return parseDate(startDate) <= parseDate(endDate)
   }
 
-
   const toggleRequirement = (value) => {
     setRequirements(prev =>
-      prev.includes(value)
-        ? prev.filter(r => r !== value)
-        : [...prev, value]
+      prev.includes(value) ? prev.filter(r => r !== value) : [...prev, value]
     )
   }
 
-  // валидация 1ого шага
+  // Валидация первого шага
   const isStepOneValid =
-    category &&
-    task &&
+    selectedCategory &&
+    selectedService &&  
     location.trim().length >= 3 &&
     startDate.replace(/\D/g, '').length === 6 &&
     endDate.replace(/\D/g, '').length === 6 &&
@@ -129,9 +158,9 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
     !endDateError &&
     isDateOrderValid()
 
-  // валидация второго шага
+  // Валидация второго шага — бюджет НЕОБЯЗАТЕЛЬНЫЙ
   useEffect(() => {
-    const budgetValid = parseInt(budget) > 0
+    const budgetValid = !budget || parseInt(budget) > 0  // true если пусто или > 0
     const requirementsValid = requirements.length > 0
     const materialsValid = !!materials
     const descriptionValid = description.trim().length >= 10
@@ -151,8 +180,8 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
   const handleCreate = () => {
     const newOrder = {
       id: Date.now(),
-      title: task,
-      category,
+      title: selectedService.join(', '),
+      category: selectedCategory,
       location,
       budget: budget ? `${budget} ₽` : 'По договорённости',
       deadline: `${startDate} — ${endDate}`,
@@ -166,10 +195,9 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
       lockStatus: 'open'
     }
 
-    console.log('Создан заказ:', newOrder) 
+    console.log('Создан заказ:', newOrder)
     onCreate(newOrder)
     alert('Заказ создан!')
-    
     onClose()
   }
 
@@ -177,41 +205,44 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
     <div className='page-wrapper'>
       <div className="create-order-form">
         <button onClick={onClose} className="back-btn">
-          <img src={arrow_left} alt="" />
+          <img src={arrow_left} alt="Назад" />
         </button>
 
         <h2>Найти специалиста для ремонта</h2>
 
-        {/* шкала для 2ого шага */}
         {step === 2 && (
-          <div >
-            <img rel='preload' src={progress_bar} alt='Шкала' style={{margin: '-10px 0 7px 0'}}/>
-            <p style={{textAlign:'center', fontSize: '20px', color: '#656565', lineHeight: '1.2', marginBottom: '0'}}>Чем точнее вы укажете детали заказа, тем лучше подрядчики смогут оценить работу и предложить наиболее выгодные условия</p>
+          <div>
+            <img rel='preload' src={progress_bar} alt='Шкала прогресса' style={{ margin: '-10px 0 7px 0' }} />
+            <p style={{ textAlign: 'center', fontSize: '20px', color: '#656565', lineHeight: '1.2', marginBottom: '0' }}>
+              Чем точнее вы укажете детали заказа, тем лучше подрядчики смогут оценить работу и предложить наиболее выгодные условия
+            </p>
           </div>
         )}
 
-        
+        {step === 1 && (
           <>
             <div className="passport-field">
               <h3>Категория</h3>
               <div className="registr-selector">
-                <RegistrSelector
-                  placeholder="Выберите категорию"
-                  subject={categories}
-                  onSelect={setCategory}
-                />
+                  <RegistrSelector
+                    placeholder="Выберите категорию"
+                    subject={topCategories}
+                    onSelect={setSelectedCategory}
+                    selected={selectedCategory}
+                  />
               </div>
             </div>
 
             <div className="passport-field">
               <h3>Что нужно сделать</h3>
               <div className="registr-selector">
-                <RegistrSelector
-                  placeholder="Выберите подкатегорию"
-                  subject={tasks}
-                  onSelect={setTask}
-                  disabled={!category}
-                />
+                  <RegistrSelector
+                    placeholder="Выберите услугу"
+                    subject={filteredServices}
+                    onSelect={setSelectedService}
+                    selected={selectedService}
+                    disabled={!selectedCategory || loadingCatalog}
+                  />
               </div>
             </div>
 
@@ -229,9 +260,7 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
                 Сроки
                 {(startDateError || endDateError || !isDateOrderValid()) && (
                   <span style={{ color: '#ff4444', marginLeft: '10px', fontSize: '16px' }}>
-                    {startDateError ||
-                    endDateError ||
-                    'Дата окончания раньше даты начала'}
+                    {startDateError || endDateError || 'Дата окончания раньше даты начала'}
                   </span>
                 )}
               </h3>
@@ -239,38 +268,36 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
               <div className="dates-row">
                 <DatePicker
                   value={startDate}
-                  onChange={(v) => handleDateChange(v, 'start')}
+                  onChange={v => handleDateChange(v, 'start')}
                   placeholder="Начать"
                   error={!!startDateError || !isDateOrderValid()}
                 />
                 <DatePicker
                   value={endDate}
-                  onChange={(v) => handleDateChange(v, 'end')}
+                  onChange={v => handleDateChange(v, 'end')}
                   placeholder="Закончить"
                   error={!!endDateError || !isDateOrderValid()}
                 />
               </div>
             </div>
 
-            {step === 1 && (
-              <button
-                className={`continue-button ${!isStepOneValid ? 'disabled' : ''}`}
-                disabled={!isStepOneValid}
-                onClick={() => setStep(2)}
-                style={{ margin: '20px 0 0 0' }}
-              >
-                Продолжить
-              </button>
-            )}
+            <button
+              className={`continue-button ${!isStepOneValid ? 'disabled' : ''}`}
+              disabled={!isStepOneValid}
+              onClick={() => setStep(2)}
+              style={{ margin: '20px 0 0 0' }}
+            >
+              Продолжить
+            </button>
           </>
-      
+        )}
 
         {step === 2 && (
           <>
             <div className="passport-field">
               <h3>Бюджет проекта</h3>
               <input
-                placeholder="От"
+                placeholder="До"
                 value={budget}
                 onChange={e => setBudget(e.target.value.replace(/\D/g, ''))}
               />
@@ -284,35 +311,21 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
                   <div key={r} className="checkbox-wrapper" onClick={() => toggleRequirement(r)}>
                     <div className={`custom-checkbox ${requirements.includes(r) ? 'checked' : ''}`}>
                       {requirements.includes(r) && (
-                        <svg
-                          width="14"
-                          height="10"
-                          viewBox="0 0 14 10"
-                          fill="none"
-                          className="check-icon"
-                        >
-                          <path
-                            d="M1 5L5 9L13 1"
-                            stroke="white"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
+                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                          <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                       )}
                     </div>
-
                     <span className='checkbox-text'>{r}</span>
                   </div>
-              ))}
+                ))}
             </div>
-
 
             <h3 style={{fontSize: '24px', fontWeight: '500', color: '#000', marginBottom: '-15px'}}>Материалы</h3>
             {['Уже куплены', 'Закуплю сам', 'От исполнителя'].map(m => (
               <label key={m} className="radio-option">
                 <input type="radio" checked={materials === m} onChange={() => setMaterials(m)} />
-                  {m}
+                {m}
               </label>
             ))}
 
@@ -328,34 +341,39 @@ export default function CreateOrderForm({ onClose, onCreate, existingOrders }) {
             
             <div className='passport-field'>
               <h3 style={{marginBottom: '-5px'}}>Желаемый результат</h3>
-              <p style={{width: '65%', marginBottom: '10px'}}>Добавьте 2-3 фото желаемого результата для наглядности (при необходимости)</p>
+              <p style={{width: '70%', marginBottom: '10px'}}>Добавьте до 5 фото желаемого результата для наглядности (при необходимости)</p>
               <FileUpload maxFiles={5} onFilesUpload={setImages} />
             </div>
 
             <div className="checkbox-wrapper" onClick={() => setIsCheckedPolicy(prev => !prev)} style={{ margin: '20px 0 0 0' }}>
-                <div className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`}>
-                    {isCheckedPolicy && <svg 
-                                            width="14" 
-                                            height="10" 
-                                            viewBox="0 0 14 10" 
-                                            fill="none"
-                                            className="check-icon"
-                                          >
-                                            <path 
-                                              d="M1 5L5 9L13 1" 
-                                              stroke="white" 
-                                              strokeWidth="2" 
-                                              strokeLinecap="round" 
-                                              strokeLinejoin="round"
-                                            />
-                                          </svg>}
-                </div>
-                <span style={{color: '#000000B2'}}>
-                    Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и обработкой персональных данных
-                </span>
+              <div className={`custom-checkbox ${isCheckedPolicy ? 'checked' : ''}`}>
+                {isCheckedPolicy && <svg 
+                  width="14" 
+                  height="10" 
+                  viewBox="0 0 14 10" 
+                  fill="none"
+                  className="check-icon"
+                >
+                  <path 
+                    d="M1 5L5 9L13 1" 
+                    stroke="white" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  />
+                </svg>}
+              </div>
+              <span style={{color: '#000000B2'}}>
+                Соглашаюсь с <a className='policy-link'>политикой конфиденциальности</a> и обработкой персональных данных
+              </span>
             </div>
 
-            <button className={`continue-button ${!isStepTwoValid ? 'disabled' : ''}`} disabled={!isStepTwoValid} onClick={handleCreate} style={{marginBottom: '0'}}>
+            <button 
+              className={`continue-button ${!isStepTwoValid ? 'disabled' : ''}`} 
+              disabled={!isStepTwoValid} 
+              onClick={handleCreate}
+              style={{marginBottom: '0'}}
+            >
               Разместить заказ
             </button>
           </>

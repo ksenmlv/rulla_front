@@ -116,7 +116,7 @@ export default function ShortStep2Name() {
     <div>
       <Header hideElements={true} />
 
-      <div className='reg-container'>
+      <div className='reg-container' style={{ marginBottom: '237px' }}>
         <div className='registr-container' style={{ height: '648px' }}>
           <div className='title'>
             <button className='btn-back' onClick={handleBack}>
@@ -135,10 +135,10 @@ export default function ShortStep2Name() {
               onChange={handleNameChange}
             />
 
-            <h3>E-mail</h3>
+            <h3>Почта</h3>
             <input
               type="text"
-              placeholder="Введите почту"
+              placeholder="Введите ваш e-mail"
               value={localEmail}
               onChange={handleEmailChange}
             />

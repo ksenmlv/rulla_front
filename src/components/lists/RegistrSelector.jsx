@@ -12,12 +12,12 @@ const RegistrSelector = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const [searchValue, setSearchValue] = useState('');          // single mode
-  const [realSearchValue, setRealSearchValue] = useState('');  // multiple mode
+  const [searchValue, setSearchValue] = useState('');          // single mode (строка)
+  const [realSearchValue, setRealSearchValue] = useState('');  // multiple mode (строка поиска)
   const [showScrollbar, setShowScrollbar] = useState(false);
 
-  const [selectedActivity, setSelectedActivity] = useState('');
-  const [selectedList, setSelectedList] = useState([]);
+  const [selectedActivity, setSelectedActivity] = useState(''); // single: строка
+  const [selectedList, setSelectedList] = useState([]);         // multiple: массив строк
 
   const dropdownRef = useRef(null);
   const dropdownListRef = useRef(null);
@@ -27,17 +27,15 @@ const RegistrSelector = ({
 
   const [isDragging, setIsDragging] = useState(false);
 
-
   // --------------------------- INIT & SYNC -----------------------------------
   useEffect(() => {
     if (multiple) {
       setSelectedList(Array.isArray(selected) ? selected : []);
     } else {
-      setSelectedActivity(selected || '');
-      setSearchValue(selected || '');
+      setSelectedActivity(typeof selected === 'string' ? selected : '');
+      setSearchValue(typeof selected === 'string' ? selected : '');
     }
   }, [selected, multiple]);
-
 
   // Закрытие при клике вне области
   useEffect(() => {
@@ -55,7 +53,6 @@ const RegistrSelector = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [searchValue, selectedActivity, subject, multiple]);
 
-
   // -------------------------- SCROLL THUMB UPDATE ----------------------------
   const updateScrollThumb = useCallback(() => {
     if (!dropdownListRef.current || !scrollThumbRef.current) return;
@@ -65,11 +62,9 @@ const RegistrSelector = ({
 
     if (scrollableHeight > 0) {
       const progress = scrollTop / scrollableHeight;
-
       const trackHeight = 195;
       const thumbHeight = 60;
       const maxTranslate = trackHeight - thumbHeight;
-
       const translateY = progress * maxTranslate;
 
       scrollThumbRef.current.style.setProperty('--thumb-position', `${translateY}px`);
@@ -102,7 +97,6 @@ const RegistrSelector = ({
       }
     };
   }, [isOpen, selectedActivity, multiple, updateScrollThumb]);
-
 
   // ---------------------------- DRAG SCROLLBAR -------------------------------
   useEffect(() => {
@@ -139,13 +133,11 @@ const RegistrSelector = ({
     };
   }, [isDragging]);
 
-
   const handleThumbMouseDown = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
-
 
   const handleTrackClick = (e) => {
     if (!dropdownListRef.current || !scrollTrackRef.current) return;
@@ -165,13 +157,13 @@ const RegistrSelector = ({
     dropdown.scrollTop = (clampedProgress / 100) * scrollableHeight;
   };
 
-
   // ----------------------------- INPUT LOGIC ---------------------------------
   const handleInputChange = (e) => {
+    const value = e.target.value;
     if (multiple) {
-      setRealSearchValue(e.target.value);
+      setRealSearchValue(value);
     } else {
-      setSearchValue(e.target.value);
+      setSearchValue(value);
     }
     setIsOpen(true);
   };
@@ -183,27 +175,24 @@ const RegistrSelector = ({
     }
   };
 
-
   // ----------------------------- FILTERED DATA -------------------------------
   const filteredSubject = multiple
-    ? (realSearchValue
+    ? (realSearchValue && typeof realSearchValue === 'string'
         ? subject.filter(item =>
-            item.toLowerCase().startsWith(realSearchValue.toLowerCase())
+            typeof item === 'string' && item.toLowerCase().startsWith(realSearchValue.toLowerCase())
           )
         : subject)
-    : (searchValue
+    : (searchValue && typeof searchValue === 'string'
         ? subject.filter(item =>
-            item.toLowerCase().startsWith(searchValue.toLowerCase())
+            typeof item === 'string' && item.toLowerCase().startsWith(searchValue.toLowerCase())
           )
         : subject);
 
-    useEffect(() => {
-      if (isOpen) {
-        setShowScrollbar(filteredSubject.length > 4);
-      }
-    }, [isOpen, filteredSubject.length]);
-
-
+  useEffect(() => {
+    if (isOpen) {
+      setShowScrollbar(filteredSubject.length > 4);
+    }
+  }, [isOpen, filteredSubject.length]);
 
   // ----------------------------- SELECTION -----------------------------------
   const handleSelectSingle = (item) => {
@@ -225,16 +214,13 @@ const RegistrSelector = ({
 
     if (onSelect) onSelect(updated);
     setSelectedList(updated);
-
     setRealSearchValue('');
   };
-
 
   // ------------------------------ INPUT VALUE --------------------------------
   const inputValue = multiple
     ? (isOpen ? realSearchValue : selectedList.join(', '))
     : (isOpen ? searchValue : selectedActivity);
-
 
   // ------------------------------ RENDER -------------------------------------
   return (

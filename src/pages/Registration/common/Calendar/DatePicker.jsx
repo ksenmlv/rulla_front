@@ -15,7 +15,7 @@ export default function CustomDatePicker({ value, onChange, placeholder = "00.00
       "." +
       String(date.getMonth() + 1).padStart(2, "0") +
       "." +
-      String(date.getFullYear()).slice(2);
+      String(date.getFullYear()).slice(4);
 
     onChange(formatted);
     setOpen(false);
@@ -32,7 +32,7 @@ export default function CustomDatePicker({ value, onChange, placeholder = "00.00
 
   // Маска ввода (как в Step3Passport)
   const handleInputChange = (e) => {
-    let inputValue = e.target.value.replace(/\D/g, '').slice(0, 6); // только цифры, макс 6
+    let inputValue = e.target.value.replace(/\D/g, '').slice(0, 8); // только цифры, макс 6
     let formatted = inputValue;
 
     if (inputValue.length > 4) {
@@ -73,7 +73,7 @@ export default function CustomDatePicker({ value, onChange, placeholder = "00.00
       />
 
       {open && (
-        <div className="calendar-popup">
+        <div className="calendar-popup" style={{ top: '-335px' }}>
           <Calendar
             onClickDay={handleSelect}
             className="custom-calendar"

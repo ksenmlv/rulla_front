@@ -313,7 +313,7 @@ export default function Step0Phone() {
             onClick={requestSmsCode}
             disabled={!canResend || isLoading}
           >
-            {canResend ? 'Получить новый код' : `Повторно через ${resendTimer} сек`}
+            {canResend ? 'Получить новый код' : `Повторная отправка через ${resendTimer} сек`}
           </button>
         </div>
       </div>

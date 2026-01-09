@@ -12,13 +12,13 @@ import separator from '../../assets/Main/blue_separator.svg'
 import main_separator from '../../assets/Main/blue_main_separator.svg'
 import arrow_r from '../../assets/Main/arrow_right.svg'
 import block_house from '../../assets/Main/block_house.png'
-import block_armchair from '../../assets/Main/block_armchair.png'
-import block_tap from '../../assets/Main/block_tap.png'
-import block_roller from '../../assets/Main/block_roller.png'
-import block_power_socket from '../../assets/Main/block_power_socket.png'
-import block_table from '../../assets/Main/block_table.png'
-import block_tile from '../../assets/Main/block_tile.png'
-import block_sofa from '../../assets/Main/block_sofa.png'
+import block_armchair from '../../assets/Main/block_armchair.svg'
+import block_tap from '../../assets/Main/block_tap.svg'
+import block_roller from '../../assets/Main/block_roller.svg'
+import block_power_socket from '../../assets/Main/block_power_socket.svg'
+import block_table from '../../assets/Main/block_table.svg'
+import block_tile from '../../assets/Main/block_tile.svg'
+import block_sofa from '../../assets/Main/block_sofa.svg'
 import arrow_r_white from '../../assets/Main/arrow_right_white.svg'
 import icon_con_manager from '../../assets/Main/icon_connect_manager.svg'
 import gear2 from '../../assets/Main/gear2.svg'
@@ -57,7 +57,7 @@ function MainCustomer() {
             </> }
             menuItems={   [
                 { label: 'О платформе', to: '/about' },
-                { label: 'Каталог исполнителей', to: '/' },
+                { label: 'Каталог исполнителей', to: '/executor_catalog' },
                 { label: 'Мои заказы', to: '/customer_my_orders' },
             ]}
         />
@@ -205,7 +205,7 @@ function MainCustomer() {
                             <img src={gear3} alt='gear' className='gear3'/>
                         </div>
 
-                        <button>Связаться с менеджером</button>
+                        <button>Связаться с поддержкой</button>
                     </div>
 
                 </div>

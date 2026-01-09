@@ -6,7 +6,7 @@ import Header from '../../../../components/Header/Header'
 import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale6.svg'
+import scale from '../../../../assets/Main/registr_scale5.svg'
 import plus from '../../../../assets/Main/plus.svg'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
 
@@ -141,7 +141,7 @@ export default function Step5Services() {
                                     <div className='registr-selector-wrapper'>
                                         <RegistrSelector 
                                             placeholder='за'
-                                            subject={['за услугу', 'за метр', 'за м²', 'за м³', 'за шт', 'за час']} 
+                                            subject={['за шт', 'за пог. м', 'за м²', 'за м³', 'за комплект', 'за точку', 'за сотку', 'за объект', 'за выезд', 'за зону', 'за час', 'за месяц', 'за узел', 'за радиатор']} 
                                             selected={s.unit} 
                                             onSelect={(value) => updateItem(setUserService, i, 'unit', value)}
                                         />

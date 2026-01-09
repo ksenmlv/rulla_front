@@ -60,6 +60,21 @@
   overflow: hidden;
 }
 
+/* Пустой/мало элементов — меню сжимается */
+.town-selector-menu:has(.town-selector-list > *:nth-child(5)) {
+  height: 355px;                   /* если 5+ элементов — полная высота */
+}
+
+/* Если элементов меньше 5 → высота под содержимое */
+.town-selector-menu:has(.town-selector-list > *:nth-child(5)) {
+  height: 355px;
+}
+
+.town-selector-menu:not(:has(.town-selector-list > *:nth-child(5))) {
+  height: auto;                    /* ← главное изменение */
+  min-height: 180px;               /* минимально приемлемая высота */
+}
+
 /* Поиск */
 .town-selector-search {
   padding: 15px;
@@ -96,6 +111,7 @@
 /* Список */
 .town-selector-list {
   padding: 5px 0;
+  font-weight: 400;
 }
 
 .town-selector-item {

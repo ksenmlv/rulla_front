@@ -7,7 +7,7 @@ import Footer from '../../../../components/Footer/Footer'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale5.svg'
+import scale from '../../../../assets/Main/registr_scale4.svg'
 
 
 export default function Step4Experience() {

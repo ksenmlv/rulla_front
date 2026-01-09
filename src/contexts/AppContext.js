@@ -30,7 +30,7 @@ export const AppProvider = ({ children }) => {
   const [travelReadiness, setTravelReadiness] = useState(false)
 
   // 2 этап регистрации
-  const [userLawSubject, setUserLawSubject] = useState('individual')         // legal_entity || individual || self_employed
+  const [userLawSubject, setUserLawSubject] = useState('individual')         // legal_entity || individual 
   const [individualEntrepreneurData, setIndividualEntrepreneurData] = useState({
       FIO: '',
       INN: '', 

@@ -9,7 +9,7 @@ import Footer from '../../../../components/Footer/Footer'
 import DatePicker from '../../common/Calendar/DatePicker'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
-import scale from '../../../../assets/Main/registr_scale4.svg'
+import scale from '../../../../assets/Main/registr_scale3.svg'
 
 
 export default function Step3Passport() {

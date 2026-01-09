@@ -43,7 +43,7 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10 }) => {
 
   return (
     <div className="file-upload-wrapper">
-      {/* === Загрузчик === */}
+      {/* === Скрытый input для выбора файлов === */}
       <input
         type="file"
         ref={fileInputRef}
@@ -53,25 +53,27 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10 }) => {
         style={{ display: 'none' }}
       />
 
-      <button
-        type="button"
-        className="file-upload-button"
-        onClick={handleClick}
-      >
-        <div className="file-upload-content">
-          <img src={file_loader} alt="Загрузить" className="file-upload-icon" />
-          <span className="file-upload-text">
-            Загрузить файл{files.length < maxFiles ? '' : ' (максимум достигнут)'}
-          </span>
-        </div>
-      </button>
+      {/* === Кнопка загрузки — показывается ТОЛЬКО если лимит НЕ достигнут === */}
+      {files.length < maxFiles && (
+        <button
+          type="button"
+          className="file-upload-button"
+          onClick={handleClick}
+        >
+          <div className="file-upload-content">
+            <img src={file_loader} alt="Загрузить" className="file-upload-icon" />
+            <span className="file-upload-text">
+              Загрузить файл
+            </span>
+          </div>
+        </button>
+      )}
 
-      {/* === Сетка загруженных файлов (внизу) === */}
+      {/* === Сетка загруженных файлов === */}
       {files.length > 0 && (
         <div className="uploaded-files-grid">
           {files.map((file, index) => (
             <div key={index} className="uploaded-file-item">
-              {/* Обёртка с радиусом и обрезкой контента */}
               <div className="file-preview-wrapper">
                 <div className="file-preview">
                   {isImage(file) ? (
@@ -88,14 +90,12 @@ const FileUpload = ({ onFilesUpload, maxFiles = 10 }) => {
                     <div className="file-icon">📄</div>
                   )}
 
-                  {/* Название внутри превью */}
                   <div className="file-name-overlay" title={file.name}>
                     {shortenFileName(file.name, 24)}
                   </div>
                 </div>
               </div>
 
-              {/* Крестик вне обрезки — всегда виден и поверх всего */}
               <button
                 type="button"
                 className="remove-file-btn"

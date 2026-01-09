@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import '../Main/Main.css'
-import TownSelect from '../../components/lists/TownSelect'
+import TownSelector from '../../components/lists/TownSelect'
 import back from '../../assets/Main/back.png'
 import icon_connection from '../../assets/Main/icon_connection.png'
 import icon_search from '../../assets/Main/icon_search.svg'
@@ -14,13 +14,13 @@ import hammer1 from '../../assets/Main/hammer_.svg'
 import wrench1 from '../../assets/Main/wrench_.svg'
 import arrow_r from '../../assets/Main/arrow_right.svg'
 import block_house from '../../assets/Main/block_house.png'
-import block_armchair from '../../assets/Main/block_armchair.png'
-import block_tap from '../../assets/Main/block_tap.png'
-import block_roller from '../../assets/Main/block_roller.png'
-import block_power_socket from '../../assets/Main/block_power_socket.png'
-import block_table from '../../assets/Main/block_table.png'
-import block_tile from '../../assets/Main/block_tile.png'
-import block_sofa from '../../assets/Main/block_sofa.png'
+import block_armchair from '../../assets/Main/block_armchair.svg'
+import block_tap from '../../assets/Main/block_tap.svg'
+import block_roller from '../../assets/Main/block_roller.svg'
+import block_power_socket from '../../assets/Main/block_power_socket.svg'
+import block_table from '../../assets/Main/block_table.svg'
+import block_tile from '../../assets/Main/block_tile.svg'
+import block_sofa from '../../assets/Main/block_sofa.svg'
 import arrow_r_white from '../../assets/Main/arrow_right_white.svg'
 import icon_con_manager from '../../assets/Main/icon_connect_manager.svg'
 import gear2 from '../../assets/Main/gear2.svg'
@@ -65,7 +65,7 @@ function Main() {
                         { isMobile &&  (   
                             <div className='location-wrapper'>
                                 <img src={icon_location} alt='location' className='location-icon'/>
-                                <TownSelect className='town-select'/>
+                                <TownSelector className='town-select'/>
                             </div>
                         )}
 
@@ -176,22 +176,23 @@ function Main() {
                         
                         <div className='block'>
                             <h3>Электрика</h3>
-                            <img src={block_power_socket} alt='power_socket' style={{ bottom:'20px' }} className='img-block'/>
+                            <img src={block_power_socket} alt='power_socket' style={{maxWidth: '80%', bottom:'15px' }} className='img-block'/>
                         </div>
 
                         <div className='block'>
+
                             <h3>Ремонт коммерческих помещений</h3>
-                            <img src={block_table} alt='table' style={{ bottom:'7px' }} className='img-block table' />
+                            <img src={block_table} alt='table' style={{ bottom:'-10px' }} className='img-block table' />
                         </div>
                         
                         <div className='block'>
                             <h3>Плиточные работы</h3>
-                            <img src={block_tile} alt='tile' className='img-block tile' width={411}/>
+                            <img src={block_tile} alt='tile' className='img-block tile'/>
                         </div>
                         
                         <div className='block'>
                             <h3 style={{ width:'277px' }}>Сборка и ремонт мебели</h3>
-                            <img src={block_sofa} alt='sofa' style={{ bottom:'-13px' }} className='img-block sofa' width={283}/>
+                            <img src={block_sofa} alt='sofa'  className='img-block sofa' />
                         </div>
                         
                         <div className='block dark'>
@@ -257,7 +258,7 @@ function Main() {
                             <img src={gear3} alt='gear' className='gear3'/>
                         </div>
 
-                        <button>Связаться с менеджером</button>
+                        <button>Связаться с поддержкой</button>
                     </div>
 
                 </div>
