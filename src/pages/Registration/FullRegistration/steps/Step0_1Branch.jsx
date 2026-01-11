@@ -32,7 +32,7 @@ export default function Step0_1Branch() {
         <div className='registr-container' style={{ height: '397px'}}>
           <div className='title'>
             <button className='btn-back' onClick={handleBack}><img src={arrow} alt='Назад' /></button>
-            <img rel="preload" src={icon} alt='Картинка' style={{display: 'block'}} />
+            <img  src={icon} alt='Картинка' style={{display: 'block'}} />
           </div>
 
           <p style={{fontSize:'20px', fontWeight: '500', color: '#000', lineHeight: '1.3', width: '604px', textAlign: 'center', margin: '0 auto'}}>Для получения возможности отклика на заказы, необходимо пройти полную регистрацию – нажмите “<Link to='/full_registration_step1' className="register-here" style={{fontSize: '20px', textDecoration: 'none'}}>Продолжить</Link>”, чтобы сделать это сейчас.</p>

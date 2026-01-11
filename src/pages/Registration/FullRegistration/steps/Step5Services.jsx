@@ -90,7 +90,7 @@ export default function Step5Services() {
 
                     <div className='registr-scale'>
                         <p>5/6</p>
-                        <img src={scale} alt='Registration scale' />
+                        <img src={scale} alt='Registration scale' style={{width: '650px'}}/>
                     </div>
 
                     <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
@@ -141,7 +141,7 @@ export default function Step5Services() {
                                     <div className='registr-selector-wrapper'>
                                         <RegistrSelector 
                                             placeholder='за'
-                                            subject={['за шт', 'за пог. м', 'за м²', 'за м³', 'за комплект', 'за точку', 'за сотку', 'за объект', 'за выезд', 'за зону', 'за час', 'за месяц', 'за узел', 'за радиатор']} 
+                                            subject={[ 'за м²', 'за м³', 'за услугу', 'за шт', 'за погонный метр', 'за объект', 'за сотку', 'за выезд', 'за час', 'за месяц', 'за зону']} 
                                             selected={s.unit} 
                                             onSelect={(value) => updateItem(setUserService, i, 'unit', value)}
                                         />

@@ -52,6 +52,10 @@ export default function Step6Contacts() {
     const [emailError, setEmailError] = useState('')
     const [submitAttempted, setSubmitAttempted] = useState(false)
 
+    const telegramInputRef = useRef(null)
+    const whatsappInputRef = useRef(null)
+    const vkInputRef = useRef(null)
+
     // устанавливаем шаг
     useEffect(() => {
         setStepNumber(6)
@@ -75,6 +79,23 @@ export default function Step6Contacts() {
                 return false
         }
     }
+
+    // фокус на поля модалки
+    useEffect(() => {
+        if (!modalVisible) return
+
+        const timer = setTimeout(() => {
+            if (selectedService === 'telegram' && telegramInputRef.current) {
+            telegramInputRef.current.focus()
+            } else if (selectedService === 'whatsapp' && whatsappInputRef.current) {
+            whatsappInputRef.current.focus()
+            } else if (selectedService === 'vk' && vkInputRef.current) {
+            vkInputRef.current.focus()
+            }
+        }, 100)
+
+        return () => clearTimeout(timer)
+        }, [modalVisible, selectedService])
 
     // валидация всей формы
     const isFormValid = () => {
@@ -227,7 +248,7 @@ export default function Step6Contacts() {
 
                     <div className='registr-scale'>
                         <p>6/6</p>
-                        <img src={isFormValid() ? scale2 : scale1} alt='Registration scale' width={654}/>
+                        <img src={isFormValid() ? scale2 : scale1} alt='Registration scale' width={650}/>
                     </div>
 
                     <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
@@ -414,6 +435,7 @@ export default function Step6Contacts() {
                                 </h3>
                                 
                                 <PhoneNumber
+                                    ref={whatsappInputRef}
                                     value={userSocialMedia[selectedService]?.phone || userPhone || phoneNumber || ''}
                                     onChange={(value) =>
                                         setUserSocialMedia(prev => ({
@@ -434,6 +456,11 @@ export default function Step6Contacts() {
                                     Ссылка
                                 </h3>
                                 <input
+                                    ref={
+                                        selectedService === 'telegram' 
+                                        ? telegramInputRef 
+                                        : vkInputRef
+                                    }
                                     value={userSocialMedia[selectedService]?.nickname || ''}
                                     placeholder='Введите ссылку'
                                     onChange={(e) => handleNicknameChange(e, selectedService)}

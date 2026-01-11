@@ -19,12 +19,11 @@ export default function Step1Activity() {
   const fioInputRef = useRef(null)
   const companyNameRef = useRef(null)
 
-  // Локальные данные для валидации
+  // Локальные данные для валидации и отправки
   const [fullName, setFullName] = useState('')
   const [birthDate, setBirthDate] = useState('')
   const [companyName, setCompanyName] = useState('')
 
-  // Ошибки — показываем только после нужного события
   const [birthDateError, setBirthDateError] = useState('')
 
   // Города
@@ -36,7 +35,6 @@ export default function Step1Activity() {
   const openModal = (msg) => setModalMessage(msg)
   const closeModal = () => setModalMessage(null)
 
-  // Состояние валидности формы (обновляется автоматически)
   const [formIsValid, setFormIsValid] = useState(false)
 
   // Загрузка городов
@@ -52,7 +50,7 @@ export default function Step1Activity() {
     loadCities()
   }, [])
 
-  // Автофокус — только при монтировании
+  // Автофокус
   useEffect(() => {
     const timer = setTimeout(() => {
       if (userLawSubject === 'individual' && fioInputRef.current) {
@@ -65,7 +63,7 @@ export default function Step1Activity() {
     return () => clearTimeout(timer)
   }, [])
 
-  // Валидация ФИО 
+  // Валидация ФИО (физлицо)
   const handleFullNameChange = (e) => {
     const value = e.target.value
     const allowed = /^[А-Яа-яЁёA-Za-z\s\-']*$/
@@ -74,8 +72,7 @@ export default function Step1Activity() {
     }
   }
 
-
-  // Валидация даты рождения 
+  // Валидация даты рождения (физлицо)
   const isValidDate = (dateStr) => {
     if (!dateStr || dateStr.length !== 10) return false
     const digits = dateStr.replace(/\D/g, '')
@@ -85,13 +82,11 @@ export default function Step1Activity() {
     const month = parseInt(digits.slice(2,4))
     const year = parseInt(digits.slice(4,8))
 
-    // Запрещаем годы раньше 1900
     if (year < 1900) return false
 
     const date = new Date(year, month - 1, day)
     const today = new Date()
 
-    // Проверяем реальность даты + не в будущем
     if (
       date.getDate() !== day ||
       date.getMonth() !== month - 1 ||
@@ -99,7 +94,6 @@ export default function Step1Activity() {
       date > today
     ) return false
 
-    // Минимум 18 лет
     let age = today.getFullYear() - date.getFullYear()
     const m = today.getMonth() - date.getMonth()
     if (m < 0 || (m === 0 && today.getDate() < date.getDate())) {
@@ -116,7 +110,6 @@ export default function Step1Activity() {
 
     setBirthDate(formatted)
 
-    // Ошибку показываем только после ввода всей даты
     if (formatted.length === 10) {
       setBirthDateError(isValidDate(formatted) ? '' : 'Некорректная дата (год ≥ 1900, не в будущем)')
     } else {
@@ -124,39 +117,60 @@ export default function Step1Activity() {
     }
   }
 
-  // Автоматическая валидация формы 
+  useEffect(() => {
+  const checkUser = async () => {
+    try {
+      const profile = await apiClient.get('/executors/me/profile')
+      console.log('Текущий профиль:', profile.data)
+      console.log('Тип исполнителя:', profile.data?.executorType)
+    } catch (err) {
+      console.error('Ошибка проверки профиля:', err.response?.data)
+    }
+  }
+  checkUser()
+}, [])
+
+  // Автоматическая валидация формы
   useEffect(() => {
     let valid = true
 
     if (userLawSubject === 'individual') {
-      const birthErr = birthDate.length === 10 
-        ? (isValidDate(birthDate) ? '' : 'Некорректная дата (год ≥ 1900, не в будущем)')
-        : 'Введите дату в формате ДД.ММ.ГГГГ'
-      if (birthErr) valid = false
+      const fioValid = fullName.trim().split(' ').length >= 2 && fullName.trim().length >= 5
+      const birthValid = birthDate.length === 10 && isValidDate(birthDate)
+      const citiesValid = selectedCities.length > 0
 
-      if (selectedCities.length === 0) valid = false
+      if (!fioValid || !birthValid || !citiesValid) valid = false
     } else {
-      if (companyName.trim().length === 0) valid = false
-      if (selectedCities.length === 0) valid = false
+      const nameValid = companyName.trim().length >= 3
+      const citiesValid = selectedCities.length > 0
+
+      if (!nameValid || !citiesValid) valid = false
     }
 
     setFormIsValid(valid)
   }, [fullName, birthDate, companyName, selectedCities, userLawSubject])
 
-  //  Финальная проверка + установка ошибок при нажатии кнопки 
-  const handleForward = async () => {
-    // Устанавливаем ошибки для показа
-    const birthErr = birthDate.length === 10 
-      ? (isValidDate(birthDate) ? '' : 'Некорректная дата (год ≥ 1900, не в будущем)')
-      : 'Введите дату в формате ДД.ММ.ГГГГ'
-    setBirthDateError(birthErr)
 
-    // Если есть ошибки — не продолжаем
-    if ( birthDateError || selectedCities.length === 0) return
+  // Отправка на сервер
+  const handleForward = async () => {
+    if (!formIsValid) return
 
     setIsLoading(true)
 
     try {
+      // 1. Проверяем текущий профиль и тип исполнителя
+      const profileRes = await apiClient.get('/executors/me/profile')
+      const executorType = profileRes.data?.executorType
+
+      // 2. Проверяем соответствие выбранного типа и реального
+      if (userLawSubject === 'individual' && executorType !== 'INDIVIDUAL') {
+        throw new Error('Вы не зарегистрированы как физическое лицо-исполнитель. Пожалуйста, войдите заново.')
+      }
+      if (userLawSubject === 'legal_entity' && executorType !== 'COMPANY') {
+        throw new Error('Вы не зарегистрированы как юридическое лицо. Пожалуйста, войдите заново.')
+      }
+
+      // 3. Отправка данных в зависимости от типа
       if (userLawSubject === 'individual') {
         const parts = fullName.trim().split(' ')
         const lastName = parts[0] || null
@@ -172,8 +186,13 @@ export default function Step1Activity() {
           middleName,
           birthDate: isoBirthDate
         })
+      } else if (userLawSubject === 'legal_entity') {
+        await apiClient.patch('/executors/companies/me/data', {
+          legalName: companyName.trim()
+        })
       }
 
+      // 4. Регионы (города) — общие для всех
       const regionsPayload = selectedCities.map(cityId => ({
         regionType: "CITY",
         cityId,
@@ -187,8 +206,21 @@ export default function Step1Activity() {
       setStepNumber(stepNumber + 1)
       navigate('/full_registration_step2')
     } catch (err) {
-      const message = err.response?.data?.message || 'Ошибка сохранения данных'
+      let message = err.message || err.response?.data?.message || 'Ошибка сохранения данных'
+
+      if (err.response?.status === 403) {
+        message = 'Доступ запрещён. Возможно, тип исполнителя не соответствует. Войдите заново.'
+      } else if (err.response?.status === 409) {
+        message = 'Данные нельзя изменить после завершения регистрации.'
+      }
+
       openModal(message)
+
+      // Если 401/403 — редирект на логин
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        localStorage.removeItem('accessToken')
+        setTimeout(() => navigate('/enter'), 2000)
+      }
     } finally {
       setIsLoading(false)
     }
@@ -199,7 +231,7 @@ export default function Step1Activity() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{minHeight: '740px', marginBottom: '175px'}}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px', marginBottom: '175px'}}>
 
           <div className='title'>
             <button className='btn-back' onClick={() => navigate('/full_registration_step0_1')}>
@@ -210,7 +242,7 @@ export default function Step1Activity() {
 
           <div className='registr-scale'>
             <p>1/6</p>
-            <img src={scale} alt='Registration scale' />
+            <img src={scale} alt='Registration scale' style={{width: '650px'}}/>
           </div>
 
           <div className='passport-row'>

@@ -10,164 +10,239 @@ import DatePicker from '../../common/Calendar/DatePicker'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale3.svg'
-
+import apiClient from '../../../../api/client'
+import { countriesApi } from '../../../../api/countriesApi.ts'
 
 export default function Step3Passport() {
   const navigate = useNavigate()
   const { stepNumber, setStepNumber, passportData, setPassportData, directorData, setDirectorData, userLawSubject } = useAppContext()
 
-  const citizenshipOptions = ['Российская федерация', 'Страны СНГ', 'Другое']
+  const citizenshipOptions = ['RU', 'KZ', 'Другое']
+  const [countries, setCountries] = useState([])
+
   const [isFormValid, setIsFormValid] = useState(false)
   const [dateError, setDateError] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const seriesRef = useRef(null)
-  const otherCountryRef  = useRef(null)
-  const directorFIORef = useRef(null)
+  const directorPhoneRef = useRef(null)
+  const numberDocumentRef = useRef(null)
 
-  const isRussian = passportData.citizenship === 'Российская федерация'
-  const isNotRussian = !isRussian
- 
-  const CIScountries = ["Азербайджан", "Армения", "Белоруссия", "Казахстан", "Киргизия", "Молдавия", "Таджикистан", "Туркменистан", "Узбекистан", "Украина"]
+  const isRussian = passportData.citizenship === 'RU'
 
+  // РФ по умолчанию
+  // useEffect(() => {
+  //     updatePassport('citizenship', 'RU')
+    
+  // }, [])
 
-  // автофокус на первое поле
+  // Загрузка стран
+  useEffect(() => {
+    const loadCountries = async () => {
+      try {
+        const data = await countriesApi.getAllCountries()
+        setCountries(data)
+      } catch (err) {
+        console.error('Ошибка загрузки стран:', err)
+        setErrorMessage('Не удалось загрузить список стран')
+      }
+    }
+    loadCountries()
+  }, [])
+
+  // Автофокус
   useEffect(() => {
     setTimeout(() => {
-      if (isRussian) seriesRef.current?.focus()
-      else if (isNotRussian) otherCountryRef .current?.focus()
+      if (userLawSubject === 'legal_entity') {
+        directorPhoneRef.current?.focus()
+      } else if (passportData.citizenship === 'RU') {
+        seriesRef.current?.focus()
+      } else if (passportData.citizenship === 'KZ') {
+        numberDocumentRef.current?.focus()
+      }
     }, 100)
-  }, [passportData.citizenship, isRussian])
+  }, [passportData.citizenship, userLawSubject])
 
-  // обновление данных паспорта
   const updatePassport = (field, value) => {
     setPassportData(prev => ({ ...prev, [field]: value }))
   }
 
-  // обновление файлов
   const handleFileUpload = (field, files) => {
     updatePassport(field, files)
   }
 
-  // валидация даты
+  // Валидация даты выдачи паспорта (≥ 14 лет на момент выдачи)
+  const isValidDate = (dateStr) => {
+    if (!dateStr || dateStr.length !== 10) return false
+    const digits = dateStr.replace(/\D/g, '')
+    if (digits.length !== 8) return false
+
+    const day = parseInt(digits.slice(0,2))
+    const month = parseInt(digits.slice(2,4))
+    const year = parseInt(digits.slice(4,8))
+
+    if (year < 1900) return false
+
+    const issueDate = new Date(year, month - 1, day)
+    const today = new Date()
+
+    if (issueDate > today) return false
+    if (issueDate.getDate() !== day || issueDate.getMonth() !== month - 1 || issueDate.getFullYear() !== year) return false
+
+    let age = today.getFullYear() - year
+    const m = today.getMonth() - (month - 1)
+    if (m < 0 || (m === 0 && today.getDate() < day)) age--
+    return age >= 14
+  }
+
   const handleDateChange = (value) => {
-    const digits = value.replace(/\D/g, '').slice(0,6)
+    const digits = value.replace(/\D/g, '').slice(0,8)
     let formatted = digits
-    if (digits.length > 4) formatted = digits.slice(0,2) + '.' + digits.slice(2,4) + '.' + digits.slice(4)
+    if (digits.length > 4) formatted = digits.slice(0,2) + '.' + digits.slice(2,4) + '.' + digits.slice(4,8)
     else if (digits.length > 2) formatted = digits.slice(0,2) + '.' + digits.slice(2)
 
     updatePassport('issueDate', formatted)
 
-    if (digits.length === 6) {
-      const day = parseInt(digits.slice(0,2))
-      const month = parseInt(digits.slice(2,4))
-      const year = parseInt('20'+digits.slice(4,6))
-      const date = new Date(year, month-1, day)
-      const valid = isValidDate(formatted) 
-      setDateError(valid ? '' : 'Некорректная дата')
-    } else setDateError('')
+    if (formatted.length === 10) {
+      const valid = isValidDate(formatted)
+      setDateError(valid ? '' : 'Некорректная дата (возраст на момент выдачи ≥ 14 лет)')
+    } else {
+      setDateError('')
+    }
   }
 
-  // валидация даты
-  const isValidDate = (dateStr) => {
-    if (!dateStr) return false
-    const digits = dateStr.replace(/\D/g,'')
-    if (digits.length !== 6) return false
-
-    const day = parseInt(digits.slice(0,2))
-    const month = parseInt(digits.slice(2,4))
-    const year = parseInt('20'+digits.slice(4,6))
-    const date = new Date(year, month-1, day)
-    return date.getDate()===day && date.getMonth()===month-1 && date.getFullYear()===year && date <= new Date()
-  }
-
-  // обновление ФИО директора 
   const handleDirectorFIOChange = (value) => {
     const cleanValue = value.replace(/[^а-яА-ЯёЁa-zA-Z\s]/g, '')
-    handleDirectorChange('FIO', cleanValue)
+    setDirectorData(prev => ({ ...prev, FIO: cleanValue }))
   }
 
-  // обновление телефона 
   const handleDirectorPhoneChange = (value) => {
     const digits = value.replace(/\D/g, '')
-    handleDirectorChange('phone', digits)
+    setDirectorData(prev => ({ ...prev, phone: digits }))
   }
 
-  // валидация формы
+  // Валидация формы
   useEffect(() => {
-    let formValid = false;
+    let formValid = false
 
-    if(userLawSubject === 'legal_entity'){
-      const fioFilled = directorData.FIO?.trim().length >= 5;
-      const phoneValid = directorData.phone?.replace(/\D/g,'').length > 10;
-      formValid = fioFilled && phoneValid;
+    if (userLawSubject === 'legal_entity') {
+      const fioFilled = directorData.FIO?.trim().length >= 5
+      const phoneValid = directorData.phone?.replace(/\D/g,'').length >= 10
+      formValid = fioFilled && phoneValid
     } else {
-      // проверка на минимум 5 символов для "Кем выдан"
-      const issuedByValid = passportData.issuedBy?.trim().length >= 5;
-      
-      // проверка для "Другое" страна (минимум 3 символа)
-      const otherCountryValid = passportData.citizenship !== 'Другое' || 
-                              (passportData.otherCountry?.trim().length >= 3);
-      
+      const issuedByValid = passportData.issuedBy?.trim().length >= 5
       const fieldsFilled = isRussian
         ? passportData.series?.trim() && passportData.number?.trim() && issuedByValid && passportData.issueDate?.trim()
-        : passportData.number?.trim() && issuedByValid && passportData.issueDate?.trim();
+        : passportData.number?.trim() && issuedByValid && passportData.issueDate?.trim()
 
-      const dateValid = isValidDate(passportData.issueDate);
-      const scanValid = (passportData.scanPages?.length > 0) && (passportData.scanRegistration?.length > 0);
-      const seriesValid = !isRussian || (passportData.series?.replace(/\s/g,'').length === 4);
+      const dateValid = isValidDate(passportData.issueDate)
+      const scanValid = (passportData.scanPages?.length > 0) && (passportData.scanRegistration?.length > 0)
+      const seriesValid = !isRussian || (passportData.series?.replace(/\s/g,'').length === 4)
       const numberValid = isRussian 
         ? passportData.number?.replace(/\D/g,'').length === 6 
-        : passportData.number?.trim().length > 0;
+        : passportData.number?.trim().length > 0
 
-      formValid = Boolean(fieldsFilled && dateValid && scanValid && otherCountryValid && seriesValid && numberValid && issuedByValid);
+      formValid = Boolean(fieldsFilled && dateValid && scanValid && seriesValid && numberValid && issuedByValid)
     }
 
-    setIsFormValid(formValid);
-  }, [passportData, directorData, dateError, isRussian, userLawSubject]);
-
-
-  // обновление директора 
-  const handleDirectorChange = (field, value) => setDirectorData(prev => ({...prev, [field]: value}))
-
-  // обработчик выбора страны
-  const handleCountryChange = (country) => {
-    setPassportData(prev => ({
-      ...prev,
-      citizenship: country,
-      otherCountry: country === 'Другое' ? prev.otherCountry : '',
-      cisCountry: country === 'Страны СНГ' ? prev.cisCountry : '',
-    }))
-  }
-
-  const handleSeriesChange = (e) => {
-    let value = e.target.value.replace(/\D/g,'').slice(0,4)
-    if (value.length > 2) value = value.slice(0,2) + ' ' + value.slice(2)
-    updatePassport('series', value)
-  }
-
-  // обработчик номера паспорта 
-  const handleNumberChange = (e) => {
-    let value = e.target.value;
-    if (isRussian) {
-      value = value.replace(/\D/g, '').slice(0, 6);
-    } else {
-      // для иностранных документов только цифры и латиница
-      value = value.replace(/[а-яА-ЯёЁ]/g, '');
-    }
-    updatePassport('number', value);
-  }
-
-  // обработчик поля "Паспорт выдан" (только кириллица, минимум 5 символов)
-  const handleIssuedByChange = (e) => {
-    const value = e.target.value.replace(/[^a-zA-Zа-яА-ЯёЁ0-9\s.,-]/g, '');
-    updatePassport('issuedBy', value);
-  }
+    setIsFormValid(formValid)
+  }, [passportData, directorData, dateError, isRussian, userLawSubject])
 
   const handleBack = () => navigate('/full_registration_step2')
-  const handleForward = () => {
-    console.log('Паспортные данные:', passportData, 'Данные директора', directorData)
-    setStepNumber(stepNumber + 1)
-    navigate('/full_registration_step4')
+
+  const handleForward = async () => {
+    if (!isFormValid) return
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      if (userLawSubject === 'legal_entity') {
+        console.log('Отправка юрлица:', { directorFullName: directorData.FIO.trim(), directorPhone: directorData.phone })
+        await apiClient.patch('/executors/companies/me/data', {
+          directorFullName: directorData.FIO.trim(),
+          directorPhone: directorData.phone
+        })
+      } else {
+        // Подготовка данных паспорта
+        const citizenshipIso2 = passportData.citizenship === 'Другое'
+            ? passportData.citizenshipIso2
+            : passportData.citizenship;
+
+        const documentNumber = isRussian 
+          ? `${passportData.series?.replace(/\s/g,'') || ''}${passportData.number || ''}`.trim()
+          : passportData.number?.trim()
+
+        const issuedAt = passportData.issueDate 
+          ? `${passportData.issueDate.slice(6,10)}-${passportData.issueDate.slice(3,5)}-${passportData.issueDate.slice(0,2)}`
+          : null
+
+        const passportPayload = {
+          citizenshipIso2,
+          citizenshipIso3: passportData.citizenshipIso3, // всегда обязателен
+          documentNumber,
+          issuedAt,
+          issuedBy: passportData.issuedBy?.trim()
+        };
+
+
+
+
+        // Отладка
+        console.log('Отправляемые паспортные данные:', passportPayload)
+
+        // Проверка перед отправкой
+        if (!citizenshipIso2) throw new Error('Не указан код страны')
+        if (!documentNumber) throw new Error('Не указан номер документа')
+        if (!issuedAt) throw new Error('Не указана дата выдачи')
+        if (!passportPayload.issuedBy) throw new Error('Не указано кем выдан')
+
+        await apiClient.put('/executors/individuals/me/passport', passportPayload)
+
+        // Файлы — только после успеха
+        if (passportData.scanPages?.length > 0 || passportData.scanRegistration?.length > 0) {
+          const fd = new FormData()
+          if (passportData.scanPages?.length > 0) fd.append('mainPage', passportData.scanPages[0])
+          if (passportData.scanRegistration?.length > 0) fd.append('registrationPage', passportData.scanRegistration[0])
+
+          console.log('Отправка сканов с citizenshipIso2:', citizenshipIso2)
+          await apiClient.post('/executors/individuals/me/passport/scans', fd, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            params: { citizenshipIso2 }
+          })
+        }
+      }
+
+      setStepNumber(stepNumber + 1)
+      navigate('/full_registration_step4')
+    } catch (err) {
+      let msg = 'Ошибка сохранения данных'
+
+      if (err.response) {
+        // Сервер вернул ответ с ошибкой
+        const status = err.response.status
+        const serverMsg = err.response.data?.message || err.response.data?.error || 'Нет сообщения от сервера'
+
+        console.log('Сервер ответил ошибкой:', { status, message: serverMsg, data: err.response.data })
+
+        if (status === 400) msg = `Неверные данные: ${serverMsg}`
+        else if (status === 403) msg = 'Доступ запрещён (403). Пользователь не является физлицом?'
+        else if (status === 404) msg = 'Ресурс не найден (404). Возможно, профиль не создан'
+        else if (status === 409) msg = 'Конфликт (409). Возможно, данные уже завершены'
+        else msg = `Ошибка ${status}: ${serverMsg}`
+      } else if (err.request) {
+        // Запрос отправлен, но нет ответа
+        msg = 'Нет ответа от сервера. Проверьте интернет или сервер'
+      } else {
+        msg = `Ошибка клиента: ${err.message}`
+      }
+
+      setErrorMessage(msg)
+      console.error('Полная ошибка:', err)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -185,126 +260,163 @@ export default function Step3Passport() {
 
           <div className='registr-scale'>
             <p>3/6</p>
-            <img src={scale} alt='Registration scale'/>
+            <img src={scale} alt='Registration scale' style={{width: '650px'}}/>
           </div>
-
 
           {/* паспортные данные для ИП и СЗ */}
           {userLawSubject !== 'legal_entity' && (
-          <div className='passport-details'>
-            <h2>Паспортные данные:</h2>
+            <div className='passport-details'>
+              <h2>Паспортные данные:</h2>
 
-            <h3>Гражданство</h3>
-            <div className='country-selection'>
+              <h3>Гражданство</h3>
+              <div className='country-selection'>
+                <div className='radio-group'>
+                  {citizenshipOptions.map((option, i) => (
+                    <div key={i} className="radio-option">
+                      <input 
+                        type="radio" 
+                        id={`cit-${i}`} 
+                        name="citizenship" 
+                        value={option} 
+                        checked={passportData.citizenship === option} 
+                        onChange={() => {
+                          setPassportData(prev => ({
+                            ...prev,
+                            citizenship: option,
+                            series: '',             
+                            number: '',              
+                            issuedBy: '',           
+                            issueDate: '',           
+                            scanPages: [],           
+                            scanRegistration: [],    
+                            otherCountry: option === 'Другое' ? prev.otherCountry : '',
+                            cisCountry: ''
+                          }));
+                        }}
 
-              <div className='radio-group'>
-                {citizenshipOptions.map((option,i)=>(
-                  <div key={i} className="radio-option">
-                    <input type="radio" id={`cit-${i}`} name="citizenship" value={option} 
-                      checked={passportData.citizenship===option} 
-                      onChange={()=>handleCountryChange(option)} />
-                    <label htmlFor={`cit-${i}`}>{option}</label>
+                      />
+                      <label htmlFor={`cit-${i}`}>
+                        {option === 'RU' ? 'Российская Федерация' : option === 'KZ' ? 'Казахстан' : 'Другое'}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Если "Другое" — показываем RegistrSelector */}
+                {passportData.citizenship === 'Другое' && (
+                  <div className="registr-selector-wrapper">
+                    {countries.length === 0 ? (
+                      <div>Загрузка стран...</div>
+                    ) : (
+                      <div className='passport-field' style={{marginTop: '-10px', width: '300px'}}>
+                        <RegistrSelector 
+                          placeholder={'Выберите страну'}
+                          subject={countries.map(c => c.name_ru)}
+                          selected={[passportData.otherCountry].filter(Boolean)}
+                          onSelect={(selectedNames) => {
+                            const selected = countries.find(c => c.name_ru === selectedNames[0]);
+                            if (selected) {
+                              setPassportData(prev => ({
+                                ...prev,
+                                otherCountry: selected.name_ru,
+                                citizenship: 'Другое',
+                                citizenshipIso2: selected.iso_code2,
+                                citizenshipIso3: selected.iso_code3
+                              }));
+
+                            }
+                          }}
+                          multiple={false}
+                        />
+                      </div>
+                    )}
                   </div>
-                ))}
+                )}
               </div>
 
-              {/* инпут для названия страны (Другое) */}
-              {passportData.citizenship === 'Другое' && (
-                <textarea 
-                  ref={otherCountryRef } 
-                  placeholder='Введите название страны' 
-                  value={passportData.otherCountry||''} 
-                  onChange={(e)=>updatePassport('otherCountry', e.target.value)} 
-                  className="country-input"
-                />
-              )}
+              <div className='passport-fields-grid'>
+                {isRussian ? (
+                  <div className='passport-row'>
+                    <div className='passport-field'>
+                      <h3>Серия паспорта</h3>
+                      <input ref={seriesRef} value={passportData.series||''} placeholder='00 00' maxLength={5} onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g,'').slice(0,4)
+                        if (value.length > 2) value = value.slice(0,2) + ' ' + value.slice(2)
+                        updatePassport('series', value)
+                      }}/>
+                    </div>
+                    <div className='passport-field'>
+                      <h3>Номер паспорта</h3>
+                      <input value={passportData.number||''} placeholder='000000' maxLength={6} onChange={(e) => updatePassport('number', e.target.value.replace(/\D/g, ''))}/>
+                    </div>
+                    <div className='passport-field'>
+                      <h3>Паспорт выдан</h3>
+                      <input value={passportData.issuedBy||''} onChange={(e) => updatePassport('issuedBy', e.target.value)} placeholder='ГУ МВД России по г. Москве'/>
+                    </div>
+                    <div className='passport-field'>
+                      <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3>
+                      <DatePicker value={passportData.issueDate||''} onChange={handleDateChange} placeholder="ДД.ММ.ГГГГ" error={!!dateError}/>
+                    </div>
+                  </div>
+                ) : (
+                  <div className='passport-row'>
+                    <div className='passport-field full-width'>
+                      <h3>Номер документа</h3>
+                      <input ref={numberDocumentRef} value={passportData.number||''} placeholder='Введите номер документа' maxLength={20} onChange={(e) => updatePassport('number', e.target.value)}/>
+                    </div>
+                    <div className='passport-field full-width'>
+                      <h3>Кем выдан</h3>
+                      <input value={passportData.issuedBy||''} onChange={(e) => updatePassport('issuedBy', e.target.value)} />
+                    </div>
+                    <div className='passport-field full-width'>
+                      <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '18px'}}>{dateError}</span>}</h3>
+                      <DatePicker value={passportData.issueDate||''} onChange={handleDateChange} placeholder="ДД.ММ.ГГГГ" error={!!dateError}/>
+                    </div>
+                  </div>
+                )}
 
-              {passportData.citizenship === 'Страны СНГ' && (
-                <div className='input-fields' style={{margin: '0'}}>
-                  <RegistrSelector placeholder={'Выберите страну'} subject={CIScountries} selected={passportData.cisCountry} onSelect={(v) => updatePassport("cisCountry", v)}/>
-                </div>
-              )}
-            </div>
-
-            <div className='passport-fields-grid'>
-
-              {/* поля для РФ */}
-              {isRussian ? (
+                {/* файлы */}
                 <div className='passport-row'>
                   <div className='passport-field'>
-                    <h3>Серия паспорта</h3>
-                    <input ref={seriesRef} value={passportData.series||''} placeholder='00 00' maxLength={5} onChange={handleSeriesChange}/>
+                    <h3>Скан главного разворота</h3>
+                    <FileUpload key={passportData.citizenship+'main'} onFilesUpload={(files)=>handleFileUpload('scanPages', files)} maxFiles={1}/>
+                    { passportData.scanPages?.length < 1 && ( 
+                      <p>Добавьте скан 2-3 страницы паспорта</p> 
+                    )}
                   </div>
                   <div className='passport-field'>
-                    <h3>Номер паспорта</h3>
-                    <input value={passportData.number||''} placeholder='000000' maxLength={6} onChange={handleNumberChange}/>
+                    <h3>Скан регистрации</h3>
+                    <FileUpload key={passportData.citizenship+'reg'} onFilesUpload={(files)=>handleFileUpload('scanRegistration', files)} maxFiles={1}/>
+                    { passportData.scanRegistration?.length < 1 && (
+                      <p style={{width: '330px'}}>Добавьте скан актуальной регистрации — 5-7 страницы</p>
+                    )}
                   </div>
-                  <div className='passport-field'>
-                    <h3>Паспорт выдан</h3>
-                    <input value={passportData.issuedBy||''} onChange={handleIssuedByChange} placeholder='ГУ МВД России по г. Москве'/>
-                  </div>
-                  <div className='passport-field'>
-                    <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '16px'}}>{dateError}</span>}</h3>
-                    <DatePicker value={passportData.issueDate||''} onChange={(v)=>handleDateChange(v)} placeholder="00.00.00" error={!!dateError}/>
-                  </div>
-                </div>
-              ) : (
-                // поля не для РФ
-                <div className='passport-row'>
-                  <div className='passport-field full-width'>
-                    <h3 style={{ marginTop: passportData.citizenship === 'Страны СНГ' ? '-25px' : '0px' }}>Номер документа</h3>
-                    <input value={passportData.number||''} placeholder='Введите номер документа' maxLength={20} onChange={handleNumberChange}/>
-                  </div>
-                  <div className='passport-field full-width'>
-                    <h3>Кем выдан</h3>
-                    <input value={passportData.issuedBy||''} onChange={handleIssuedByChange} />
-                  </div>
-                  <div className='passport-field full-width'>
-                    <h3>Дата выдачи {dateError && <span style={{color:'#ff4444', marginLeft:'10px', fontSize: '18px'}}>{dateError}</span>}</h3>
-                    <DatePicker value={passportData.issueDate||''} onChange={(v)=>handleDateChange(v)} placeholder="00.00.00" error={!!dateError}/>
-                  </div>
-                </div>
-              )}
-
-              {/* добавление файлов */}
-              <div className='passport-row'>
-                <div className='passport-field'>
-                  <h3>Скан главного разворота</h3>
-                  <FileUpload key={passportData.citizenship+'main'} onFilesUpload={(files)=>handleFileUpload('scanPages', files)} maxFiles={1}/>
-                  <p>Добавьте скан 2-3 страницы паспорта</p>
-                </div>
-                <div className='passport-field'>
-                  <h3>Скан регистрации</h3>
-                  <FileUpload key={passportData.citizenship+'reg'} onFilesUpload={(files)=>handleFileUpload('scanRegistration', files)} maxFiles={1}/>
-                  <p style={{width: '330px'}}>Добавьте скан актуальной регистрации — 5-7 страницы</p>
                 </div>
               </div>
-
             </div>
-          </div> )}
+          )}
 
-
-          {/* контакты директора для физ лиц */}
+          {/* Юрлицо: телефон и ФИО директора */}
           {userLawSubject === 'legal_entity' && (
             <div className='passport-row'>
               <div className='passport-field full-width' style={{marginBottom: '-50px'}}>
-                  <h3>Номер телефона руководителя</h3>
-                  <PhoneNumber  value={directorData.phone}  onChange={(val) => handleDirectorPhoneChange(val)}  />
+                <h3>Номер телефона руководителя</h3>
+                <PhoneNumber  ref={directorPhoneRef} value={directorData.phone} onChange={handleDirectorPhoneChange} />
               </div>
               <div className='passport-field full-width'>
-                  <h3>ФИО руководителя (генерального директора, президента компании, др.)</h3>
-                  <input ref={directorFIORef} value={directorData.FIO||''} onChange={(e)=>handleDirectorFIOChange(e.target.value)} />
+                <h3>ФИО руководителя</h3>
+                <input value={directorData.FIO||''} onChange={(e)=>handleDirectorFIOChange(e.target.value)} />
               </div>
             </div>
           )}
 
           <button 
-            className={`continue-button ${!isFormValid?'disabled':''}`} 
-            disabled={!isFormValid} 
+            className={`continue-button ${!isFormValid || isLoading ? 'disabled' : ''}`} 
+            disabled={!isFormValid || isLoading} 
             onClick={handleForward} 
             style={{position:'absolute', bottom:'27px', width:'714px'}}
-          >
-            Продолжить
+        >
+            {isLoading ? 'Сохранение...' : 'Продолжить'}
           </button>
 
         </div>

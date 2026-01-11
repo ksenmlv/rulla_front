@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import arrow_left from '../../assets/Main/arrow_left.svg'
 import RegistrSelector from '../../components/lists/RegistrSelector'
 import FileUpload from '../Registration/common/FileUpload'
@@ -35,10 +35,21 @@ export default function CreateOrderForm({ onClose, onCreate }) {
   const [images, setImages] = useState([])
   const [isCheckedPolicy, setIsCheckedPolicy] = useState(false)
 
+  const budgetRef = useRef(null)
+
   // валидация
   const [isStepTwoValid, setIsStepTwoValid] = useState(false)
   const [startDateError, setStartDateError] = useState('')
   const [endDateError, setEndDateError] = useState('')
+
+  // автофокус на первое поле
+  useEffect(() => {
+    setTimeout(() => {
+      if (step == 2 ) {
+        budgetRef.current?.focus();
+      } 
+    }, 100);
+  }, [step]);
 
   // Загрузка каталога услуг 
   useEffect(() => {
@@ -89,6 +100,20 @@ export default function CreateOrderForm({ onClose, onCreate }) {
     return [...new Set(services)]
   }, [selectedCategory, catalog, loadingCatalog, catalogError])
 
+  // Вычисление сегодняшнего дня
+  const today = new Date(2026, 0, 11); // 11 января 2026 — фиксируем текущую дату
+
+  // Функция проверки, что дата не раньше сегодняшнего дня
+  const isFutureDate = (dateStr) => {
+    if (!dateStr || dateStr.replace(/\D/g, '').length !== 6) return false;
+    
+    const parsed = parseDate(dateStr);
+    if (!parsed || isNaN(parsed.getTime())) return false;
+    
+    // Сравниваем без учёта времени (только дата)
+    return parsed >= today;
+  };
+
   // Валидация дат 
   const isValidDate = (dateStr) => {
     if (!dateStr) return false
@@ -110,27 +135,41 @@ export default function CreateOrderForm({ onClose, onCreate }) {
   }
 
   const handleDateChange = (value, type) => {
-    const digits = value.replace(/\D/g, '').slice(0, 6)
-    let formatted = digits
+    const digits = value.replace(/\D/g, '').slice(0, 6);
+    let formatted = digits;
     if (digits.length > 4) {
-      formatted = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4)
+      formatted = digits.slice(0, 2) + '.' + digits.slice(2, 4) + '.' + digits.slice(4);
     } else if (digits.length > 2) {
-      formatted = digits.slice(0, 2) + '.' + digits.slice(2)
+      formatted = digits.slice(0, 2) + '.' + digits.slice(2);
     }
 
     if (type === 'start') {
-      setStartDate(formatted)
+      setStartDate(formatted);
+      
       if (digits.length === 6) {
-        setStartDateError(isValidDate(formatted) ? '' : 'Некорректная дата')
+        if (!isValidDate(formatted)) {
+          setStartDateError('Некорректная дата');
+        } else if (!isFutureDate(formatted)) {
+          setStartDateError('Дата не может быть в прошлом');
+        } else {
+          setStartDateError('');
+        }
       } else {
-        setStartDateError('')
+        setStartDateError('');
       }
     } else {
-      setEndDate(formatted)
+      setEndDate(formatted);
+      
       if (digits.length === 6) {
-        setEndDateError(isValidDate(formatted) ? '' : 'Некорректная дата')
+        if (!isValidDate(formatted)) {
+          setEndDateError('Некорректная дата');
+        } else if (!isFutureDate(formatted)) {
+          setEndDateError('Дата не может быть в прошлом');
+        } else {
+          setEndDateError('');
+        }
       } else {
-        setEndDateError('')
+        setEndDateError('');
       }
     }
   }
@@ -156,7 +195,9 @@ export default function CreateOrderForm({ onClose, onCreate }) {
     endDate.replace(/\D/g, '').length === 6 &&
     !startDateError &&
     !endDateError &&
-    isDateOrderValid()
+    isDateOrderValid() &&
+  isFutureDate(startDate) &&     
+  isFutureDate(endDate)
 
   // Валидация второго шага — бюджет НЕОБЯЗАТЕЛЬНЫЙ
   useEffect(() => {
@@ -294,13 +335,23 @@ export default function CreateOrderForm({ onClose, onCreate }) {
 
         {step === 2 && (
           <>
-            <div className="passport-field">
+            <div className="passport-field" style={{ position: 'relative' }}>
               <h3>Бюджет проекта</h3>
-              <input
-                placeholder="До"
-                value={budget}
-                onChange={e => setBudget(e.target.value.replace(/\D/g, ''))}
-              />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center'}}>
+                <input
+                  ref={budgetRef}
+                  value={budget}
+                  onChange={e => setBudget(e.target.value.replace(/\D/g, ''))}
+                  style={{
+                    width: '100%',
+                    paddingRight: '40px' 
+                  }}
+                />
+                <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#656565', fontSize: '20px', pointerEvents: 'none'}}>
+                  ₽
+                </span>
+              </div>
+              <p>До какой суммы готовы рассматривать предложения?</p>
             </div>
 
             <h3 style={{fontSize: '24px', fontWeight: '500', color: '#000', marginBottom: '-5px'}}>Требования к исполнителю</h3>
