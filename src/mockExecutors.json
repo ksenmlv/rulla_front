@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "РемонтПрофи",
-    "photo": "https://via.placeholder.com/80",
+    "photo": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop",
     "specialization": "Дизайн интерьеров",
     "rating": 4.9,
     "reviewsCount": 39,
@@ -10,36 +10,130 @@
     "readyToContract": true,
     "readyToGiveWarranty": true,
     "services": [
-      "Капитальный ремонт",
-      "Техническая экспертиза",
-      "Малярные работы"
+      { "name": "Капитальный ремонт", "price": "от 130 000₽" },
+      { "name": "Техническая экспертиза", "price": "от 70 000₽" },
+      { "name": "Малярные работы", "price": "от 50 000₽" }
     ],
     "specialOffer": "Закажите комплексный ремонт до конца месяца и получите уборку помещений после finishing со скидкой 50%.",
     "projects": [
-      { "photo": "https://via.placeholder.com/120" },
-      { "photo": "https://via.placeholder.com/120" },
-      { "photo": "https://via.placeholder.com/120" }
+      {
+        "photo": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",
+        "name": "Квартира на Ленинском проспекте",
+        "description": "Капитальный ремонт двухкомнатной квартиры с перепланировкой."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=600",
+        "name": "Загородный дом",
+        "description": "Ремонт и отделка коттеджа с установкой инженерных систем."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",
+        "name": "Квартира на Ленинском проспекте",
+        "description": "Капитальный ремонт двухкомнатной квартиры с перепланировкой."
+      }
     ]
   },
   {
     "id": 2,
     "name": "СантехМастер",
-    "photo": "https://via.placeholder.com/80",
+    "photo": "https://images.pexels.com/photos/3760067/pexels-photo-3760067.jpeg?auto=compress&cs=tinysrgb&w=400",
     "specialization": "Сантехника",
     "rating": 4.8,
     "reviewsCount": 27,
     "experience": 5,
-    "readyToContract": false,
-    "readyToGiveWarranty": true,
+    "readyToContract": true,
+    "readyToGiveWarranty": false,
     "services": [
-      "Установка сантехники",
-      "Ремонт труб",
-      "Монтаж водонагревателей"
+      { "name": "Установка сантехники", "price": "от 15 000₽" },
+      { "name": "Ремонт труб", "price": "от 8 000₽" },
+      { "name": "Монтаж водонагревателей", "price": "от 20 000₽" }
     ],
     "specialOffer": "Скидка 10% на замену труб при заказе полного комплекса услуг.",
     "projects": [
-      { "photo": "https://via.placeholder.com/120" },
-      { "photo": "https://via.placeholder.com/120" }
+      {
+        "photo": "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=600",
+        "name": "Установка бойлера",
+        "description": "Монтаж накопительного водонагревателя на 100 литров."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=600",
+        "name": "Установка бойлера",
+        "description": "Монтаж накопительного водонагревателя на 100 литров."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?w=600",
+        "name": "Установка бойлера",
+        "description": "Монтаж накопительного водонагревателя на 100 литров."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "ЭлектроСервис",
+    "photo": "https://images.pexels.com/photos/3760069/pexels-photo-3760069.jpeg?auto=compress&cs=tinysrgb&w=400",
+    "specialization": "Электрика",
+    "rating": 4.7,
+    "reviewsCount": 22,
+    "experience": 7,
+    "readyToContract": false,
+    "readyToGiveWarranty": true,
+    "services": [
+      { "name": "Монтаж электропроводки", "price": "от 25 000₽" },
+      { "name": "Установка розеток и выключателей", "price": "от 5 000₽" },
+      { "name": "Ремонт электрооборудования", "price": "от 10 000₽" }
+    ],
+    "specialOffer": "Бесплатная диагностика при заказе ремонта электрооборудования.",
+    "projects": [
+      {
+        "photo": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600",
+        "name": "Электропроводка в доме",
+        "description": "Полная замена электропроводки в частном доме."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600",
+        "name": "Установка щитка",
+        "description": "Монтаж электрощитка с автоматическими выключателями."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600",
+        "name": "Освещение в офисе",
+        "description": "Установка светодиодного освещения в офисном помещении."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "ОтделкаМастер",
+    "photo": "https://images.unsplash.com/photo-1560518883-2dd6d8c3c4a5?w=400&h=400&fit=crop",
+    "specialization": "Отделка и ремонт квартир",
+    "rating": 4.85,
+    "reviewsCount": 45,
+    "experience": 8,
+    "readyToContract": true,
+    "readyToGiveWarranty": true,
+    "services": [
+      { "name": "Штукатурка и шпаклёвка", "price": "от 450 ₽/м²" },
+      { "name": "Поклейка обоев", "price": "от 350 ₽/м²" },
+      { "name": "Укладка ламината", "price": "от 600 ₽/м²" },
+      { "name": "Натяжные потолки", "price": "от 800 ₽/м²" }
+    ],
+    "specialOffer": "При заказе полной отделки квартиры — бесплатный вывоз мусора и клининг после ремонта.",
+    "projects": [
+      {
+        "photo": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600",
+        "name": "Трёхкомнатная квартира в новостройке",
+        "description": "Полная отделка под ключ: штукатурка, обои, ламинат, натяжные потолки."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1600210492493-0946911123ea?w=600",
+        "name": "Квартира в сталинке",
+        "description": "Реставрация и современная отделка квартиры 1930-х годов."
+      },
+      {
+        "photo": "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600",
+        "name": "Двушка в панельном доме",
+        "description": "Бюджетный ремонт с перепланировкой и заменой коммуникаций."
+      }
     ]
   }
 ]

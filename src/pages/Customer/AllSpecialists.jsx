@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// import '../Registration.css'
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -14,24 +15,21 @@ import icon_check from '../../assets/Main/icon_checkmark2.svg'
 import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg'  
 import award from '../../assets/Main/icon_award.svg';
 
-
 export default function AllSpecialists() {
   const navigate = useNavigate();
   const [executors, setExecutors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all'); // По умолчанию "Все специалисты"
+  const [activeTab, setActiveTab] = useState('all');
 
-  // Используем мок-данные
   useEffect(() => {
     setExecutors(mockExecutors);
     setLoading(false);
   }, []);
 
-  // Фильтрация по специализации
   const getFilteredExecutors = () => {
     switch (activeTab) {
       case 'all':
-        return executors; // Все специалисты
+        return executors;
       case 'design':
         return executors.filter((executor) => executor.specialization === 'Дизайн интерьеров');
       case 'plumbing':
@@ -51,7 +49,6 @@ export default function AllSpecialists() {
 
   const filteredExecutors = getFilteredExecutors();
 
-  // Рендер звезд рейтинга
   const renderStars = (rating) => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -86,12 +83,10 @@ export default function AllSpecialists() {
         ]}
       />
 
-      {/* Основная часть */}
       <div className="full-container" style={{ marginBottom: '285px', minHeight: 'calc(100vh - 833px)' }}>
         <div className="main-container">
           <h1 className="page-title" style={{marginTop: '140px'}}>Каталог исполнителей</h1>
 
-          {/* Вкладки по специализациям */}
           <div className="orders-tabs">
             <button
               className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
@@ -137,7 +132,6 @@ export default function AllSpecialists() {
             </button>
           </div>
 
-          {/* Список исполнителей */}
           {loading ? (
             <div className="loading-message">Загрузка исполнителей...</div>
           ) : filteredExecutors.length === 0 ? (
@@ -146,91 +140,135 @@ export default function AllSpecialists() {
             <div className="executors-grid">
               {filteredExecutors.map((executor) => (
                 <div key={executor.id} className="executor-card">
-                    <div className="executor-header">
+                  <div className="executor-header">
+                    <img
+                      src={avatar}
+                      alt={executor.name}
+                      className="executor-photo"
+                    />
+                    <div className="executor-info">
+                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <img src={icon_check} alt="✓" />
+                        <p style={{fontSize: '20px', fontWeight: '500', color: '#656565', margin: '2px 0 0 10px'}}>
+                          Документы подтверждены
+                        </p>
+                      </div>
+
+                      <h3 className="executor-name">{executor.name}</h3>
+                      <p style={{fontSize: '20px', fontWeight: '500', color: '#656565'}}>
+                        Был в сети 10 минут назад
+                      </p>
+                      <div className="executor-rating">
+                        <p className="rating-value" style={{display: 'flex', alignItems: 'center'}}>
+                          {executor.rating} 
+                          <img src={icon_star_yellow} alt='Звезда' style={{margin: '0 10px'}}/> 
+                          {executor.reviewsCount} отзывов
+                        </p>
+                      </div>
+                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                        <img src={award} alt='Награда' />
+                        <p style={{fontSize: '20px', fontWeight: '500', color: '#151515', margin: '2px 0 0 10px'}}>
+                          Название награды
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="order-actions" style={{margin: '25px 0 20px 0'}}>
+                    <button className="respond-btn" style={{width: '100px'}}>Предложить заказ</button>
+                    <button className="favorite-btn">
+                      <img src={icon_star} alt="Избранное" style={{ width: '30px' }} />
+                    </button>
+                  </div>
+
+                  <div className="executor-features">
+                    {executor.readyToContract && (
+                      <div className="feature-item">
+                        <img src={icon_check} alt="Готов работать по договору" className="feature-icon" />
+                        <span>Работа по договору</span>
+                      </div>
+                    )}
+                    {executor.readyToGiveWarranty && (
+                      <div className="feature-item">
+                        <img src={icon_check} alt="Гарантия на работу" className="feature-icon" />
+                        <span>Гарантия на работу</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="executor-details">
+                    <div className="executor-services">
+                      <h4>Опыт работы</h4>
+                      <p>{executor.experience} лет</p>
+                    </div>
+
+                    <div className="executor-services">
+                      <h4 style={{marginBottom: '15px'}}>Услуги</h4>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                        {executor.services.map((service, index) => (
+                          <li 
+                            key={index} 
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              alignItems: 'center',
+                              marginBottom: '12px',
+                              fontSize: '20px',
+                              fontWeight: '500',
+                              color: '#656565'
+                            }}
+                          >
+                            <span>{service.name}</span>
+                            <span style={{
+                              color: '#02283D',
+                              fontWeight: '600',
+                              whiteSpace: 'nowrap'
+                            }}>
+                              {service.price}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="executor-special-offers">
+                    <div className='discount'>
+                      -25%
+                    </div>
+
+                    <h4>Спецпредложение</h4>
+                    <p>{executor.specialOffer}</p>
+                  </div>
+
+                  <div className="executor-projects">
+                    <h4>Реализованные проекты ({executor.projects.length})</h4>
+
+                    <div className="projects-grid">
+                        {executor.projects.slice(0, 3).map((project, index) => (
+                        <div 
+                            key={index} 
+                            className="project-item"
+                        >
                             <img
-                                //   src={executor.photo}
-                                src={avatar}
-                                alt={executor.name}
-                                className="executor-photo"
-                            />
-                            <div className="executor-info">
-                                <div style={{display: 'flex', flexDirection: 'row', alignContent: 'center'}}>
-                                    <img src={icon_check} alt="✓" />
-                                    <p style={{fontSize: '20px', fontWeight: '500', color: '#656565', margin: '2px 0 0 10px'}}>Документы подтверждены</p>
-                                </div>
-
-                                <h3 className="executor-name">{executor.name}</h3>
-                                <p style={{fontSize: '20px', fontWeight: '500', color: '#656565',}}>Был в сети 10 минут назад</p>
-                                <div className="executor-rating">
-                                    <p className="rating-value" style={{display: 'flex', alignItems: 'center'}}>
-                                        {executor.rating} <img src={icon_star_yellow} alt='Звезда' style={{margin: '0 10px'}}/> {executor.reviewsCount} отзывов
-                                    </p>
-                                </div>
-                                <div style={{display: 'flex', flexDirection: 'row', alignContent: 'center'}}>
-                                    <img src={award} alt='Награда' />
-                                    <p style={{fontSize: '20px', fontWeight: '500', color: '#151515', margin: '2px 0 0 10px'}}>Название награды</p>
-                                </div>
-                            </div>
-                    </div>
-
-                    <div className="order-actions" style={{margin: '25px 0 20px 0'}}>
-                        <button className="respond-btn" style={{width: '100px'}}>Предложить заказ</button>
-                        <button className="favorite-btn">
-                            <img src={icon_star} alt="Избранное" style={{ width: '30px' }} />
-                        </button>
-                    </div>
-
-                    {/* Иконки для готовности работать по договору и гарантии */}
-                    <div className="executor-features">
-                        {executor.readyToContract && (
-                        <div className="feature-item">
-                            <img src={icon_check} alt="Готов работать по договору" className="feature-icon" />
-                            <span>Работа по договору</span>
-                        </div>
-                        )}
-                        {executor.readyToGiveWarranty && (
-                        <div className="feature-item">
-                            <img src={icon_check} alt="Гарантия на работу" className="feature-icon" />
-                            <span>Гарантия на работу</span>
-                        </div>
-                        )}
-                    </div>
-
-
-                    <div className="executor-details">
-                        <div className="executor-services">
-                            <h4>Опыт работы</h4>
-                            <p>{executor.experience} лет</p>
-                        </div>
-                        <div className="executor-services">
-                            <h4 style={{marginBottom: '15px'}}>Услуги</h4>
-                            <ul>
-                                {executor.services.map((service, index) => (
-                                    <li key={index}>{service}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div className="executor-special-offers">
-                        <h4>Спецпредложение</h4>
-                        <p>{executor.specialOffer}</p>
-                    </div>
-
-                    <div className="executor-projects">
-                        <h4>Реализованные проекты ({executor.projects.length})</h4>
-                        <div className="projects-grid">
-                            {executor.projects.map((project, index) => (
-                                <img
-                                key={index}
                                 src={project.photo}
                                 alt={`Проект ${index + 1}`}
                                 className="project-photo"
-                                />
-                            ))}
+                            />
+                            <p className="project-name">
+                                {project.name}
+                            </p>
+                            <p className="project-description">
+                                {project.description}
+                            </p>
                         </div>
-                        <Link to={`/executor_profile/${executor.id}`} className="detail-link"> Посмотреть ещё → </Link>
+                        ))}
                     </div>
+
+                    <Link to={`/executor_profile/${executor.id}`} className="show-more-link" style={{fontSize: '24px', fontWeight: '600', marginTop: 'auto'}}>
+                      Посмотреть ещё →
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>
