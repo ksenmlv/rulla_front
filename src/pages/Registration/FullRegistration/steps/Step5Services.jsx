@@ -1,5 +1,5 @@
 import '../../Registration.css'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppContext } from '../../../../contexts/AppContext'
 import Header from '../../../../components/Header/Header'
@@ -9,245 +9,561 @@ import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale5.svg'
 import plus from '../../../../assets/Main/plus.svg'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
-
+import apiClient from '../../../../api/client'
 
 export default function Step5Services() {
-    const navigate = useNavigate()
-    const { 
-        stepNumber, setStepNumber,
-        userService, setUserService,
-        otherTeamsInteraction, setOtherTeamsInteraction,
-        userProjects, setUserProjects,
-        reviews, setReviews,
-        certificates, setCertificates,
-        userLawSubject
-    } = useAppContext()
+  const navigate = useNavigate()
+  const { 
+    stepNumber, setStepNumber,
+    userService, setUserService,
+    otherTeamsInteraction, setOtherTeamsInteraction,
+    userProjects, setUserProjects,
+    reviews, setReviews,
+    certificates, setCertificates,
+    userLawSubject
+  } = useAppContext()
 
+  const [isFormValid, setIsFormValid] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [showFileSizeModal, setShowFileSizeModal] = useState(false)
+  const [badFileName, setBadFileName] = useState('')
 
-    const [isFormValid, setIsFormValid] = useState(false)
+  // Каталог услуг (для выбора в RegistrSelector)
+  const [catalog, setCatalog] = useState([])
+  const [loadingCatalog, setLoadingCatalog] = useState(true)
 
-    // фокус на первое поле
-    const firstServiceInputRef = useRef(null)
-    useEffect(() => { firstServiceInputRef.current?.focus() }, [])
+    const allServices = useMemo(() => {
+    const services = []
 
-    const addItem = (setter, defaultValue) => setter(prev => [...prev, defaultValue])
-    const removeItem = (setter, index) => setter(prev => prev.filter((_, i) => i !== index))
-    const updateItem = (setter, index, field, value) => setter(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item))
+    const collect = (node) => {
+        // если в узле есть услуги
+        if (node.services?.length) {
+        node.services.forEach(s => {
+            const defaultUnit =
+            s.unitOptions?.find(u => u.isDefault) || s.unitOptions?.[0]
 
+            services.push({
+            id: s.id,
+            name: s.name,
+            priceFromRub: s.priceFromRub || 0,
 
-    // валидация формы
-    useEffect(() => {
-        // услуги
-        const allServicesFilled = userService.every(s =>
-            s.name.trim().length >= 3 &&
-            s.price.trim() &&
-            s.unit.trim() 
-        );
-        
-        const interactionValid = otherTeamsInteraction.status === 'yes' || otherTeamsInteraction.status === 'no'
-        
-        setIsFormValid(allServicesFilled && interactionValid);
-    }, [userService, otherTeamsInteraction]);
+            // что видит пользователь
+            unitName: defaultUnit?.unitName || '',
 
+            // что хочет backend
+            unitOptionId: defaultUnit?.unitId || null
+            })
+        })
+        }
 
-    // обработчик названия услуги (минимум 3 символа)
-    const handleServiceNameChange = (index, value) => {
-        updateItem(setUserService, index, 'name', value);
+        // рекурсивно спускаемся в детей
+        if (node.children?.length) {
+        node.children.forEach(collect)
+        }
     }
 
-    // обработчик цены (только цифры)
-    const handleServicePriceChange = (index, value) => {
-        // только цифры
-        const digits = value.replace(/\D/g, '');
-        updateItem(setUserService, index, 'price', digits);
+    catalog.forEach(collect)
+
+    return services
+    }, [catalog])
+
+
+  // фокус на первое поле
+  const firstServiceSelectorRef = useRef(null)
+  useEffect(() => {
+    setTimeout(() => firstServiceSelectorRef.current?.focus(), 100)
+  }, [])
+
+  // Загрузка только каталога услуг (без GET профиля и услуг)
+  useEffect(() => {
+    const fetchCatalog = async () => {
+      try {
+        setLoadingCatalog(true)
+        const res = await apiClient.get('/public/services/catalog')
+        setCatalog(res.data || [])
+      } catch (err) {
+        console.error('Ошибка загрузки каталога услуг:', err)
+      } finally {
+        setLoadingCatalog(false)
+      }
+    }
+    fetchCatalog()
+  }, [])
+
+  // Инициализация userService, если он пустой
+  useEffect(() => {
+    if (!userService || userService.length === 0) {
+      setUserService([
+        {
+            serviceId: null,
+            name: '',
+            price: '',
+            unitName: '',
+            unitOptionId: null
+        }
+        ])
+    }
+  }, [userService, setUserService])
+
+  const addItem = (setter, defaultValue) => setter(prev => [...prev, defaultValue])
+  const removeItem = (setter, index) => setter(prev => prev.filter((_, i) => i !== index))
+  const updateItem = (setter, index, field, value) => 
+    setter(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item))
+
+    const handleServiceSelect = (index, serviceName) => {
+        const selected = allServices.find(s => s.name === serviceName)
+        if (!selected) return
+
+          console.log("Выбрана услуга:", {
+            serviceId: selected.id,
+            unitOptionId: selected.unitOptionId,
+            unitName: selected.unitName
+        })
+
+        setUserService(prev =>
+            prev.map((item, i) =>
+            i === index
+                ? {
+                    ...item,
+                    serviceId: selected.id,
+                    name: selected.name,
+                    price: String(selected.priceFromRub || ''),
+                    unitName: selected.unitName,
+                    unitOptionId: selected.unitOptionId
+                }
+                : item
+            )
+        )
     }
 
-    // обработчик текста проекта (минимум 5 символов)
-    const handleProjectTextChange = (index, value) => {
-        updateItem(setUserProjects, index, 'text', value);
+
+  const handleFileUploadWithCheck = (setter, files) => {
+    const tooBig = files.find(f => f.size > 10 * 1024 * 1024)
+    if (tooBig) {
+      setBadFileName(tooBig.name)
+      setShowFileSizeModal(true)
+      setter(files.filter(f => f.size <= 10 * 1024 * 1024))
+      return
     }
+    setter(files)
+  }
 
-    const handleBack = () => navigate('/full_registration_step4')
+  // Валидация формы
+  useEffect(() => {
+    const allServicesFilled = userService.every(s =>
+    s.name.trim().length >= 3 &&
+    s.price.trim() &&
+    s.unitName.trim()
+    )
+    
+    const interactionValid = otherTeamsInteraction.status === 'yes' || 
+                            otherTeamsInteraction.status === 'no'
+    
+    setIsFormValid(allServicesFilled && interactionValid)
+  }, [userService, otherTeamsInteraction])
 
-    const handleForward = () => {
-        console.log(userService, otherTeamsInteraction, userProjects, reviews, certificates)
+  const handleBack = () => navigate('/full_registration_step4')
+
+
+    const handleForward = async () => {
+    if (!isFormValid || isLoading) return
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+        // Готовности — отправляем только изменённые поля
+        const readinessData = {}
+        if (otherTeamsInteraction.status === 'yes' || otherTeamsInteraction.status === 'no') {
+            readinessData.readyToCollaborate = otherTeamsInteraction.status === 'yes'
+        }
+        if (otherTeamsInteraction.readyToContract !== undefined) {
+            readinessData.readyToContract = !!otherTeamsInteraction.readyToContract
+        }
+        if (otherTeamsInteraction.readyToGiveWarranty !== undefined) {
+            readinessData.readyToGiveWarranty = !!otherTeamsInteraction.readyToGiveWarranty
+        }
+
+        if (Object.keys(readinessData).length > 0) {
+        await apiClient.patch('/executors/me/readiness', readinessData)
+        }
+
+        // Услуги — полная замена одним PUT-запросом
+        console.group('=== Отправка услуг (PUT /executors/me/services) ===');
+
+        const servicesToSend = userService
+        .filter(s => {
+            const isValid = s.name.trim().length >= 3 && s.price.trim() && s.unitName.trim();
+            console.log(`Услуга "${s.name}":`, {
+                valid: isValid,
+                name: s.name,
+                price: s.price,
+                unit: s.unitName
+                });
+            return isValid;
+        })
+        .map(s => {
+            const found = allServices.find(svc => svc.name === s.name);
+            const serviceData = {
+                serviceId: found?.id || null,
+                unitOptionId:  s.unitOptionId,
+                priceType: 'FIXED',
+                priceFromRub: parseInt(s.price) || 0,
+                note: '',
+                active: true
+            };
+            console.log('→ Формируем объект услуги:', serviceData);
+            return serviceData;
+        });
+
+        console.log('Итоговый массив для отправки:', servicesToSend);
+
+        if (servicesToSend.length === 0) {
+        console.warn('Нет валидных услуг — PUT не отправляется');
+        } else {
+        console.log('Отправляем PUT-запрос...');
+        try {
+            const response = await apiClient.put('/executors/me/services', {
+            services: servicesToSend
+            });
+            console.log('Успешный ответ от сервера:', response.data);
+        } catch (err) {
+            console.error('Ошибка PUT-запроса:', {
+            status: err.response?.status,
+            statusText: err.response?.statusText,
+            data: err.response?.data,
+            message: err.message
+            });
+            throw err; // чтобы дальше обработать в catch
+        }
+        }
+
+        console.groupEnd();
+
+
+        // Проекты — только новые
+        for (const p of userProjects) {
+        if (!p.files?.length && !p.text?.trim()) continue
+
+        const fd = new FormData()
+        p.files?.forEach(f => fd.append('file', f))
+        if (p.text?.trim()) fd.append('projectDescription', p.text.trim())
+
+        await apiClient.post('/executors/me/projects', fd)
+        }
+
+        // Отзывы — только новые
+        for (const f of reviews.files || []) {
+        const fd = new FormData()
+        fd.append('file', f)
+        await apiClient.post('/executors/me/reviews', fd)
+        }
+
+        // Сертификаты — только новые (если не юрлицо)
+        if (userLawSubject !== 'legal_entity') {
+        for (const f of certificates.files || []) {
+            const fd = new FormData()
+            fd.append('file', f)
+            await apiClient.post('/executors/me/certificates', fd)
+        }
+        }
+
         setStepNumber(stepNumber + 1)
         navigate('/full_registration_step6')
+
+    } catch (err) {
+        console.error('Ошибка сохранения шага 5:', err)
+
+        let msg = 'Не удалось сохранить данные'
+        if (err.response?.status === 413) {
+        msg = 'Один или несколько файлов слишком большие (макс. 10 МБ)'
+        } else if (err.response) {
+        msg = err.response.data?.message || `Ошибка сервера (${err.response.status})`
+        }
+
+        setErrorMessage(msg)
+    } finally {
+        setIsLoading(false)
+    }
     }
 
-    return (
-        <div>
-            <Header hideElements />
-            <div className='reg-container'>
-                <div className='registr-container' style={{ height: 'auto', paddingBottom: '57px' }}>
+  return (
+    <div>
+      <Header hideElements />
+      <div className='reg-container'>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '57px' }}>
 
-                    <div className='title'>
-                        <button className='btn-back' onClick={handleBack}>
-                            <img src={arrow} alt='Назад' />
-                        </button>
-                        <h2 className='login-title'>Полная регистрация</h2>
-                    </div>
+          <div className='title'>
+            <button className='btn-back' onClick={handleBack}>
+              <img src={arrow} alt='Назад' />
+            </button>
+            <h2 className='login-title'>Полная регистрация</h2>
+          </div>
 
-                    <div className='registr-scale'>
-                        <p>5/6</p>
-                        <img src={scale} alt='Registration scale' style={{width: '650px'}}/>
-                    </div>
+          <div className='registr-scale'>
+            <p>5/6</p>
+            <img src={scale} alt='Registration scale' style={{width: '650px'}}/>
+          </div>
 
-                    <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
-                        Услуги и реализованные проекты
-                    </p>
+          <p style={{ fontSize: '30px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
+            Услуги и реализованные проекты
+          </p>
 
-                    {/* услуги */}
-                    {userService.map((s, i) => (
-                        <div key={i} style={{ position: 'relative', marginBottom: '25px' }}>
+          {/* Услуги */}
+          {userService.map((s, i) => (
+            <div key={i} style={{ position: 'relative', marginBottom: '25px' }}>
 
-                            {/* показываем крестик, когда больше 1 элемента */}
-                            {userService.length > 1 && (
-                                <button 
-                                    className='file-remove' 
-                                    onClick={() => removeItem(setUserService, i)}
-                                    style={i === 0 ? { top: '42px' } : {}}
-                                >
-                                    ✕
-                                </button>
-                            )}
-                            
-                            <div className='passport-row'>
-                                <div className='passport-field full-width'>
-                                    {i === 0 && <h3>Наименование услуги и стоимость</h3>}
-                                    <input
-                                        ref={i === 0 ? firstServiceInputRef : null}
-                                        placeholder='Введите название услуги'
-                                        value={s.name}
-                                        onChange={(e) => handleServiceNameChange(i, e.target.value)} 
-                                    />
-                                </div>
-                            </div>
-
-                            <div className='passport-row' style={{ marginTop: '15px', position: 'relative', width: '100%' }}>
-                                <div className='passport-field '>
-                                    <input
-                                        placeholder='от'
-                                        value={s.price}
-                                        onChange={(e) => handleServicePriceChange(i, e.target.value)}
-                                        style={{ paddingRight: '50px' }}
-                                    />
-                                    <span style={{
-                                        position: 'absolute', left: '310px', top: '50%',
-                                        transform: 'translateY(-50%)', color: '#656565', fontSize: '20px', pointerEvents: 'none'
-                                    }}>₽</span>
-                                </div>
-                                <div className='passport-field '>
-                                    <div className='registr-selector-wrapper'>
-                                        <RegistrSelector 
-                                            placeholder='за'
-                                            subject={[ 'за м²', 'за м³', 'за услугу', 'за шт', 'за погонный метр', 'за объект', 'за сотку', 'за выезд', 'за час', 'за месяц', 'за зону']} 
-                                            selected={s.unit} 
-                                            onSelect={(value) => updateItem(setUserService, i, 'unit', value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    ))}
-
-                    <div className='btn-plus'>
-                        <button onClick={() => addItem(setUserService, { name: '', price: '', unit: '' })} style={{marginTop: '-5px'}}>
-                            <img src={plus} alt='Add more' />Добавить еще
-                        </button>
-                    </div>
-
-                    {/* взаимодействие с другими командами */}
-                    <div className='passport-field' style={{ marginTop: '25px' }}>
-                        <h3>Готовы взаимодействовать с другими командами?</h3>
-                        {['yes','no'].map(val => (
-                            <div className='radio-option' key={val} style={{ marginBottom: '10px' }}>
-                                <input
-                                    type='radio' id={val} name='interaction' value={val}
-                                    checked={otherTeamsInteraction.status === val}
-                                    onChange={() => setOtherTeamsInteraction(val === 'yes' ? { ...otherTeamsInteraction, status: 'yes' } : { status: 'no', text: '' })}
-                                    style={{ margin: '0 10px 0 0' }}
-                                />
-                                <label htmlFor={val}>{val === 'yes' ? 'Да' : 'Нет'}</label>
-                            </div>
-                        ))}
-
-                    </div>
-
-                    {/* реализованные проекты */}
-                    {userProjects.map((p, i) => (
-                        <div key={i} style={{ position: 'relative', marginTop: '20px' }}>
-
-                            {/* показываем крестик, когда больше 1 элемента */}
-                            {userProjects.length > 1 && (
-                                <button 
-                                    className='file-remove' 
-                                    onClick={() => removeItem(setUserProjects, i)}
-                                    style={i === 0 ? { top: '70px' } : {}}
-                                >
-                                    ✕
-                                </button>
-                            )}
-
-                            {i === 0 && <>
-                                <h3 style={{fontSize: '24px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>            
-                                <p style={{ color: '#000000B2', fontSize: '20px', margin: '0 0 10px 0'}}>Подробно опишите ваши проекты и добавьте фото/видео </p>
-                            </>} 
-
-                            <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '142px', height: 'auto' }}>
-                                <div className='file-upload-area' style={{ width: '203px' }}>
-                                    <FileUpload maxFiles={10} onFilesUpload={(files) => updateItem(setUserProjects, i, 'files', files)}/>
-                                </div>
-                                <textarea
-                                    placeholder='Опишите подробности проекта (бюджет, сроки, поставленные задачи и др.)'
-                                    value={p.text}
-                                    onChange={(e) => handleProjectTextChange(i, e.target.value)} 
-                                    className='country-input'
-                                    style={{ width: '491px', height: 'auto', lineHeight: '1.2', fontSize: '18px' }}
-                                />
-                            </div>
-                        </div>
-                    ))}
-
-                    <div className='btn-plus'>
-                        <button onClick={() => addItem(setUserProjects, { files: [], text: '' })}>
-                            <img src={plus} alt='Add more' />Добавить еще
-                        </button>
-                    </div>
-
-                    <p style={{ color: '#00000078', fontSize: '16px', margin: '-50px 0 10px 0', width: '500px', lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> <br></br>
-
-                    {/* отзывы */}
-                    <div className='passport-field' style={{ marginTop: '10px' }}>
-                        <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
-                        <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
-                        <FileUpload maxFiles={10} onFilesUpload={(files) => setReviews(prev => ({ ...prev, files }))} />
-                        <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
-                    </div>
-
-                    {/* сертификаты */}
-                    {userLawSubject !== 'legal_entity' && (
-                        <div className='passport-field' style={{ marginTop: '25px' }}>
-                            <h3>Сертификаты о повышении квалификации</h3>
-                            <FileUpload maxFiles={10} onFilesUpload={(files) => setCertificates(prev => ({ ...prev, files }))} />
-                            <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0',  lineHeight: '1.1' }}>Вы сможете добавить дополнительные файлы в личном кабинете после регистрации</p> 
-                        </div>
-                    )}
-
-                    <button
-                        type='submit'
-                        className={`continue-button ${!isFormValid ? 'disabled' : ''}`}
-                        onClick={handleForward}
-                        disabled={!isFormValid}
-                        style={{ margin: '50px 0 0 0' }}
-                    >
-                        Продолжить
-                    </button>
+              {userService.length > 1 && (
+                <button 
+                  className='file-remove' 
+                  onClick={() => removeItem(setUserService, i)}
+                  style={i === 0 ? { top: '42px' } : {}}
+                >
+                  ✕
+                </button>
+              )}
+              
+              <div className='passport-row'>
+                <div className='passport-field full-width'>
+                  {i === 0 && <h3>Наименование услуги и стоимость</h3>}
+                  <div className="registr-selector-wrapper">
+                    <RegistrSelector
+                      ref={i === 0 ? firstServiceSelectorRef : null}
+                      placeholder='Выберите услугу из каталога'
+                      subject={allServices.map(svc => svc.name)}
+                      selected={s.name}
+                      onSelect={(val) => handleServiceSelect(i, val)}
+                      disabled={loadingCatalog}
+                    />
+                  </div>
                 </div>
-            </div>
+              </div>
 
-            <Footer />
+              <div className='passport-row' style={{ marginTop: '15px', position: 'relative', width: '100%' }}>
+                <div className='passport-field'>
+                  <input
+                    placeholder='от'
+                    value={s.price || ''}
+                    readOnly
+                    style={{ 
+                      paddingRight: '50px',
+                      background: '#f5f5f5',
+                      cursor: 'not-allowed'
+                    }}
+                  />
+                  <span style={{
+                    position: 'absolute', 
+                    right: '10px', 
+                    top: '50%',
+                    transform: 'translateY(-50%)', 
+                    color: '#656565', 
+                    fontSize: '20px', 
+                    pointerEvents: 'none'
+                  }}>₽</span>
+                </div>
+                <div className='passport-field'>
+                  <input
+                    placeholder='за'
+                    value={s.unitName || ''}
+                    readOnly
+                    style={{ 
+                      background: '#f5f5f5',
+                      cursor: 'not-allowed'
+                    }}
+                  />
+                </div>
+              </div>
+
+            </div>
+          ))}
+
+          <div className='btn-plus'>
+            <button
+                onClick={() =>
+                    addItem(setUserService, {
+                    serviceId: null,
+                    name: '',
+                    price: '',
+                    unitName: '',
+                    unitOptionId: null
+                    })
+                }
+                style={{marginTop: '-5px'}}>
+              <img src={plus} alt='Add more' />Добавить еще
+            </button>
+          </div>
+
+          {/* Взаимодействие с другими командами — радиокнопки */}
+          <div className='passport-field' style={{ marginTop: '40px' }}>
+            <h3>Готовы взаимодействовать с другими командами/специалистами?</h3>
+            {['yes','no'].map(val => (
+              <div className='radio-option' key={val} style={{ marginBottom: '10px' }}>
+                <input
+                  type='radio' id={val} name='interaction' value={val}
+                  checked={otherTeamsInteraction.status === val}
+                  onChange={() => setOtherTeamsInteraction(prev => ({ ...prev, status: val }))}
+                  style={{ margin: '0 10px 0 0' }}
+                />
+                <label htmlFor={val}>{val === 'yes' ? 'Да' : 'Нет'}</label>
+              </div>
+            ))}
+          </div>
+
+          {/* Реализованные проекты */}
+          {userProjects.map((p, i) => (
+            <div key={i} style={{ position: 'relative', marginTop: '40px' }}>
+              {userProjects.length > 1 && (
+                <button 
+                  className='file-remove' 
+                  onClick={() => removeItem(setUserProjects, i)}
+                  style={i === 0 ? { top: '70px' } : {}}
+                >
+                  ✕
+                </button>
+              )}
+
+              {i === 0 && <>
+                <h3 style={{fontSize: '20px', color: '#000000', marginBottom: 0 }}>Реализованные проекты</h3>            
+                <p style={{ color: '#000000B2', fontSize: '16px', margin: '0 0 10px 0'}}>Подробно опишите ваши проекты и добавьте фото/видео </p>
+              </>} 
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', minHeight: '142px', height: 'auto' }}>
+                <div className='file-upload-area' style={{ width: '203px' }}>
+                  <FileUpload 
+                    maxFiles={10} 
+                    onFilesUpload={(files) => handleFileUploadWithCheck(
+                      (newFiles) => updateItem(setUserProjects, i, 'files', newFiles),
+                      files
+                    )}
+                  />
+                </div>
+                <textarea
+                  placeholder='Опишите подробности проекта (бюджет, сроки, поставленные задачи и др.)'
+                  value={p.text}
+                  onChange={(e) => updateItem(setUserProjects, i, 'text', e.target.value)} 
+                  className='country-input'
+                  style={{ width: '491px', height: 'auto', lineHeight: '1.2', fontSize: '18px' }}
+                />
+              </div>
+            </div>
+          ))}
+
+          <div className='btn-plus'>
+            <button onClick={() => addItem(setUserProjects, { files: [], text: '' })}>
+              <img src={plus} alt='Add more' />Добавить еще
+            </button>
+          </div>
+
+          <p style={{ color: '#00000078', fontSize: '16px', margin: '-50px 0 10px 0', width: '500px', lineHeight: '1.1' }}>
+            Вы сможете добавить дополнительные файлы в личном кабинете после регистрации
+          </p>
+
+          {/* Отзывы */}
+          <div className='passport-field' style={{ marginTop: '50px' }}>
+            <h3 style={{ marginBottom: 0 }}>Отзывы от заказчиков</h3>
+            <p style={{ fontSize: '20px', margin: '5px 0 10px 0' }}>Добавьте фото реальных отзывов от заказчиков</p>
+            <FileUpload 
+              maxFiles={10} 
+              onFilesUpload={(files) => handleFileUploadWithCheck(
+                (newFiles) => setReviews(prev => ({ ...prev, files: newFiles })),
+                files
+              )}
+            />
+            <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0', lineHeight: '1.1' }}>
+              Вы сможете добавить дополнительные файлы в личном кабинете после регистрации
+            </p> 
+          </div>
+
+          {/* Сертификаты */}
+          {userLawSubject !== 'legal_entity' && (
+            <div className='passport-field' style={{ marginTop: '25px' }}>
+              <h3>Сертификаты о повышении квалификации</h3>
+              <FileUpload 
+                maxFiles={10} 
+                onFilesUpload={(files) => handleFileUploadWithCheck(
+                  (newFiles) => setCertificates(prev => ({ ...prev, files: newFiles })),
+                  files
+                )}
+              />
+              <p style={{ color: '#00000078', fontSize: '16px', margin: '10px 0 10px 0', lineHeight: '1.1' }}>
+                Вы сможете добавить дополнительные файлы в личном кабинете после регистрации
+              </p> 
+            </div>
+          )}
+
+          {/* Два чекбокса — в самом низу */}
+          <div className="checkbox-wrapper" 
+               onClick={() => setOtherTeamsInteraction(prev => ({...prev, readyToContract: !prev.readyToContract}))}
+               style={{ margin: '20px 0 -10px 0'}}>
+            <div className={`custom-checkbox ${otherTeamsInteraction.readyToContract ? 'checked' : ''}`}>
+              {otherTeamsInteraction.readyToContract && (
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                  <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <span className="checkbox-text" style={{fontSize: '20px', fontWeight: '500', color: '#000' }}>
+              Готов работать по договору
+            </span>
+          </div>
+
+          <div className="checkbox-wrapper" onClick={() => setOtherTeamsInteraction(prev => ({...prev, readyToGiveWarranty: !prev.readyToGiveWarranty})) }>
+            <div className={`custom-checkbox ${otherTeamsInteraction.readyToGiveWarranty ? 'checked' : ''}`}>
+              {otherTeamsInteraction.readyToGiveWarranty && (
+                <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                  <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <span className="checkbox-text" style={{fontSize: '20px', fontWeight: '500', color: '#000' }}>
+              Готов давать гарантию на выполненную работу
+            </span>
+          </div>
+
+          {/* Модалка при слишком большом файле */}
+          {showFileSizeModal && (
+            <div className="modal-overlay">
+              <div className="modal-content" style={{ maxWidth: '400px', textAlign: 'center' }}>
+                <h3>Файл слишком большой</h3>
+                <p>Файл «{badFileName}» превышает 10 МБ и был удалён.</p>
+                <p>Максимальный размер одного файла — 10 МБ.</p>
+                <button 
+                  className="save-button"
+                  onClick={() => setShowFileSizeModal(false)}
+                  style={{ marginTop: '20px' }}
+                >
+                  Понятно
+                </button>
+              </div>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div style={{
+              color: '#ff4444',
+              fontSize: '16px',
+              textAlign: 'center',
+              margin: '20px 0'
+            }}>
+              {errorMessage}
+            </div>
+          )}
+
+          <button
+            type='submit'
+            className={`continue-button ${!isFormValid || isLoading ? 'disabled' : ''}`}
+            onClick={handleForward}
+            disabled={!isFormValid || isLoading}
+            style={{ margin: '40px 0 0 0' }}
+          >
+            {isLoading ? 'Сохранение...' : 'Продолжить'}
+          </button>
+
         </div>
-    )
+      </div>
+
+      <Footer />
+    </div>
+  )
 }

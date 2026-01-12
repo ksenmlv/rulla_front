@@ -57,7 +57,7 @@ function MainCustomer() {
             </> }
             menuItems={   [
                 { label: 'О платформе', to: '/about' },
-                { label: 'Каталог исполнителей', to: '/executor_catalog' },
+                { label: 'Каталог исполнителей', to: '/customer_catalog' },
                 { label: 'Мои заказы', to: '/customer_my_orders' },
             ]}
         />

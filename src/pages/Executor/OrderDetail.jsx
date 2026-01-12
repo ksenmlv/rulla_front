@@ -127,7 +127,7 @@ export default function OrderDetail() {
                         <div className="order-actions">
                             <button className="respond-btn">Откликнуться</button>
                             <button className="favorite-btn">
-                                <img src={icon_star} alt="Избранное" style={{ width: '28px' }} />
+                                <img src={icon_star} alt="Избранное" style={{ width: '30px' }} />
                             </button>
                         </div>
                     </div>              

@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1,
+    "name": "РемонтПрофи",
+    "photo": "https://via.placeholder.com/80",
+    "specialization": "Дизайн интерьеров",
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "experience": 6,
+    "readyToContract": true,
+    "readyToGiveWarranty": true,
+    "services": [
+      "Капитальный ремонт",
+      "Техническая экспертиза",
+      "Малярные работы"
+    ],
+    "specialOffer": "Закажите комплексный ремонт до конца месяца и получите уборку помещений после finishing со скидкой 50%.",
+    "projects": [
+      { "photo": "https://via.placeholder.com/120" },
+      { "photo": "https://via.placeholder.com/120" },
+      { "photo": "https://via.placeholder.com/120" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "СантехМастер",
+    "photo": "https://via.placeholder.com/80",
+    "specialization": "Сантехника",
+    "rating": 4.8,
+    "reviewsCount": 27,
+    "experience": 5,
+    "readyToContract": false,
+    "readyToGiveWarranty": true,
+    "services": [
+      "Установка сантехники",
+      "Ремонт труб",
+      "Монтаж водонагревателей"
+    ],
+    "specialOffer": "Скидка 10% на замену труб при заказе полного комплекса услуг.",
+    "projects": [
+      { "photo": "https://via.placeholder.com/120" },
+      { "photo": "https://via.placeholder.com/120" }
+    ]
+  }
+]

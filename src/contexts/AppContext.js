@@ -55,7 +55,7 @@ export const AppProvider = ({ children }) => {
 
   // 3 этап регистрации
   const [passportData, setPassportData] = useState({
-    citizenship: 'Российская федерация', 
+    citizenship: 'RU', 
     otherCountry: '', // если citizenship === 'other' или 'chf'
     series: '',
     number: '',

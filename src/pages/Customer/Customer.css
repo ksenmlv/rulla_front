@@ -4,7 +4,7 @@
   border-radius: 10px;
   margin: 120px 0 0 0;
   overflow: hidden;
- clip-path: polygon(0 0, 95% 0, 100% 40%, 100% 100%, 0 100%);
+  clip-path: polygon(0 0, 95% 0, 100% 40%, 100% 100%, 0 100%);
 }
 
 .promo-content {
@@ -246,4 +246,165 @@
 
 .description-input:focus {
   outline: none;
+}
+
+
+
+/* все исполнители */
+/* Вкладки */
+.specialists-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.specialists-tabs button {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.specialists-tabs button.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+/* Карточка исполнителя */
+.executors-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 20px; 
+}
+
+.executor-card {
+  border: 1px solid #919191;
+  border-radius: 15px;
+  padding: 35px;
+  width: 100%; 
+  box-sizing: border-box; 
+}
+
+.executor-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.executor-photo {
+  width: 225px;
+  height: 225px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 25px;
+}
+
+.executor-name {
+  font-size: 29px;
+  font-weight: 600;
+  color: #000;
+  margin: 15px 0 10px 0;
+}
+
+.executor-rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rating-value, .reviews-count {
+  font-size: 20px;
+  font-weight: 500;
+  color: #151515;
+}
+
+
+
+
+/* Услуги и опыт */
+.executor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.executor-services h4 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #151515;
+  margin-bottom: 5px;
+}
+
+.executor-services p {
+  font-size: 20px;
+  font-weight: 500;
+  color: #656565;
+}
+
+.executor-services ul {
+  list-style: none;
+  padding: 0;
+}
+
+.executor-services li {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #656565;
+}
+
+/* Галочки готовностей */
+.executor-features {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #151515;
+}
+
+
+
+/* Спецпредложение */
+.executor-special-offers {
+  background: #f0f8ff;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+/* Проекты */
+.executor-projects h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.projects-grid {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.project-photo {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.detail-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
 }

@@ -238,10 +238,6 @@ export default function Step4Experience() {
             <img src={scale} alt="Registration scale" style={{ width: '650px' }} />
           </div>
 
-          <p style={{ fontSize: '32px', fontWeight: '600', color: '#151515', marginBottom: '30px' }}>
-            Дополнительная информация:
-          </p>
-
           <div className="input-fields" style={{ marginBottom: '40px' }}>
             <h3>Опыт работы</h3>
             <RegistrSelector
