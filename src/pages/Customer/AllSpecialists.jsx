@@ -1,6 +1,5 @@
-// import '../Registration.css'
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import mockExecutors from '../../../src/mockExecutors.json';
@@ -9,60 +8,53 @@ import '../Executor/Executor.css';
 import '../Customer/Customer.css';
 import icon_user from '../../assets/Main/icon_user.svg';
 import star_icon from '../../assets/Main/icon_star.svg';
-import icon_star from '../../assets/Main/icon_star.svg'  
+import icon_star from '../../assets/Main/icon_star.svg';
 import avatar from '../../assets/Main/mock_avatar.svg';
-import icon_check from '../../assets/Main/icon_checkmark2.svg'  
-import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg'  
+import icon_check from '../../assets/Main/icon_checkmark2.svg';
+import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg';
 import award from '../../assets/Main/icon_award.svg';
+import icon_filter from '../../assets/Main/icon_filter.svg'
+
 
 export default function AllSpecialists() {
-  const navigate = useNavigate();
   const [executors, setExecutors] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('all');
+  const [selectedSpecializations, setSelectedSpecializations] = useState([]);
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     setExecutors(mockExecutors);
     setLoading(false);
   }, []);
 
-  const getFilteredExecutors = () => {
-    switch (activeTab) {
-      case 'all':
-        return executors;
-      case 'design':
-        return executors.filter((executor) => executor.specialization === 'Дизайн интерьеров');
-      case 'plumbing':
-        return executors.filter((executor) => executor.specialization === 'Сантехника');
-      case 'electric':
-        return executors.filter((executor) => executor.specialization === 'Электрика');
-      case 'commercial':
-        return executors.filter((executor) => executor.specialization === 'Ремонт коммерческих помещений');
-      case 'carpentry':
-        return executors.filter((executor) => executor.specialization === 'Плотничные работы');
-      case 'furniture':
-        return executors.filter((executor) => executor.specialization === 'Сборка и ремонт мебели');
-      default:
-        return executors;
-    }
-  };
-
-  const filteredExecutors = getFilteredExecutors();
-
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <img
-          key={i}
-          src={star_icon}
-          alt="star"
-          style={{ width: '16px', height: '16px', marginRight: '2px' }}
-        />
+  const toggleSpecialization = (spec) => {
+    if (spec === 'Все специалисты') {
+      setSelectedSpecializations([]);
+    } else {
+      setSelectedSpecializations(prev =>
+        prev.includes(spec)
+          ? prev.filter(s => s !== spec)
+          : [...prev, spec]
       );
     }
-    return stars;
   };
+
+  const filteredExecutors = selectedSpecializations.length === 0
+    ? executors
+    : executors.filter(executor =>
+        selectedSpecializations.includes(executor.specialization)
+      );
+
+  const specializations = [
+    'Все специалисты',
+    'Проектирование и дизайн',
+    'Сантехника',
+    'Отделка',
+    'Электрика',
+    'Ремонт коммерческих помещений',
+    'Плиточные работы',
+    'Сборка и ремонт мебели'
+  ];
 
   return (
     <div>
@@ -72,7 +64,9 @@ export default function AllSpecialists() {
             <button className="btn_user" style={{ marginRight: '-10px' }}>
               <img src={icon_user} alt="Иконка пользователя" />
             </button>
-            <p style={{ fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px' }}>Имя пользователя</p>
+            <p style={{ fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px' }}>
+              Имя пользователя
+            </p>
             <button className='btn-blue'>Создать заказ</button>
           </>
         }
@@ -85,194 +79,160 @@ export default function AllSpecialists() {
 
       <div className="full-container" style={{ marginBottom: '285px', minHeight: 'calc(100vh - 833px)' }}>
         <div className="main-container">
-          <h1 className="page-title" style={{marginTop: '140px'}}>Каталог исполнителей</h1>
 
-          <div className="orders-tabs">
-            <button
-              className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveTab('all')}
-            >
-              Все специалисты
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'design' ? 'active' : ''}`}
-              onClick={() => setActiveTab('design')}
-            >
-              Дизайн интерьеров
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'plumbing' ? 'active' : ''}`}
-              onClick={() => setActiveTab('plumbing')}
-            >
-              Сантехника
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'electric' ? 'active' : ''}`}
-              onClick={() => setActiveTab('electric')}
-            >
-              Электрика
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'commercial' ? 'active' : ''}`}
-              onClick={() => setActiveTab('commercial')}
-            >
-              Ремонт коммерческих помещений
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'carpentry' ? 'active' : ''}`}
-              onClick={() => setActiveTab('carpentry')}
-            >
-              Плотничные работы
-            </button>
-            <button
-              className={`tab-button ${activeTab === 'furniture' ? 'active' : ''}`}
-              onClick={() => setActiveTab('furniture')}
-            >
-              Сборка и ремонт мебели
-            </button>
+          <h1 className="page-title" style={{ margin: '140px 0 8px 0' }}>
+            Каталог исполнителей
+          </h1>
+          <p style={{ fontSize: '20px', color: '#656565', marginBottom: '40px' }}>
+            Найдено 432 проверенных подрядчиков
+          </p>
+
+          <Link to={`/customer_all_specialists_filter`}>
+            <button className='btn-filter'><img src={icon_filter} alt='Фильтр' /></button>
+          </Link>
+
+          <div className="catalog-layout">
+          {/* Левая колонка — чекбоксы */}
+          <div className="sidebar">
+            {specializations.slice(0, showMore ? specializations.length : 5).map(spec => {
+              const isChecked = 
+                spec === 'Все специалисты'
+                  ? selectedSpecializations.length === 0
+                  : selectedSpecializations.includes(spec);
+
+              return (
+                <div
+                  key={spec}
+                  className="checkbox-wrapper"
+                  onClick={() => toggleSpecialization(spec)}
+                >
+                  <div className={`custom-checkbox ${isChecked ? 'checked' : ''}`}>
+                    {isChecked && (
+                      <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
+                        <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <span className="checkbox-textt">{spec}</span>
+                </div>
+              );
+            })}
+
+            {specializations.length > 5 && (
+              <button 
+                className={`show-more-link ${showMore ? 'expanded' : ''}`}
+                onClick={() => setShowMore(!showMore)}
+              >
+                {showMore ? 'Скрыть' : 'Показать еще'}
+                <span className="arrow">▼</span>
+              </button>
+            )}
           </div>
 
-          {loading ? (
-            <div className="loading-message">Загрузка исполнителей...</div>
-          ) : filteredExecutors.length === 0 ? (
-            <div className="empty-message">Исполнители не найдены</div>
-          ) : (
-            <div className="executors-grid">
-              {filteredExecutors.map((executor) => (
-                <div key={executor.id} className="executor-card">
-                  <div className="executor-header">
-                    <img
-                      src={avatar}
-                      alt={executor.name}
-                      className="executor-photo"
-                    />
-                    <div className="executor-info">
-                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        <img src={icon_check} alt="✓" />
-                        <p style={{fontSize: '20px', fontWeight: '500', color: '#656565', margin: '2px 0 0 10px'}}>
-                          Документы подтверждены
-                        </p>
+
+
+
+            {/* Правая часть — карточки */}
+            <div className="executors-list">
+              {loading ? (
+                <div className="loading-message">Загрузка исполнителей...</div>
+              ) : filteredExecutors.length === 0 ? (
+                <div className="empty-message">Исполнители не найдены</div>
+              ) : (
+                filteredExecutors.map(executor => (
+                  <div key={executor.id} className="executor-card-horizontal">
+                    {/* Левый столбец */}
+                    <div className="left-column">
+                      <div className="photo-name">
+                          <img src={avatar} alt={executor.name} className="executor-photo" />
+
+                          <div className="name-block">
+                              <div className="verified">
+                                <img src={icon_check} alt="✓" />
+                                <span>Документы подтверждены</span>
+                              </div>
+
+                              <h3 className="executor-name">{executor.name}</h3>
+                              <p className="last-online">Был в сети 10 минут назад</p>
+                              <div className="rating">
+                                  <span>{executor.rating}</span>
+                                  <img src={icon_star_yellow} alt="★" className="star-icon" />
+                                  <span>{executor.reviewsCount} отзывов</span>
+                              </div>
+                              <div className="award">
+                                  <img src={award} alt="Награда" />
+                                  <span>Название награды</span>
+                              </div>
+                          </div>
                       </div>
 
-                      <h3 className="executor-name">{executor.name}</h3>
-                      <p style={{fontSize: '20px', fontWeight: '500', color: '#656565'}}>
-                        Был в сети 10 минут назад
-                      </p>
-                      <div className="executor-rating">
-                        <p className="rating-value" style={{display: 'flex', alignItems: 'center'}}>
-                          {executor.rating} 
-                          <img src={icon_star_yellow} alt='Звезда' style={{margin: '0 10px'}}/> 
-                          {executor.reviewsCount} отзывов
-                        </p>
+                      <div className="actions">
+                        <button className="offer-btn">Предложить заказ</button>
+                        <button className="favorite-btn">
+                          <img src={icon_star} alt="★" />
+                        </button>
                       </div>
-                      <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                        <img src={award} alt='Награда' />
-                        <p style={{fontSize: '20px', fontWeight: '500', color: '#151515', margin: '2px 0 0 10px'}}>
-                          Название награды
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="order-actions" style={{margin: '25px 0 20px 0'}}>
-                    <button className="respond-btn" style={{width: '100px'}}>Предложить заказ</button>
-                    <button className="favorite-btn">
-                      <img src={icon_star} alt="Избранное" style={{ width: '30px' }} />
-                    </button>
-                  </div>
-
-                  <div className="executor-features">
-                    {executor.readyToContract && (
-                      <div className="feature-item">
-                        <img src={icon_check} alt="Готов работать по договору" className="feature-icon" />
-                        <span>Работа по договору</span>
+                      <div className="features">
+                        {executor.readyToContract && (
+                          <span><img src={icon_check} alt="✓" style={{marginRight: '7px'}}/> Работа по договору</span>
+                        )}
+                        {executor.readyToGiveWarranty && (
+                          <span><img src={icon_check} alt="✓" style={{marginRight: '7px'}}/> Гарантия на работу</span>
+                        )}
                       </div>
-                    )}
-                    {executor.readyToGiveWarranty && (
-                      <div className="feature-item">
-                        <img src={icon_check} alt="Гарантия на работу" className="feature-icon" />
-                        <span>Гарантия на работу</span>
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="executor-details">
-                    <div className="executor-services">
-                      <h4>Опыт работы</h4>
-                      <p>{executor.experience} лет</p>
+                      <div className="special-offer">
+                        <div className="discount">-25%</div>
+                        <h4>Спецпредложение</h4>
+                        <p>Закажите комплексный ремонт до конца месяца и получите уборку помещений после finishing с 50% скидкой</p>
+                      </div>
+
+                      <Link to={`/executor_profile/${executor.id}`} className="btn-look-more">
+                        Посмотреть ещё →
+                      </Link>
                     </div>
 
-                    <div className="executor-services">
-                      <h4 style={{marginBottom: '15px'}}>Услуги</h4>
-                      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                        {executor.services.map((service, index) => (
-                          <li 
-                            key={index} 
-                            style={{
-                              display: 'flex',
-                              justifyContent: 'space-between',
-                              alignItems: 'center',
-                              marginBottom: '12px',
-                              fontSize: '20px',
-                              fontWeight: '500',
-                              color: '#656565'
-                            }}
-                          >
-                            <span>{service.name}</span>
-                            <span style={{
-                              color: '#02283D',
-                              fontWeight: '600',
-                              whiteSpace: 'nowrap'
-                            }}>
-                              {service.price}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
+                    {/* Вертикальная линия */}
+                    <div className="vertical-divider"></div>
 
-                  <div className="executor-special-offers">
-                    <div className='discount'>
-                      -25%
-                    </div>
-
-                    <h4>Спецпредложение</h4>
-                    <p>{executor.specialOffer}</p>
-                  </div>
-
-                  <div className="executor-projects">
-                    <h4>Реализованные проекты ({executor.projects.length})</h4>
-
-                    <div className="projects-grid">
-                        {executor.projects.slice(0, 3).map((project, index) => (
-                        <div 
-                            key={index} 
-                            className="project-item"
-                        >
-                            <img
-                                src={project.photo}
-                                alt={`Проект ${index + 1}`}
-                                className="project-photo"
-                            />
-                            <p className="project-name">
-                                {project.name}
-                            </p>
-                            <p className="project-description">
-                                {project.description}
-                            </p>
+                    {/* Правый столбец */}
+                    <div className="right-column">
+                      <div className="projects-section">
+                        <h4>Реализованные проекты ({executor.projects.length})</h4>
+                        <div className="projects-grid">
+                          {executor.projects.slice(0, 3).map((project, idx) => (
+                            <div key={idx} className="project-item">
+                              <img src={project.photo} alt={project.name} className="project-photo" />
+                              <p className="project-name">{project.name}</p>
+                              <p className="project-desc">{project.description}</p>
+                            </div>
+                          ))}
                         </div>
-                        ))}
-                    </div>
+                      </div>
 
-                    <Link to={`/executor_profile/${executor.id}`} className="show-more-link" style={{fontSize: '24px', fontWeight: '600', marginTop: 'auto'}}>
-                      Посмотреть ещё →
-                    </Link>
+                      <div className="experience">
+                        <h4>Опыт работы</h4>
+                        <p style={{fontSize: '18px', color: '#656565'}}>{executor.experience} лет</p>
+                      </div>
+
+                      <div className="services-section">
+                        <h4>Услуги</h4>
+                        <ul>
+                          {executor.services.map((s, idx) => (
+                            <li key={idx}>
+                              <span>{s.name}</span>
+                              <span className="price">{s.price}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 

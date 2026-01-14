@@ -37,7 +37,7 @@ export default function Step4Experience() {
     navigate('/full_registration_step3')
   }
 
-  // Преобразование выбранного опыта в код, который ожидает бэкенд
+  // Преобразование выбранного опыта в код бэка
   const mapExperienceToCode = (displayValue) => {
     if (!displayValue) return null;
 
@@ -224,6 +224,7 @@ export default function Step4Experience() {
   return (
     <div>
       <Header hideElements />
+
       <div className="reg-container">
         <div className="registr-container" style={{ height: 'auto', paddingBottom: '17px' }}>
           <div className="title">
@@ -278,18 +279,6 @@ export default function Step4Experience() {
               <span style={{ fontSize: '20px', color: '#000', fontWeight: '500' }}>Готов работать по договору</span>
             </div>
 
-            {errorMessage && (
-              <div
-                style={{
-                  color: '#ff4444',
-                  fontSize: '16px',
-                  margin: '20px 0',
-                  textAlign: 'center',
-                }}
-              >
-                {errorMessage}
-              </div>
-            )}
 
             <button
               type="button"
@@ -303,6 +292,7 @@ export default function Step4Experience() {
           </div>
         </div>
       </div>
+
       <Footer className="footer footer--registr" />
     </div>
   )
