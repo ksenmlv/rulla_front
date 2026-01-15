@@ -249,6 +249,14 @@
 }
 
 
+.back-btnn {
+    border: none;
+    position: absolute;
+    left: 110px;
+    top: 140px;
+    background-color: #fff;
+}
+
 
 /* Каталог испонителей */
 /* карточка исполнителя */
@@ -356,6 +364,9 @@
   padding: 35px;
   gap: 30px;
   margin-bottom: 20px;
+  position: relative;
+  width: 80%;
+  justify-self: center;
 }
 
 .vertical-divider {
@@ -575,7 +586,7 @@
   justify-content: space-between;
   font-size: 18px;
   color: #656565;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .price {
@@ -626,7 +637,7 @@
   position: absolute;
   left: 4px;
   width: 13px;
-  height: 12px;
+  height: 13px;
   border: 2px solid #02283D; 
   background-color: #02283D;
   border-radius: 50%;
@@ -634,4 +645,27 @@
 
 .radio-label_ input:checked + span::before {
   border-color: #02283D;
+}
+
+
+
+/* полная карточка исполнителя: второй блок */
+.name-block_ {
+  display: flex;
+  justify-content: space-between;
+  gap: 90px;
+  
+  h4 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #151515;
+
+  }
+
+  p {
+    font-size: 20px;
+    font-weight: 500;
+    color: #656565;
+    line-height: 1.3;
+  }
 }

@@ -182,7 +182,7 @@ export default function ShortStep2Name() {
 
           <button
             type="button"
-            className={`continue-button ${(!isFormValid || isLoading) ? 'disabled' : ''}`}
+            className={`continue-button ${(!isFormValid ) ? 'disabled' : ''}`}
             disabled={!isFormValid || isLoading}
             onClick={handleSubmit}
           >

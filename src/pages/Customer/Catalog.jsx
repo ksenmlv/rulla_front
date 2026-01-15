@@ -14,7 +14,6 @@ import block_table from '../../assets/Main/block_table.svg'
 import block_tile from '../../assets/Main/block_tile.svg'
 import block_sofa from '../../assets/Main/block_sofa.svg'
 import arrow_r_white from '../../assets/Main/arrow_right_white.svg'
-import icon_con_manager from '../../assets/Main/icon_connect_manager.svg'
 import gear2 from '../../assets/Main/gear2.svg'
 import gear3 from '../../assets/Main/gear3.svg'
 

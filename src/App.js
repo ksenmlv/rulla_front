@@ -45,6 +45,8 @@ const CusMyOrders = lazy(() => import('./pages/Customer/MyOrders'));
 const Catalog = lazy(() => import('./pages/Customer/Catalog'));
 const AllSpecialists = lazy(() => import('./pages/Customer/AllSpecialists'));
 const AllSpecialistsFilter = lazy(() => import('./pages/Customer/AllSpecialistsFilter'));
+const ExecutorProfile = lazy(() => import('./pages/Customer/ExecutorProfile'));
+
 
 function App() {
   return (
@@ -75,6 +77,7 @@ function App() {
             <Route path="/customer_catalog" element={<Catalog />} />
             <Route path="/customer_all_specialists" element={<AllSpecialists />} />
             <Route path="/customer_all_specialists_filter" element={<AllSpecialistsFilter />} />
+            <Route path="/executor_profile" element={<ExecutorProfile />} />
           </Routes>
         </Suspense>
       </AppProvider>

@@ -134,7 +134,7 @@ export default function CusMyOrders() {
 
                         <Link to={`/order/${order.id}`} className="detail-link" style={{ marginLeft: 0 }}>
                           Подробнее
-                          <img src={icon_arrow} alt="Стрелка" style={{ marginLeft: '7px' }} />
+                          <img src={icon_arrow} alt="Стрелка" style={{ margin: '-5px 0 0 15px' }} />
                         </Link>
                       </div>
                     )

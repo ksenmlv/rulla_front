@@ -7,13 +7,13 @@ import '../Main/Main.css';
 import '../Executor/Executor.css';
 import '../Customer/Customer.css';
 import icon_user from '../../assets/Main/icon_user.svg';
-import star_icon from '../../assets/Main/icon_star.svg';
 import icon_star from '../../assets/Main/icon_star.svg';
 import avatar from '../../assets/Main/mock_avatar.svg';
 import icon_check from '../../assets/Main/icon_checkmark2.svg';
 import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg';
 import award from '../../assets/Main/icon_award.svg';
 import icon_filter from '../../assets/Main/icon_filter.svg'
+import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
 
 
 export default function AllSpecialists() {
@@ -188,8 +188,9 @@ export default function AllSpecialists() {
                         <p>Закажите комплексный ремонт до конца месяца и получите уборку помещений после finishing с 50% скидкой</p>
                       </div>
 
-                      <Link to={`/executor_profile/${executor.id}`} className="btn-look-more">
-                        Посмотреть ещё →
+                      <Link to={'/executor_profile'} className="btn-look-more">
+                          Посмотреть еще 
+                          <img src={icon_arrow} alt="Стрелка" style={{ margin: '-5px 0 0 15px' }} />
                       </Link>
                     </div>
 
