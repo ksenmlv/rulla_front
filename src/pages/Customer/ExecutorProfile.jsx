@@ -46,7 +46,7 @@ export default function ExecutorProfile() {
           </button>
 
           {/* Первая карточка (оставил как было) */}
-          <div className="executor-card-horizontal" style={{ marginTop: '140px' }}>
+          <div className="executor-card-full" style={{ marginTop: '140px' }}>
             {/* Левый столбец — основная информация */}
             <div className="left-column">
               <div className="photo-name">
@@ -102,7 +102,7 @@ export default function ExecutorProfile() {
           </div>
 
           {/* Вторая карточка — как на скриншоте */}
-          <div className="executor-card-horizontal" style={{ flexDirection: 'column' }}>
+          <div className="executor-card-full" style={{ flexDirection: 'column' }}>
             {/* Описание исполнителя */}
             <div className='name-block_'>
                 {/* Левый столбик: О себе + Гражданство */}

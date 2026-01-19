@@ -8,7 +8,7 @@ import TownSelect from '../../components/lists/TownSelect'
 import { ordersApi } from '../../api/ordersApi.ts'
 import icon_user from '../../assets/Main/icon_user.svg'
 import back from '../../assets/Main/back.png'
-import icon_connection from '../../assets/Main/icon_connection.png'
+import icon_connection from '../../assets/Main/icon_connection.svg'
 import icon_search from '../../assets/Main/icon_search.svg'
 import separator from '../../assets/Main/bw_separator.svg'
 import icon_location from '../../assets/Header/icon_location.png'
@@ -119,7 +119,7 @@ export default function MainExecutor() {
                     <h2 style={{marginTop: '120px'}}>Актуальные заказы</h2>
 
                     {/* контейнер поиска */}
-                     <div className='search-container' style={{position: 'relative', margin: '20px 0 40px 0', display: 'flex', flexDirection: 'row', width: '100%'}} >
+                     <div className='search-container' style={{position: 'relative', margin: '50px 0 40px 0', display: 'flex', flexDirection: 'row', width: '100%'}} >
                         <div style={{width: '75%'}}>
                             <input type='text' placeholder='Найти заказы' className='search-input' style={{marginLeft: '-40px'}} onKeyPress={(e) => e.key === 'Enter' && handleSearch()}/>
                             <img src={icon_search} alt='search' className='search-icon' style={{left: '0'}}/>

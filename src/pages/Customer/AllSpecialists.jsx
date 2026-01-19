@@ -46,14 +46,27 @@ export default function AllSpecialists() {
       );
 
   const specializations = [
-    'Все специалисты',
-    'Проектирование и дизайн',
-    'Сантехника',
-    'Отделка',
-    'Электрика',
-    'Ремонт коммерческих помещений',
-    'Плиточные работы',
-    'Сборка и ремонт мебели'
+    "Все специалисты",
+    "Ремонт «под ключ»", 
+    "Электрика", 
+    "Сантехника", 
+    "Отделка", 
+    "Дизайн и проектирование", 
+    "Двери, окна и балконы",
+    "Плиточные работы", 
+    "Строительные работы", 
+    "Сборка и ремонт мебели", 
+    "Изоляция и утепление", 
+    "Вентиляция и кондиционирование", 
+    "Кровельные работы", 
+    "Демонтажные работы", 
+    "Сервисное обслуживание", 
+    "Ландшафт и наружные сети", 
+    "Фасадные работы", 
+    "Ремонт коммерческих помещений", 
+    "Металлоконструкции и сварка", 
+    "Высотные работы", 
+    "Другое"
   ];
 
   return (
@@ -94,7 +107,7 @@ export default function AllSpecialists() {
           <div className="catalog-layout">
           {/* Левая колонка — чекбоксы */}
           <div className="sidebar">
-            {specializations.slice(0, showMore ? specializations.length : 5).map(spec => {
+            {specializations.slice(0, showMore ? specializations.length : 10).map(spec => {
               const isChecked = 
                 spec === 'Все специалисты'
                   ? selectedSpecializations.length === 0
@@ -118,7 +131,7 @@ export default function AllSpecialists() {
               );
             })}
 
-            {specializations.length > 5 && (
+            {specializations.length > 10 && (
               <button 
                 className={`show-more-link ${showMore ? 'expanded' : ''}`}
                 onClick={() => setShowMore(!showMore)}

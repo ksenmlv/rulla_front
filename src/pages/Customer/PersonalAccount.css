@@ -1,0 +1,67 @@
+.profile-tabs-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.profile-tabs {
+  display: flex;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid #e0e0e0;
+  background: white;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.profile-tabs::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.tab-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.tab-button:hover {
+  color: #000;
+}
+
+.tab-button.active {
+  color: #de5a2b; /* ваш акцентный цвет */
+  font-weight: 600;
+}
+
+.tab-icon {
+  font-size: 20px;
+}
+
+.tabs-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #de5a2b;
+  transition: transform 0.3s ease, width 0.3s ease;
+  border-radius: 3px 3px 0 0;
+}
+
+/* Анимация подчёркивания под активным табом */
+.tab-button.active ~ .tabs-underline {
+  /* JS будет управлять шириной и позицией */
+}

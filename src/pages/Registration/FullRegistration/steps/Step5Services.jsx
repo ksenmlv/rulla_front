@@ -7,7 +7,7 @@ import Footer from '../../../../components/Footer/Footer'
 import FileUpload from '../../common/FileUpload'
 import arrow from '../../../../assets/Main/arrow_left.svg'
 import scale from '../../../../assets/Main/registr_scale5.svg'
-import plus from '../../../../assets/Main/plus.svg'
+import plus from '../../../../assets/Main/icon_plus.svg'
 import RegistrSelector from '../../../../components/lists/RegistrSelector'
 import apiClient from '../../../../api/client'
 
@@ -33,40 +33,75 @@ export default function Step5Services() {
   const [catalog, setCatalog] = useState([])
   const [loadingCatalog, setLoadingCatalog] = useState(true)
 
-    const allServices = useMemo(() => {
-    const services = []
+  const groupedServices = useMemo(() => {
+    const groups = [];
 
-    const collect = (node) => {
-        // если в узле есть услуги
-        if (node.services?.length) {
-        node.services.forEach(s => {
-            const defaultUnit =
-            s.unitOptions?.find(u => u.isDefault) || s.unitOptions?.[0]
+    const collectGroups = (node, parentTitle = '') => {
+      if (!node) return;
 
-            services.push({
-            id: s.id,
-            name: s.name,
-            priceFromRub: s.priceFromRub || 0,
+      // Если есть услуги — добавляем группу
+      if (Array.isArray(node.services) && node.services.length > 0) {
+        const title = node.name?.trim() || 'Без названия';
+        const fullTitle = parentTitle ? `${title}` : title;
 
-            // что видит пользователь
-            unitName: defaultUnit?.unitName || '',
+        const items = node.services
+          .map(s => s?.name?.trim())
+          .filter(Boolean);
 
-            // что хочет backend
-            unitOptionId: defaultUnit?.unitId || null
-            })
-        })
+        if (items.length > 0) {
+          groups.push({ title: fullTitle, items });
         }
+      }
 
-        // рекурсивно спускаемся в детей
-        if (node.children?.length) {
-        node.children.forEach(collect)
-        }
+      // Рекурсия по children
+      if (Array.isArray(node.children)) {
+        const currentTitle = node.name?.trim() || '';
+        node.children.forEach(child => collectGroups(child, currentTitle));
+      }
+    };
+
+    if (Array.isArray(catalog)) {
+      catalog.forEach(node => collectGroups(node));
     }
 
-    catalog.forEach(collect)
+    return groups;
+}, [catalog]);
 
-    return services
-    }, [catalog])
+
+  const allServices = useMemo(() => {
+    const services = [];
+
+    const collect = (node) => {
+      if (!node) return;
+
+      if (Array.isArray(node.services)) {
+        node.services.forEach(s => {
+          if (!s?.name) return;
+
+          const defaultUnit =
+            s.unitOptions?.find(u => u?.isDefault) ||
+            s.unitOptions?.[0] ||
+            {};
+
+          services.push({
+            id: s.id,
+            name: s.name.trim(),
+            priceFromRub: Number(s.priceFromRub) || 0,
+            unitName: defaultUnit.unitName || "",
+            unitOptionId: defaultUnit.unitId || null
+          });
+        });
+      }
+
+      if (Array.isArray(node.children)) {
+        node.children.forEach(collect);
+      }
+    };
+
+    catalog.forEach(collect);
+
+    return services;
+  }, [catalog]);
 
 
   // фокус на первое поле
@@ -114,12 +149,6 @@ export default function Step5Services() {
     const handleServiceSelect = (index, serviceName) => {
         const selected = allServices.find(s => s.name === serviceName)
         if (!selected) return
-
-          console.log("Выбрана услуга:", {
-            serviceId: selected.id,
-            unitOptionId: selected.unitOptionId,
-            unitName: selected.unitName
-        })
 
         setUserService(prev =>
             prev.map((item, i) =>
@@ -195,12 +224,6 @@ export default function Step5Services() {
         const servicesToSend = userService
         .filter(s => {
             const isValid = s.name.trim().length >= 3 && s.price.trim() && s.unitName.trim();
-            console.log(`Услуга "${s.name}":`, {
-                valid: isValid,
-                name: s.name,
-                price: s.price,
-                unit: s.unitName
-                });
             return isValid;
         })
         .map(s => {
@@ -213,7 +236,6 @@ export default function Step5Services() {
                 note: '',
                 active: true
             };
-            console.log('→ Формируем объект услуги:', serviceData);
             return serviceData;
         });
 
@@ -331,7 +353,7 @@ export default function Step5Services() {
                     <RegistrSelector
                       ref={i === 0 ? firstServiceSelectorRef : null}
                       placeholder='Выберите услугу из каталога'
-                      subject={allServices.map(svc => svc.name)}
+                      subject={groupedServices || []}
                       selected={s.name}
                       onSelect={(val) => handleServiceSelect(i, val)}
                       disabled={loadingCatalog}

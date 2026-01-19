@@ -248,7 +248,7 @@ export default function AllOrders() {
                             <button onClick={closeModal}> <img src={icon_close_modal} alt='Крестик' /> </button>
 
                             {/* Текст */}
-                            <div className='modal-text' > Для отклика на заказ пройдите <br /> полную регистрацию исполнителя </div>
+                            <div className='modal-text' > Для отклика на заказ пройдите <br /> <p style={{ color: '#DE5A2B'}}>полную регистрацию исполнителя </p> </div>
 
                             {/* Кнопка */}
                             <button className='modal-action-btn' onClick={() => {

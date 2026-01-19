@@ -365,6 +365,17 @@
   gap: 30px;
   margin-bottom: 20px;
   position: relative;
+}
+
+.executor-card-full  {
+  display: flex;
+  background: #fff;
+  border: 1px solid #919191;
+  border-radius: 15px;
+  padding: 35px;
+  gap: 30px;
+  margin-bottom: 20px;
+  position: relative;
   width: 80%;
   justify-self: center;
 }
@@ -669,3 +680,5 @@
     line-height: 1.3;
   }
 }
+
+

@@ -46,6 +46,7 @@ const Catalog = lazy(() => import('./pages/Customer/Catalog'));
 const AllSpecialists = lazy(() => import('./pages/Customer/AllSpecialists'));
 const AllSpecialistsFilter = lazy(() => import('./pages/Customer/AllSpecialistsFilter'));
 const ExecutorProfile = lazy(() => import('./pages/Customer/ExecutorProfile'));
+const PersonalAccount = lazy(() => import('./pages/Customer/PersonalAccount'));
 
 
 function App() {
@@ -78,6 +79,7 @@ function App() {
             <Route path="/customer_all_specialists" element={<AllSpecialists />} />
             <Route path="/customer_all_specialists_filter" element={<AllSpecialistsFilter />} />
             <Route path="/executor_profile" element={<ExecutorProfile />} />
+            <Route path="/customer_personal_account" element={<PersonalAccount />} />
           </Routes>
         </Suspense>
       </AppProvider>

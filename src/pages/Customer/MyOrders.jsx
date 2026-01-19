@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import Header from '../../components/Header/Header'
 import Footer from '../../components/Footer/Footer'
 import { ordersApi } from '../../api/ordersApi.ts'
@@ -19,6 +19,7 @@ import gear2 from '../../assets/Main/gear2.svg'
 import gear3 from '../../assets/Main/gear3.svg'
 
 export default function CusMyOrders() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -36,6 +37,10 @@ export default function CusMyOrders() {
       })
   }, [])
 
+  const handleClickUser = () => {
+    navigate('/customer_personal_account')
+  } 
+
   const getStatusInfo = (order) => {
     const isOpen = order.lockStatus === 'open'
     return {
@@ -50,13 +55,13 @@ export default function CusMyOrders() {
     <div>
       <Header rightContent={
         <>
-          <button className='btn_user' style={{marginRight: '-10px'}}>
+          <button className='btn_user' style={{marginRight: '-10px'}} onClick={handleClickUser}>
             <img src={icon_user} alt='Иконка пользователя'/>
           </button>
           <p style={{fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px'}}>Имя пользователя</p>
           <button 
             onClick={() => setShowCreateForm(true)}
-            style={{marginLeft: '10px', height: '54px', border: '2px solid #02283D', borderRadius: '7px', padding: '0 36px', background: 'white', fontWeight: '500', color: '#02283D' }}
+            className='btn-blue'
           >
             Создать заказ
           </button>

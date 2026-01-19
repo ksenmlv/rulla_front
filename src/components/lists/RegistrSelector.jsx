@@ -2,22 +2,21 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './RegistrSelector.css';
 
 const RegistrSelector = ({
-  subject = [],
-  placeholder,
-  selected,
+  subject = [],           // string[] или { title: string, items: string[] }[]
+  placeholder = 'Выберите услугу...',
+  selected = '',
   onSelect,
   multiple = false,
-  maxSelect = Infinity
+  maxSelect = Infinity,
+  disabled = false,
 }) => {
-
   const [isOpen, setIsOpen] = useState(false);
-
-  const [searchValue, setSearchValue] = useState('');          // single mode (строка)
-  const [realSearchValue, setRealSearchValue] = useState('');  // multiple mode (строка поиска)
+  const [searchValue, setSearchValue] = useState('');           // single mode
+  const [realSearchValue, setRealSearchValue] = useState('');   // multiple mode search
   const [showScrollbar, setShowScrollbar] = useState(false);
 
-  const [selectedActivity, setSelectedActivity] = useState(''); // single: строка
-  const [selectedList, setSelectedList] = useState([]);         // multiple: массив строк
+  const [selectedActivity, setSelectedActivity] = useState('');
+  const [selectedList, setSelectedList] = useState([]);
 
   const dropdownRef = useRef(null);
   const dropdownListRef = useRef(null);
@@ -27,23 +26,36 @@ const RegistrSelector = ({
 
   const [isDragging, setIsDragging] = useState(false);
 
+  // Определяем тип данных
+  const isGrouped =
+    Array.isArray(subject) &&
+    subject.length > 0 &&
+    subject[0] != null &&
+    typeof subject[0] === 'object' &&
+    !Array.isArray(subject[0]) &&
+    'title' in subject[0];
+
+  // Все элементы для фильтрации и проверки
+  const allItems = isGrouped ? subject.flatMap(g => Array.isArray(g.items) ? g.items : []) : Array.isArray(subject) ? subject : []
+  
+
   // --------------------------- INIT & SYNC -----------------------------------
   useEffect(() => {
     if (multiple) {
       setSelectedList(Array.isArray(selected) ? selected : []);
     } else {
-      setSelectedActivity(typeof selected === 'string' ? selected : '');
-      setSearchValue(typeof selected === 'string' ? selected : '');
+      const val = typeof selected === 'string' ? selected : '';
+      setSelectedActivity(val);
+      setSearchValue(val);
     }
   }, [selected, multiple]);
 
-  // Закрытие при клике вне области
+  // Закрытие по клику вне компонента
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-
-        if (!multiple && !subject.includes(searchValue)) {
+        if (!multiple && !allItems.includes(searchValue)) {
           setSearchValue(selectedActivity || '');
         }
       }
@@ -51,43 +63,62 @@ const RegistrSelector = ({
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [searchValue, selectedActivity, subject, multiple]);
+  }, [searchValue, selectedActivity, allItems, multiple]);
 
   // -------------------------- SCROLL THUMB UPDATE ----------------------------
   const updateScrollThumb = useCallback(() => {
-    if (!dropdownListRef.current || !scrollThumbRef.current) return;
+    if (!dropdownListRef.current || !scrollThumbRef.current || !scrollTrackRef.current) return;
 
-    const { scrollTop, scrollHeight, clientHeight } = dropdownListRef.current;
-    const scrollableHeight = scrollHeight - clientHeight;
+    const content = dropdownListRef.current;
+    const thumb = scrollThumbRef.current;
+    const track = scrollTrackRef.current;
 
-    if (scrollableHeight > 0) {
-      const progress = scrollTop / scrollableHeight;
-      const trackHeight = 195;
-      const thumbHeight = 60;
-      const maxTranslate = trackHeight - thumbHeight;
-      const translateY = progress * maxTranslate;
+    const scrollTop = content.scrollTop;
+    const scrollHeight = content.scrollHeight;
+    const clientHeight = content.clientHeight;
 
-      scrollThumbRef.current.style.setProperty('--thumb-position', `${translateY}px`);
-    } else {
-      scrollThumbRef.current.style.setProperty('--thumb-position', '0px');
+    const scrollable = scrollHeight - clientHeight;
+
+    if (scrollable <= 0) {
+      // контент не скроллится → скрываем или сбрасываем thumb
+      thumb.style.height = '0px';
+      thumb.style.opacity = '0';
+      return;
     }
+
+    // Реальная высота трека (динамическая!)
+    const trackHeight = track.clientHeight;
+
+    // Высота ползунка пропорциональна видимой области
+    const thumbHeight = Math.max((clientHeight / scrollHeight) * trackHeight, 30); // минимум 30px
+
+    // Позиция
+    const progress = scrollTop / scrollable;
+    const maxTranslate = trackHeight - thumbHeight;
+    const translateY = progress * maxTranslate;
+
+    // Применяем стили
+    thumb.style.height = `${thumbHeight}px`;
+    thumb.style.setProperty('--thumb-position', `${translateY}px`);
+    thumb.style.opacity = '1';
   }, []);
+
 
   useEffect(() => {
     if (isOpen && dropdownListRef.current) {
       updateScrollThumb();
       dropdownListRef.current.addEventListener('scroll', updateScrollThumb);
 
+      // скролл к выбранному (single)
       if (!multiple && selectedActivity && selectedOptionRef.current) {
         setTimeout(() => {
-          const dropdown = dropdownListRef.current;
-          const selectedElement = selectedOptionRef.current;
-
-          if (dropdown && selectedElement) {
-            dropdown.scrollTop = selectedElement.offsetTop - dropdown.offsetTop;
+          const el = selectedOptionRef.current;
+          const list = dropdownListRef.current;
+          if (el && list) {
+            list.scrollTop = el.offsetTop - list.offsetTop - 50; // небольшой отступ сверху
             updateScrollThumb();
           }
-        }, 0);
+        }, 100);
       }
     }
 
@@ -102,22 +133,16 @@ const RegistrSelector = ({
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isDragging || !dropdownListRef.current || !scrollTrackRef.current) return;
-
       e.preventDefault();
 
-      const track = scrollTrackRef.current;
-      const trackRect = track.getBoundingClientRect();
+      const track = scrollTrackRef.current.getBoundingClientRect();
+      const list = dropdownListRef.current;
+      const scrollable = list.scrollHeight - list.clientHeight;
 
-      const dropdown = dropdownListRef.current;
-      const { scrollHeight, clientHeight } = dropdown;
-      const scrollableHeight = scrollHeight - clientHeight;
+      const relY = e.clientY - track.top;
+      const progress = Math.min(Math.max(relY / track.height, 0), 1);
 
-      const mouseY = e.clientY;
-      const relativeY = mouseY - trackRect.top;
-      const progress = (relativeY / trackRect.height) * 100;
-      const clampedProgress = Math.min(Math.max(progress, 0), 100);
-
-      dropdown.scrollTop = (clampedProgress / 100) * scrollableHeight;
+      list.scrollTop = progress * scrollable;
     };
 
     const handleMouseUp = () => setIsDragging(false);
@@ -142,29 +167,20 @@ const RegistrSelector = ({
   const handleTrackClick = (e) => {
     if (!dropdownListRef.current || !scrollTrackRef.current) return;
 
-    const track = scrollTrackRef.current;
-    const trackRect = track.getBoundingClientRect();
+    const track = scrollTrackRef.current.getBoundingClientRect();
+    const list = dropdownListRef.current;
+    const scrollable = list.scrollHeight - list.clientHeight;
 
-    const dropdown = dropdownListRef.current;
-    const { scrollHeight, clientHeight } = dropdown;
-    const scrollableHeight = scrollHeight - clientHeight;
+    const relY = e.clientY - track.top;
+    const progress = Math.min(Math.max(relY / track.height, 0), 1);
 
-    const mouseY = e.clientY;
-    const relativeY = mouseY - trackRect.top;
-    const progress = (relativeY / trackRect.height) * 100;
-    const clampedProgress = Math.min(Math.max(progress, 0), 100);
-
-    dropdown.scrollTop = (clampedProgress / 100) * scrollableHeight;
+    list.scrollTop = progress * scrollable;
   };
 
-  // ----------------------------- INPUT LOGIC ---------------------------------
+  // ----------------------------- INPUT ---------------------------------------
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    if (multiple) {
-      setRealSearchValue(value);
-    } else {
-      setSearchValue(value);
-    }
+    const val = e.target.value;
+    multiple ? setRealSearchValue(val) : setSearchValue(val);
     setIsOpen(true);
   };
 
@@ -175,26 +191,20 @@ const RegistrSelector = ({
     }
   };
 
-  // ----------------------------- FILTERED DATA -------------------------------
-  const filteredSubject = multiple
-    ? (realSearchValue && typeof realSearchValue === 'string'
-        ? subject.filter(item =>
-            typeof item === 'string' && item.toLowerCase().startsWith(realSearchValue.toLowerCase())
-          )
-        : subject)
-    : (searchValue && typeof searchValue === 'string'
-        ? subject.filter(item =>
-            typeof item === 'string' && item.toLowerCase().startsWith(searchValue.toLowerCase())
-          )
-        : subject);
+  // --------------------------- FILTERING -------------------------------------
+  const searchText = (multiple ? realSearchValue : searchValue || '').trim().toLowerCase();
+
+  const filteredItems = searchText
+    ? allItems.filter(item => typeof item === 'string' && item.toLowerCase().includes(searchText))
+    : allItems;
 
   useEffect(() => {
     if (isOpen) {
-      setShowScrollbar(filteredSubject.length > 4);
+      setShowScrollbar(filteredItems.length > 5);
     }
-  }, [isOpen, filteredSubject.length]);
+  }, [isOpen, filteredItems.length]);
 
-  // ----------------------------- SELECTION -----------------------------------
+  // --------------------------- SELECTION -------------------------------------
   const handleSelectSingle = (item) => {
     if (onSelect) onSelect(item);
     setSelectedActivity(item);
@@ -203,29 +213,25 @@ const RegistrSelector = ({
   };
 
   const handleSelectMultiple = (item) => {
-    let updated;
+    let updated = selectedList.includes(item)
+      ? selectedList.filter(i => i !== item)
+      : [...selectedList, item];
 
-    if (selectedList.includes(item)) {
-      updated = selectedList.filter(i => i !== item);
-    } else {
-      if (selectedList.length >= maxSelect) return;
-      updated = [...selectedList, item];
-    }
+    if (updated.length > maxSelect) return;
 
     if (onSelect) onSelect(updated);
     setSelectedList(updated);
     setRealSearchValue('');
   };
 
-  // ------------------------------ INPUT VALUE --------------------------------
+  // --------------------------- INPUT VALUE -----------------------------------
   const inputValue = multiple
     ? (isOpen ? realSearchValue : selectedList.join(', '))
     : (isOpen ? searchValue : selectedActivity);
 
-  // ------------------------------ RENDER -------------------------------------
+  // --------------------------- RENDER ----------------------------------------
   return (
     <div className="activity-input-container" ref={dropdownRef}>
-
       <input
         type="text"
         className={`activity-input ${isOpen ? 'active' : ''}`}
@@ -233,12 +239,13 @@ const RegistrSelector = ({
         value={inputValue}
         onFocus={handleInputFocus}
         onChange={handleInputChange}
-        readOnly={false}
+        readOnly={disabled}
+        disabled={disabled}
       />
 
       <div
         className={`arrow ${isOpen ? 'arrow-up' : 'arrow-down'}`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && setIsOpen(prev => !prev)}
       >
         <svg width="20" height="12" viewBox="0 0 12 8" fill="none">
           <path d="M1 1.5L6 6.5L11 1.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -252,11 +259,67 @@ const RegistrSelector = ({
             <div
               className="dropdown-content"
               ref={dropdownListRef}
-              style={{ paddingRight: '10px' }}
+              style={{ paddingRight: showScrollbar ? '10px' : '0', height: '100%' }}
             >
 
-              {filteredSubject.length > 0 ? (
-                filteredSubject.map((item, index) => {
+              {filteredItems.length === 0 ? (
+                <div className="activity-option" style={{ color: '#999', padding: '12px' }}>
+                  {searchText ? 'Ничего не найдено' : 'Каталог услуг пуст или не загрузился'}
+                </div>
+              ) : isGrouped ? (
+                subject.map((group, groupIdx) => {
+                  const visible = Array.isArray(group.items)
+                    ? group.items.filter(item =>
+                        !searchText || (typeof item === 'string' && item.toLowerCase().includes(searchText))
+                      )
+                    : [];
+
+                  if (visible.length === 0) return null;
+
+                  return (
+                    <React.Fragment key={groupIdx}>
+                      <div className="group-header">
+                        {group.title || 'Без названия'} ({visible.length})
+                      </div>
+
+                      {visible.map((item, idx) => {
+                        const isSelected = multiple
+                          ? selectedList.includes(item)
+                          : item === selectedActivity;
+
+                        const isDisabled = multiple && !isSelected && selectedList.length >= maxSelect;
+
+                        return (
+                          <div
+                            key={`${groupIdx}-${idx}`}
+                            ref={!multiple && isSelected ? selectedOptionRef : null}
+                            className={`activity-option ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                            onClick={() => {
+                              if (isDisabled || disabled) return;
+                              multiple ? handleSelectMultiple(item) : handleSelectSingle(item);
+                            }}
+                            style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 16px' }}
+                          >
+                            {multiple && (
+                              <div className="custom-checkbox-wrapper">
+                                <div className={`custom-checkbox ${isSelected ? 'checked' : ''}`}>
+                                  {isSelected && (
+                                    <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                      <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            <span>{item}</span>
+                          </div>
+                        );
+                      })}
+                    </React.Fragment>
+                  );
+                })
+              ) : (
+                filteredItems.map((item, index) => {
                   const isSelected = multiple ? selectedList.includes(item) : item === selectedActivity;
                   const isDisabled = multiple && !isSelected && selectedList.length >= maxSelect;
 
@@ -266,40 +329,27 @@ const RegistrSelector = ({
                       ref={!multiple && isSelected ? selectedOptionRef : null}
                       className={`activity-option ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
                       onClick={() => {
-                        if (isDisabled) return;
+                        if (isDisabled || disabled) return;
                         multiple ? handleSelectMultiple(item) : handleSelectSingle(item);
                       }}
-                      style={{ display: 'flex', gap: '10px' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 16px' }}
                     >
-
                       {multiple && (
                         <div className="custom-checkbox-wrapper">
                           <div className={`custom-checkbox ${isSelected ? 'checked' : ''}`}>
                             {isSelected && (
-                              <svg width="14" height="10" viewBox="0 0 14 10" fill="none" className="check-icon">
-                                <path
-                                  d="M1 5L5 9L13 1"
-                                  stroke="white"
-                                  strokeWidth="2"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                />
+                              <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+                                <path d="M1 5L5 9L13 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                               </svg>
                             )}
                           </div>
                         </div>
                       )}
-
-                      {item}
+                      <span>{item}</span>
                     </div>
                   );
                 })
-              ) : (
-                <div className="activity-option" style={{ color: '#999' }}>
-                  Ничего не найдено
-                </div>
               )}
-
             </div>
 
             {showScrollbar && (
@@ -316,11 +366,9 @@ const RegistrSelector = ({
                 />
               </div>
             )}
-
           </div>
         </div>
       )}
-
     </div>
   );
 };

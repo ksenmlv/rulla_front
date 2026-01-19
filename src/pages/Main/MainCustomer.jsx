@@ -6,9 +6,7 @@ import '../Main/Main.css'
 import '../Main/MainCustomer.css'
 import TownSelect from '../../components/lists/TownSelect'
 import back from '../../assets/Main/back.png'
-import icon_connection from '../../assets/Main/icon_connection.png'
-import icon_search from '../../assets/Main/icon_search.svg'
-import separator from '../../assets/Main/blue_separator.svg'
+import icon_connection from '../../assets/Main/icon_connection.svg'
 import main_separator from '../../assets/Main/blue_main_separator.svg'
 import arrow_r from '../../assets/Main/arrow_right.svg'
 import block_house from '../../assets/Main/block_house.png'
@@ -39,6 +37,10 @@ function MainCustomer() {
   const navigate = useNavigate()
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)        
 
+  const handleClickUser = () => {
+    navigate('/customer_personal_account')
+  }
+
   // определение ширины устройства
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -52,7 +54,7 @@ function MainCustomer() {
     <>
         <Header rightContent={
             < >
-                <button className='btn_user'><img src={icon_user} alt='Иконка пользователя'/></button>
+                <button className='btn_user' onClick={handleClickUser}><img src={icon_user} alt='Иконка пользователя'/></button>
                 <button className='btn-blue'>Создать заказ</button>
             </> }
             menuItems={   [
@@ -63,7 +65,6 @@ function MainCustomer() {
         />
 
         <div className='full-container'>
-
             <div className='main-container'>
                 
                 {/* первый блок до разделителя */}
