@@ -137,7 +137,7 @@ export default function AllSpecialists() {
                 onClick={() => setShowMore(!showMore)}
               >
                 {showMore ? 'Скрыть' : 'Показать еще'}
-                <span className="arrow">▼</span>
+                <span className="arroww">▼</span>
               </button>
             )}
           </div>

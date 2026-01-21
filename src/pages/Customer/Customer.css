@@ -1,3 +1,8 @@
+.btn_user {
+    border: none;
+    background: transparent;
+}
+
 .promo-banner {
   height: 200px;
   background: linear-gradient(88.2deg, #02283D 1.52%, #134E6D 103.21%);
@@ -283,7 +288,7 @@
   right: 110px;
 }
 
-/* Чекбоксы в стиле вашего другого файла */
+/* Чекбоксы */
 .checkbox-wrapper {
   display: flex;
   align-items: center;
@@ -337,14 +342,14 @@
   text-decoration: none;
 }
 
-.show-more-link .arrow {
+.show-more-link .arroww {
   font-size: 22px;
   font-weight: 600;
   transition: transform 0.3s ease;
   transform: rotate(0deg);
 }
 
-.show-more-link.expanded .arrow {
+.show-more-link.expanded .arroww {
   transform: rotate(180deg);
 }
 
@@ -682,3 +687,9 @@
 }
 
 
+.page-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin: 140px 0 30px 0;
+  color: #151515;
+}

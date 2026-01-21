@@ -1,67 +1,324 @@
 .profile-tabs-container {
   width: 100%;
-  max-width: 1200px;
   margin: 0 auto;
   position: relative;
+
 }
 
 .profile-tabs {
   display: flex;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 0 16px;
-  border-bottom: 1px solid #e0e0e0;
-  background: white;
+  gap: 20px;
   overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  justify-content: space-around;
 }
-
 .profile-tabs::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
 }
 
 .tab-button {
+  height: 78px;
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
-  background: none;
+  justify-content: center;
+  background: #FAFAFA;
   border: none;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 20px;
   font-weight: 500;
-  color: #666;
+  color: #000;
   cursor: pointer;
-  transition: all 0.2s ease;
   position: relative;
-  z-index: 1;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .tab-button:hover {
-  color: #000;
+  background: #f0f0f0;
 }
 
 .tab-button.active {
-  color: #de5a2b; /* ваш акцентный цвет */
-  font-weight: 600;
+  position: relative;
+  display: inline-block;       
+  height: 78px;          
+  background: url('data:image/svg+xml;utf8,<svg width="410" height="78" viewBox="0 0 410 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 1.5H368.251C370.469 1.50006 372.599 2.36717 374.187 3.91602L405.03 34.0078H405.031C406.671 35.6074 407.595 37.8013 407.595 40.0918V68C407.595 72.6944 403.789 76.5 399.095 76.5H10C5.30558 76.5 1.5 72.6944 1.5 68V10C1.5 5.30558 5.30558 1.5 10 1.5Z" fill="white" stroke="%23DE5A2B" stroke-width="3"/></svg>') 
+    no-repeat center / 100% 100%;  
+  color: black;
+  font-weight: bold;
+  text-align: center;          
+  cursor: pointer;
+  font-weight: 500;
 }
 
 .tab-icon {
+  margin-right: 15px;
+}
+
+
+/* все картточки */
+.profileContainer {
+  width: 100%;
+  margin-top: 30px;
+}
+
+.headerBlock {
+  position: relative;
+  background: white;
+  background: url('../../assets/Main/rec.svg') no-repeat center top;
+  background-size: 100% 100%;
+  width: 100%;
+  overflow: visible;
+  margin-bottom: 20px;
+}
+
+.headerContent {
+  position: relative;
+  z-index: 10;
+  padding: 35px;
+  display: flex;
+  align-items: center;
+  gap: 27px;
+}
+
+.avatarWrapper {
+  position: relative;
+
+  .img_edit_avatar {
+    position: absolute;
+    top: -17px;
+    right: -17px;
+  }
+}
+
+.headerText h1 {
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  margin: 15px 0 0 0;
+}
+
+.headerText p {
+  margin-top: 4px;
+  font-size: 24px;
+  color: #656565;
+}
+
+
+.gridContainer {
+  display: grid;
+  grid-template-columns: 35fr 65fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.gridContainer2 {
+  display: grid;
+  grid-template-columns: 55fr 45fr;
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  border: 1px solid #919191;
+  padding: 35px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font-size: 28px;
+  font-weight: 600;
+  color: #000;
+}
+
+.editButton {
+  margin-left: auto;
+  border: none;
+  background: none;
+}
+
+.field {
+  margin-bottom: 20px;
+}
+
+.fieldLabel {
+  font-size: 24px;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 3px;
+}
+
+.fieldValue {
   font-size: 20px;
+  font-weight: 500;
+  color: #656565;
 }
 
-.tabs-underline {
-  position: absolute;
-  bottom: 0;
+
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  font-size: 24px;
+  font-weight: 500;
+  color: #656565;
+}
+
+
+.reviewCard {
+  background: #f9fafb;
+  border-radius: 8px;
+  padding: 35px 25px;
+  margin-bottom: 16px;
+}
+
+.reviewAvatar {
+  width: 34px;
+  height: 34px;
+  background: #D9D9D9;
+  border-radius: 7%;
+  flex-shrink: 0;
+}
+
+.reviewAuthor {
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+}
+
+.reviewText {
+  color: #4B4B4B;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.reviewDate {
+  color: #656565;
+  font-size: 16px;
+}
+
+
+.actionLink {
+  display: block;
+  color: #02283D;
+  font-size: 24px;
+  font-weight: 600;
+  text-underline-offset: 4px; 
+}
+
+
+.logoutLink {
+  color: #000;
+  font-weight: 500;
+  margin-top: 5px;
+}
+
+
+/* модалка */
+.modal-overlay {
+  position: fixed;
+  top: 0;
   left: 0;
-  height: 3px;
-  background: #de5a2b;
-  transition: transform 0.3s ease, width 0.3s ease;
-  border-radius: 3px 3px 0 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
-/* Анимация подчёркивания под активным табом */
-.tab-button.active ~ .tabs-underline {
-  /* JS будет управлять шириной и позицией */
+.edit-modal-content {
+  background: white;
+  border-radius: 10px;
+  width: 750px;
+  padding: 35px;
+  position: relative;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+}
+/* 
+.form-field label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #555;
+  font-weight: 500;
+}
+
+.form-field input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid #d0d0d0;
+  border-radius: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #de5a2b;
+  box-shadow: 0 0 0 3px rgba(222,90,43,0.1);
+} */
+
+.modal-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+.btn-cancel,
+.btn-save {
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 110px;
+}
+
+.btn-cancel {
+  background: white;
+  border: 1px solid #ccc;
+}
+
+.btn-cancel:hover {
+  background: #f8f8f8;
+}
+
+.btn-save {
+  background: #de5a2b;
+  color: white;
+  border: none;
+}
+
+.btn-save:hover {
+  background: #c44e24;
 }
