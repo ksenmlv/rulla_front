@@ -1,18 +1,31 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import arrow_left from '../../assets/Main/arrow_left.svg'
 import RegistrSelector from '../../components/lists/RegistrSelector'
 import FileUpload from '../Registration/common/FileUpload'
 import DatePicker from '../../pages/Registration/common/Calendar/DatePicker'
+import apiClient from '../../api/client' 
+import mockExecutors from '../../../src/mockExecutors.json'
 
 import '../Main/Main.css'
 import '../Customer/Customer.css'
 import '../Executor/Executor.css'
+import '../../styles/Modal.css'
 import progress_bar from '../../assets/Main/progress_bar.svg'
+import icon_close_modal from '../../assets/Main/icon_close_modal.svg'
+import icon_arrow from '../../assets/Main/arrow_right_blue.svg'
+import checkmark from '../../assets/Main/checkmark3.svg'
+import icon_check from '../../assets/Main/icon_checkmark2.svg';
+import icon_star_yellow from '../../assets/Main/icon_star_yellow.svg';
+import award from '../../assets/Main/icon_award.svg';
+import icon_star2 from '../../assets/Main/icon_star2.svg';
 
-import apiClient from '../../api/client' 
+
+
 
 export default function CreateOrderForm({ onClose, onCreate }) {
   const [step, setStep] = useState(1)
+  const navigate = useNavigate()
 
   // Каталог с бэкенда
   const [catalog, setCatalog] = useState('')                        // категории 
@@ -22,7 +35,7 @@ export default function CreateOrderForm({ onClose, onCreate }) {
 
   // Выбранные значения
   const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedService, setSelectedService] = useState([]) // массив для множественного выбора
+  const [selectedService, setSelectedService] = useState('') 
 
   // остальные поля формы
   const [location, setLocation] = useState('')
@@ -41,6 +54,8 @@ export default function CreateOrderForm({ onClose, onCreate }) {
   const [isStepTwoValid, setIsStepTwoValid] = useState(false)
   const [startDateError, setStartDateError] = useState('')
   const [endDateError, setEndDateError] = useState('')
+
+  const [showSuccessModal, setShowSuccessModal] = useState(true)
 
   // автофокус на первое поле
   useEffect(() => {
@@ -221,7 +236,7 @@ export default function CreateOrderForm({ onClose, onCreate }) {
   const handleCreate = () => {
     const newOrder = {
       id: Date.now(),
-      title: selectedService.join(', '),
+      title: selectedService || 'Заказ без названия',
       category: selectedCategory,
       location,
       budget: budget ? `${budget} ₽` : 'По договорённости',
@@ -238,7 +253,7 @@ export default function CreateOrderForm({ onClose, onCreate }) {
 
     console.log('Создан заказ:', newOrder)
     onCreate(newOrder)
-    alert('Заказ создан!')
+    setShowSuccessModal(true)
     onClose()
   }
 
@@ -275,7 +290,7 @@ export default function CreateOrderForm({ onClose, onCreate }) {
             </div>
 
             <div className="passport-field">
-              <h3>Что нужно сделать</h3>
+              <h3>Что нужно сделать?</h3>
               <div className="registr-selector">
                   <RegistrSelector
                     placeholder="Выберите услугу"
@@ -430,6 +445,143 @@ export default function CreateOrderForm({ onClose, onCreate }) {
           </>
         )}
       </div>
+
+
+
+
+      {/* успешная модалка */}
+      {showSuccessModal && (
+        <div className="modal-overlay" onClick={() => setShowSuccessModal(false)} style={{overflowY: 'auto'}}>
+          <div 
+            className="response-sent-modal-window" 
+            onClick={e => e.stopPropagation()}
+            style={{ margin: '550px 0 100px 0'}}
+          >
+            {/* Крестик закрытия */}
+            <button 
+              className="response-sent-modal-close"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              <img src={icon_close_modal} alt="Закрыть" />
+            </button>
+
+            <div className="response-sent-modal-plane" > <img src={checkmark} alt='Галочка' /> </div>
+            
+            <h2 className="response-sent-modal-title" style={{margin: '30px 0 10px 0'}}>
+              Ваш заказ опубликован!
+            </h2>
+
+            <p style={{
+              textAlign: 'center',
+              color: '#656565',
+              fontSize: '20px',
+              fontWeight: '500',
+              margin: '0 0 20px 0',
+              lineHeight: '1.4',
+            }}>
+              Отклики специалистов вы можете <br /> видеть в личном кабинете
+            </p>
+
+        
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0' }}>
+              <button 
+                className="response-sent-modal-chat-btn"
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  navigate('/customer_personal_account') 
+                  alert('Переход в личный кабинет заказчика');
+                }}
+              >
+                Перейти в личный кабинет
+              </button>
+            </div>
+
+            {/* Блок "Вам могут подойти" */}
+            <div className="response-sent-similar-title" style={{fontWeight: '600'}}>
+              <span >Вам могут подойти:</span>
+              <Link to={'/customer_all_specialists'} className="detail-link" style={{ marginLeft: 0 }}>
+                Все специалисты
+                <img src={icon_arrow} alt="Стрелка" style={{ margin: '-5px 0 0 15px' }} />
+              </Link>
+            </div>
+
+
+            <div className="response-sent-similar-grid">
+              {mockExecutors.slice(0, 2).map((executor) => (
+                <div key={executor.id} className="task-card-modern" style={{ border: '1px solid #919191', padding: '25px', borderRadius: '15px', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{display: 'flex', flexDirection: 'row'}}>
+                      {/* Фото исполнителя / компании */}
+                      <div style={{ width: '140px',height: '190px', borderRadius: '7px', marginBottom: '15px', overflow: 'hidden', background: '#e0e0e0'}}>
+                        <img src={executor.photo} alt={executor.name}   style={{width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={(e) => { e.target.src = 'https://via.placeholder.com/300x160?text=Фото+не+загружено'; }}
+                        />
+                      </div>
+
+                      {/* блок справа от фото */}
+                      <div className="name-block" style={{marginLeft: '20px'}}>
+                          <div className="verified">
+                            <img src={icon_check} alt="✓" width={23}/>
+                            <span style={{fontSize: '14px'}}>Документы подтверждены</span>
+                          </div>
+
+                          <h3 className="executor-name" style={{fontSize: '20px'}}>{executor.name}</h3>
+                          <p className="last-online">Был в сети 10 минут назад</p>
+                          <div className="rating">
+                              <span>{executor.rating}</span>
+                              <img src={icon_star_yellow} alt="★" className="star-icon" />
+                              <span>{executor.reviewsCount} отзывов</span>
+                          </div>
+                          <div className="award">
+                              <img src={award} alt="Награда" />
+                              <span>Название награды</span>
+                          </div>
+                      </div>
+          
+                  </div>
+                  
+                  {/*кнопки действий  */}
+                  <div className="actions">
+                    <button className="offer-btn" style={{height: '70px'}}>Предложить заказ</button>
+                    <button className="favorite-btn">
+                      <img src={icon_star2} alt="★" width={30}/>
+                    </button>
+                  </div>
+
+  
+                  {/* Галочки требований */}
+                  <div className="features" style={{flexDirection: 'column', gap: '10px', margin: '15px 0'}}>
+                    {executor.readyToContract && (
+                      <span><img src={icon_check} alt="✓" style={{marginRight: '7px'}}/> Работа по договору</span>
+                    )}
+                    {executor.readyToGiveWarranty && (
+                      <span><img src={icon_check} alt="✓" style={{marginRight: '7px'}}/> Гарантия на работу</span>
+                    )}
+                  </div>
+
+                  {/* Спецпредложение */}
+                  <div className="special-offer" style={{marginBottom: '30px'}}>
+                    <div className="discount">-25%</div>
+                    <h4>Спецпредложение</h4>
+                    <p>Закажите комплексный ремонт до конца месяца и получите уборку помещений после finishing с 50% скидкой</p>
+                  </div>
+
+                  
+                  <Link to={'/executor_profile'} className="btn-look-more" >
+                      Посмотреть еще 
+                      <img src={icon_arrow} alt="Стрелка" style={{ margin: '-5px 0 0 15px' }} />
+                  </Link>
+                  
+
+                </div>
+              ))}
+            </div>
+
+
+          </div>
+        </div>
+      )}
+
+
     </div>
   )
 }

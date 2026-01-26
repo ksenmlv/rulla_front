@@ -118,7 +118,7 @@ export default function ShortStep1Phone() {
       if (profile.regStatus === 'REQUIRED_PERSONAL_DATA') {
         navigate('/simplified_registration_step2')
       } else {
-        navigate('/customer_dashboard') // ПОСМОТРЕТЬ!!!!!!!!!!!!!!
+        navigate('/customer_personal_account') 
       }
     } catch (err) {
       const message = err.response?.data?.message || 'Неверный код'

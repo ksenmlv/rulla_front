@@ -84,7 +84,7 @@ export default function ShortStep2Name() {
       // Успех (204 No Content)
       setPhoneNumber('') // очистка
       openModal('Регистрация успешно завершена!') // можно заменить на модалку успеха
-      navigate('/') 
+      navigate('/main_customer') 
     } catch (err) {
       console.error('Ошибка сохранения персональных данных:', err)
 
@@ -97,7 +97,7 @@ export default function ShortStep2Name() {
         navigate('/simplified_registration_step1')
       } else if (err.response?.status === 409) {
         message = 'Персональные данные уже заполнены'
-        navigate('/')
+        navigate('/main_customer')
       } else if (err.response?.status === 429) {
         message = 'Слишком много попыток. Попробуйте позже.'
       }

@@ -47,6 +47,8 @@ const AllSpecialists = lazy(() => import('./pages/Customer/AllSpecialists'));
 const AllSpecialistsFilter = lazy(() => import('./pages/Customer/AllSpecialistsFilter'));
 const ExecutorProfile = lazy(() => import('./pages/Customer/ExecutorProfile'));
 const PersonalAccount = lazy(() => import('./pages/Customer/PersonalAccount'));
+const EPersonalAccount = lazy(() => import('./pages/Executor/EPersonalAccount'));
+const Error404 = lazy(() => import('./pages/Error404'));
 
 
 function App() {
@@ -80,6 +82,8 @@ function App() {
             <Route path="/customer_all_specialists_filter" element={<AllSpecialistsFilter />} />
             <Route path="/executor_profile" element={<ExecutorProfile />} />
             <Route path="/customer_personal_account" element={<PersonalAccount />} />
+            <Route path="/executor_personal_account" element={<EPersonalAccount />} />
+            <Route path="/error404" element={<Error404 />} />
           </Routes>
         </Suspense>
       </AppProvider>

@@ -42,13 +42,14 @@
   position: relative;
   display: inline-block;       
   height: 78px;          
-  background: url('data:image/svg+xml;utf8,<svg width="410" height="78" viewBox="0 0 410 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 1.5H368.251C370.469 1.50006 372.599 2.36717 374.187 3.91602L405.03 34.0078H405.031C406.671 35.6074 407.595 37.8013 407.595 40.0918V68C407.595 72.6944 403.789 76.5 399.095 76.5H10C5.30558 76.5 1.5 72.6944 1.5 68V10C1.5 5.30558 5.30558 1.5 10 1.5Z" fill="white" stroke="%23DE5A2B" stroke-width="3"/></svg>') 
-    no-repeat center / 100% 100%;  
+  background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 410 78' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'><path d='M10 1.5H368.251C370.469 1.50006 372.599 2.36717 374.187 3.91602L405.03 34.0078H405.031C406.671 35.6074 407.595 37.8013 407.595 40.0918V68C407.595 72.6944 403.789 76.5 399.095 76.5H10C5.30558 76.5 1.5 72.6944 1.5 68V10C1.5 5.30558 5.30558 1.5 10 1.5Z' fill='white' stroke='%23DE5A2B' stroke-width='3'/></svg>")
+    center / 100% 100% no-repeat;
   color: black;
   font-weight: bold;
   text-align: center;          
   cursor: pointer;
   font-weight: 500;
+  border: none;
 }
 
 .tab-icon {
@@ -65,9 +66,12 @@
 .headerBlock {
   position: relative;
   background: white;
-  background: url('../../assets/Main/rec.svg') no-repeat center top;
+  background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 1701 181' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'><path d='M10.001 0.5H1644.32C1646.85 0.50013 1649.28 1.51431 1651.07 3.31641L1697.23 49.9453C1698.98 51.7149 1699.97 54.1017 1699.98 56.5918L1700.43 170.828C1700.45 176.089 1696.19 180.366 1690.93 180.366H10.4521C5.2159 180.366 0.966846 176.129 0.952148 170.893L0.500977 10.0264C0.486381 4.7694 4.74395 0.5 10.001 0.5Z' fill='white' stroke='%23919191'/></svg>")
+    center / 100% 100% no-repeat;
   background-size: 100% 100%;
   width: 100%;
+  min-width: 1600px;
+  max-width: 2500px;
   overflow: visible;
   margin-bottom: 20px;
 }
@@ -263,62 +267,38 @@
   background: none;
   border: none;
 }
-/* 
-.form-field label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 15px;
-  color: #555;
-  font-weight: 500;
-}
-
-.form-field input {
-  width: 100%;
-  padding: 13px 16px;
-  border: 1px solid #d0d0d0;
-  border-radius: 10px;
-  font-size: 16px;
-  box-sizing: border-box;
-}
-
-.form-field input:focus {
-  outline: none;
-  border-color: #de5a2b;
-  box-shadow: 0 0 0 3px rgba(222,90,43,0.1);
-} */
 
 .modal-buttons {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   justify-content: flex-end;
-  margin-top: 28px;
+  margin-top: 50px;
 }
 
-.btn-cancel,
-.btn-save {
-  padding: 12px 28px;
-  border-radius: 10px;
-  font-size: 16px;
+.btn-cancel_,
+.btn-save_ {
+  border-radius: 7px;
+  height: 70px;
+  font-size: 20px;
   font-weight: 500;
   cursor: pointer;
-  min-width: 110px;
 }
 
-.btn-cancel {
+.btn-cancel_ {
   background: white;
-  border: 1px solid #ccc;
+  border: 2px solid #02283D;
+  width: 30%;
 }
 
-.btn-cancel:hover {
-  background: #f8f8f8;
-}
-
-.btn-save {
+.btn-save_ {
   background: #de5a2b;
   color: white;
   border: none;
+  width: 70%;
 }
 
-.btn-save:hover {
-  background: #c44e24;
+.btn-save_.disabled {
+  background-color: #ECA288;
+  cursor: not-allowed;
+  opacity: 0.6;
 }

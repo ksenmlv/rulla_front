@@ -1,0 +1,374 @@
+.profile-tabs-container {
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+
+}
+
+.profile-tabs { 
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  justify-content: space-around;
+}
+.profile-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab-button {
+  height: 78px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FAFAFA;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  background: #f0f0f0;
+}
+
+
+.tab-button.active {
+  position: relative;
+  display: inline-block;       
+  height: 78px;          
+  background: url("data:image/svg+xml;utf8,<svg viewBox='0 0 325 78' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'><path d='M10 1.5H284.113C286.329 1.5 288.459 2.36548 290.046 3.91211L320.932 34.0078C322.574 35.6077 323.5 37.8032 323.5 40.0957V68C323.5 72.6944 319.694 76.5 315 76.5H10C5.30558 76.5 1.5 72.6944 1.5 68V10C1.5 5.30558 5.30558 1.5 10 1.5Z' fill='white' stroke='%23DE5A2B' stroke-width='3'/></svg>")
+    center / 100% 100% no-repeat;
+  color: black;
+  font-weight: bold;
+  text-align: center;          
+  cursor: pointer;
+  font-weight: 500;
+  border: none;
+}
+
+.tab-icon {
+  margin-right: 15px;
+}
+
+
+
+/* Мой профиль */
+.executor-profile {
+  width: 100%;
+}
+
+/* Шапка  */
+.header {
+  background: white
+    url("data:image/svg+xml;utf8,<svg viewBox='0 0 1127 419' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'><path d='M10 0.5H1060.89C1063.39 0.500096 1065.79 1.4854 1067.57 3.24219L1123.68 58.6768C1125.48 60.4615 1126.5 62.8952 1126.5 65.4346V409C1126.5 414.247 1122.25 418.5 1117 418.5H10C4.7533 418.5 0.5 414.247 0.5 409V10C0.500002 4.7533 4.7533 0.5 10 0.5Z' fill='white' stroke='%23919191'/></svg>")
+    center / 100% 100% no-repeat !important; 
+  display: flex;
+  width: 100%;
+}
+
+/* Две колонки */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 68.5% 30%;
+  gap: 20px;
+}
+
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.right-column .card {
+  padding: 35px;
+}
+
+.city-tag {
+  background: #f0f0f0;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+.education-images {
+  display: flex;
+  gap: 12px;
+}
+
+.img-placeholder {
+  width: 150px;
+  height: 230px;
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+/* Награды */
+.award-item {
+  display: flex;
+  align-items: center;
+  background-color: #F4F5F5;
+  height: 90px;
+  border-radius: 15px;
+  padding: 20px;
+  gap: 20px;
+  margin: 12px 0;
+  font-size: 20px;
+  color: #000;
+  font-weight: 500;
+}
+
+
+/* Кнопка паспортных данных */
+.view-passport-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.loading {
+  text-align: center;
+  padding: 60px;
+  font-size: 20px;
+  color: #555;
+}
+
+
+
+/* модалка паспорта */
+.passport-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px);   
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;          
+}
+
+/* Само окно */
+.passport-modal-content {
+  background: white;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 800px;
+  max-height: auto;
+  overflow-y: auto;
+  position: relative;
+  padding: 45px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.passport-field_ {
+  margin-bottom: 30px;
+}
+
+.passport-field_ label {
+  display: block;
+  font-size: 24px;
+  color: #000;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.passport-field_ .value {
+  font-size: 20px;
+  font-weight: 500;
+  color: #656565;
+}
+
+
+
+
+/* модалка редактирования паспорта */
+.modal-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+
+/* вкладка мои услуги */
+.services-prices-card {
+  background: white;
+  border: 1px solid #919191;
+  border-radius: 10px;
+  padding: 35px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.card-title {
+  font-size: 36px;
+  font-weight: 600;
+  margin: 0;
+  color: #000;
+}
+
+.add-service-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.service-item {
+  background-color: #FAFAFA;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.service-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.service-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+  flex: 1;
+}
+
+.service-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #000;
+  white-space: nowrap;
+}
+
+.edit-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.subservices-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 10px;
+}
+
+.subservice-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+  color: #000;
+}
+
+.subservice-name {
+  flex: 1;
+}
+
+
+
+/* модалка редактирования услуги */
+.service-edit-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.currency {
+  font-size: 20px;
+  color: #888;
+  font-weight: 500;
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translate(-50%, -50%);
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-end;
+  margin-top: 50px;
+}
+
+.btn-cancel,
+.btn-save {
+  border-radius: 7px;
+  height: 70px;
+  font-size: 20px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background: white;
+  border: 2px solid #02283D;
+  width: 30%;
+}
+
+.btn-save {
+  background: #de5a2b;
+  color: white;
+  border: none;
+  width: 70%;
+}
+
+.btn-save.disabled {
+  background-color: #ECA288;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+
+/* вкладка портфолио */
+.portfolio-text {
+  margin-left: 20px;
+}
+
+.service-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #000;
+}
+
+.portfolio-subtitle {
+  font-size: 20px;
+  color: #656565;
+}

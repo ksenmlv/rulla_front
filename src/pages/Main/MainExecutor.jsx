@@ -48,6 +48,10 @@ export default function MainExecutor() {
         return () => window.removeEventListener('resize', handleResize);
     }, [])   
 
+    const handleClickUser = () => {
+        navigate('/executor_personal_account')
+    }
+
     // загрузка заказов при открытии страницы и при поиске
     useEffect(() => {
         ordersApi.getOrders({ search: searchQuery })
@@ -72,7 +76,7 @@ export default function MainExecutor() {
     <div>
         <Header rightContent={
             < >
-                <button className='btn_user' style={{marginRight: '-10px'}}><img src={icon_user} alt='Иконка пользователя'/></button>
+                <button className='btn_user' style={{marginRight: '-10px'}} onClick={handleClickUser}><img src={icon_user} alt='Иконка пользователя'/></button>
                 <p style={{fontSize: '20px', color: '#000', fontWeight: '500', paddingTop: '15px'}}>Имя пользователя</p>
             </> }
             menuItems={   [
