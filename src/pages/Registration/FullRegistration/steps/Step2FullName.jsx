@@ -26,6 +26,18 @@ export default function Step2FullName() {
     egrulExtract: [],
   })
 
+
+  useEffect(() => {
+  // Проверяем токен при загрузке компонента
+  const token = localStorage.getItem('accessToken')
+  console.log('Токен при загрузке компонента:', token ? 'присутствует' : 'отсутствует')
+  
+  if (!token || token === 'null' || token === 'undefined') {
+    console.warn('Токен не найден или невалиден. Редирект на вход...')
+    navigate('/enter')
+  }
+}, [navigate])
+
   const [dateError, setDateError] = useState('')
   const [isFormValid, setIsFormValid] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -36,10 +48,10 @@ export default function Step2FullName() {
     setFormData({
       INN: '',
       registrationDate: '',
-      OGRNIP: type === 'individual_entrepreneur' ? '' : [],
+      OGRNIP: type === 'ENTREPRENEUR' ? '' : [],
       registrationAddress: '',
-      extractOGRNIP: type === 'individual_entrepreneur' ? [] : [],
-      registrationCertificate: type === 'self-employed' ? [] : [],
+      extractOGRNIP: type === 'ENTREPRENEUR' ? [] : [],
+      registrationCertificate: type === 'SELF_EMPLOYED' ? [] : [],
       OGRN: type === 'legal_entity' ? '' : [],
       egrulExtract: type === 'legal_entity' ? [] : [],
     })
@@ -54,8 +66,8 @@ export default function Step2FullName() {
   // Установка ИП по умолчанию для физлиц и очистка при первом рендере
   useEffect(() => {
     if (!userLawSubject || userLawSubject === 'individual') {
-      setUserLawSubject('individual_entrepreneur')
-      resetFormForType('individual_entrepreneur')
+      setUserLawSubject('ENTREPRENEUR')
+      resetFormForType('ENTREPRENEUR')
     }
   }, []) // Только при монтировании
 
@@ -115,14 +127,14 @@ export default function Step2FullName() {
     const dateValid = formData.registrationDate.length === 10 && isValidDate(formData.registrationDate)
     const innDigits = formData.INN.replace(/\D/g, '')
 
-    if (userLawSubject === 'individual_entrepreneur') {
+    if (userLawSubject === 'ENTREPRENEUR') {
       valid = 
         innDigits.length === 12 &&
         formData.OGRNIP.replace(/\D/g, '').length === 15 &&
         dateValid &&
         formData.registrationAddress.trim().length >= 5 &&
         formData.extractOGRNIP.length > 0
-    } else if (userLawSubject === 'self-employed') {
+    } else if (userLawSubject === 'SELF_EMPLOYED') {
       valid = 
         innDigits.length === 12 &&
         dateValid &&
@@ -139,91 +151,224 @@ export default function Step2FullName() {
     setIsFormValid(valid)
   }, [formData, userLawSubject])
 
-  const handleForward = async () => {
-    if (!isFormValid) return
 
-    setIsLoading(true)
-    setErrorMessage(null)
 
+
+
+const handleForward = async () => {
+  if (!isFormValid) return
+
+  setIsLoading(true)
+  setErrorMessage(null)
+
+  try {
+    const [day, month, year] = formData.registrationDate.split('.')
+    const isoDate = `${year}-${month}-${day}`
+
+    // Проверяем токен
+    const token = localStorage.getItem('accessToken')
+    if (!token || token === 'null' || token === 'undefined') {
+      localStorage.removeItem('accessToken')
+      throw new Error('Токен авторизации отсутствует. Пожалуйста, войдите заново.')
+    }
+
+    // Проверяем авторизацию
     try {
-      const [day, month, year] = formData.registrationDate.split('.')
-      const isoDate = `${year}-${month}-${day}`
+      await apiClient.get('/executors/me/profile')
+    } catch (authErr) {
+      if (authErr.response?.status === 401 || authErr.response?.status === 403) {
+        localStorage.removeItem('accessToken')
+        throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
+      }
+      throw authErr
+    }
 
-      // 1. Установка типа работы (для физлиц)
+    // Для физлиц: пробуем установить тип работы
+    if (userLawSubject !== 'legal_entity') {
       const targetWorkType = 
         userLawSubject === 'individual_entrepreneur' ? 'ENTREPRENEUR' : 
         userLawSubject === 'self-employed' ? 'SELF_EMPLOYED' : null
 
       if (targetWorkType) {
         try {
-          await apiClient.put('/executors/individuals/me/work-type', { workType: targetWorkType })
+          await apiClient.put('/executors/individuals/me/work-type', null, {
+            params: { workType: targetWorkType }
+          })
         } catch (typeErr) {
-          if (typeErr.response?.status !== 409) throw typeErr // 409 = уже установлено
+          // Игнорируем 409 (уже установлено) и 500 (ошибка на сервере)
+          if (typeErr.response?.status !== 409 && typeErr.response?.status !== 500) {
+            if (typeErr.response?.status === 401 || typeErr.response?.status === 403) {
+              localStorage.removeItem('accessToken')
+              throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
+            }
+            throw typeErr
+          }
         }
       }
 
-      // 2. Базовые данные (ИНН + дата регистрации/рождения)
-      if (userLawSubject !== 'legal_entity') {
+      // Базовые данные для физлица
+      try {
         await apiClient.patch('/executors/individuals/me/base-data', {
           inn: formData.INN,
           birthDate: isoDate
         })
+      } catch (baseErr) {
+        if (baseErr.response?.status === 401 || baseErr.response?.status === 403) {
+          localStorage.removeItem('accessToken')
+          throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
+        }
+        throw baseErr
       }
+    }
 
-      // 3. Специфические данные
-      if (userLawSubject === 'individual_entrepreneur') {
+    // Обработка по типам пользователя
+    if (userLawSubject === 'individual_entrepreneur') {
+      // Данные ИП
+      try {
         await apiClient.put('/executors/individuals/me/entrepreneur', {
           ogrnip: formData.OGRNIP,
           registrationDate: isoDate,
           registrationPlace: formData.registrationAddress
         })
-
-        if (formData.extractOGRNIP.length > 0) {
-          const fd = new FormData()
-          fd.append('file', formData.extractOGRNIP[0])
-          await apiClient.post('/executors/individuals/me/entrepreneur/egrip-extract', fd, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          })
+      } catch (entrepreneurErr) {
+        // Игнорируем 409 ошибки (возможно тип работы не установлен)
+        if (entrepreneurErr.response?.status !== 409) {
+          if (entrepreneurErr.response?.status === 401 || entrepreneurErr.response?.status === 403) {
+            localStorage.removeItem('accessToken')
+            throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
+          }
+          throw entrepreneurErr
         }
-      } else if (userLawSubject === 'self-employed') {
+      }
+
+      // Файл ЕГРИП
+      if (formData.extractOGRNIP.length > 0) {
+        const fd = new FormData()
+        fd.append('file', formData.extractOGRNIP[0])
+        
+        try {
+          await apiClient.post('/executors/individuals/me/entrepreneur/egrip-extract', fd, {
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+            }
+          })
+        } catch (fileErr) {
+          if (fileErr.response?.status === 401 || fileErr.response?.status === 403) {
+            localStorage.removeItem('accessToken')
+            throw new Error('Ошибка авторизации при загрузке файла. Пожалуйста, войдите заново.')
+          }
+          throw new Error(`Не удалось загрузить файл ЕГРИП: ${fileErr.response?.data?.message || 'Ошибка сервера'}`)
+        }
+      }
+
+    } else if (userLawSubject === 'self-employed') {
+      // Данные самозанятого
+      try {
         await apiClient.put('/executors/individuals/me/self-employed', {
           registrationDate: isoDate
         })
-
-        if (formData.registrationCertificate.length > 0) {
-          const fd = new FormData()
-          fd.append('file', formData.registrationCertificate[0])
-          await apiClient.post('/executors/individuals/me/self-employed/certificate', fd, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          })
+      } catch (selfErr) {
+        // Игнорируем 409 ошибки
+        if (selfErr.response?.status !== 409) {
+          if (selfErr.response?.status === 401 || selfErr.response?.status === 403) {
+            localStorage.removeItem('accessToken')
+            throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
+          }
+          throw selfErr
         }
-      } else if (userLawSubject === 'legal_entity') {
+      }
+
+      // Файл справки
+      if (formData.registrationCertificate.length > 0) {
+        const fd = new FormData()
+        fd.append('file', formData.registrationCertificate[0])
+        
+        try {
+          await apiClient.post('/executors/individuals/me/self-employed/certificate', fd, {
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+            }
+          })
+        } catch (certErr) {
+          if (certErr.response?.status === 401 || certErr.response?.status === 403) {
+            localStorage.removeItem('accessToken')
+            throw new Error('Ошибка авторизации при загрузке файла. Пожалуйста, войдите заново.')
+          }
+          throw new Error(`Не удалось загрузить справку: ${certErr.response?.data?.message || 'Ошибка сервера'}`)
+        }
+      }
+
+    } else if (userLawSubject === 'legal_entity') {
+      // Данные юрлица
+      try {
         await apiClient.patch('/executors/companies/me/data', {
           inn: formData.INN,
           ogrn: formData.OGRN,
           registrationDate: isoDate,
           registrationPlace: formData.registrationAddress.trim()
         })
-
-        if (formData.egrulExtract.length > 0) {
-          const fd = new FormData()
-          fd.append('file', formData.egrulExtract[0])
-          await apiClient.post('/executors/companies/me/egrul-extract', fd, {
-            headers: { 'Content-Type': 'multipart/form-data' }
-          })
+      } catch (companyErr) {
+        if (companyErr.response?.status === 401 || companyErr.response?.status === 403) {
+          localStorage.removeItem('accessToken')
+          throw new Error('Ошибка авторизации. Пожалуйста, войдите заново.')
         }
+        throw new Error(`Не удалось сохранить данные юрлица: ${companyErr.response?.data?.message || 'Ошибка сервера'}`)
       }
 
-      setStepNumber(stepNumber + 1)
-      navigate('/full_registration_step3')
-    } catch (err) {
-      const msg = err.response?.data?.message || 'Ошибка сохранения данных'
-      setErrorMessage(msg)
-      console.error('Ошибка сохранения:', err)
-    } finally {
-      setIsLoading(false)
+      // Файл ЕГРЮЛ
+      if (formData.egrulExtract.length > 0) {
+        const fd = new FormData()
+        fd.append('file', formData.egrulExtract[0])
+        
+        try {
+          await apiClient.post('/executors/companies/me/egrul-extract', fd, {
+            headers: { 
+              'Content-Type': 'multipart/form-data',
+              'Authorization': `Bearer ${token}`
+            }
+          })
+        } catch (egrulErr) {
+          if (egrulErr.response?.status === 401 || egrulErr.response?.status === 403) {
+            localStorage.removeItem('accessToken')
+            throw new Error('Ошибка авторизации при загрузке файла. Пожалуйста, войдите заново.')
+          }
+          throw new Error(`Не удалось загрузить файл ЕГРЮЛ: ${egrulErr.response?.data?.message || 'Ошибка сервера'}`)
+        }
+      } else {
+        throw new Error('Пожалуйста, загрузите выписку из ЕГРЮЛ')
+      }
     }
+
+    // Успешное завершение
+    setStepNumber(stepNumber + 1)
+    navigate('/full_registration_step3')
+
+  } catch (err) {
+    console.error('Ошибка при отправке данных:', err)
+    
+    // Формируем понятное сообщение об ошибке
+    let msg = err.message || 'Ошибка сохранения данных'
+    
+    // Если это ошибка сети или сервера
+    if (err.response?.status >= 500) {
+      msg = 'Внутренняя ошибка сервера. Пожалуйста, попробуйте позже.'
+    } else if (err.response?.status === 400) {
+      msg = 'Некорректные данные. Проверьте введенные значения.'
+    } else if (err.response?.status === 409) {
+      msg = 'Данные уже существуют или конфликтуют с текущим состоянием.'
+    }
+
+    setErrorMessage(msg)
+
+  } finally {
+    setIsLoading(false)
   }
+}
+
+
+
 
   const handleBack = () => navigate('/full_registration_step1')
 
@@ -249,14 +394,14 @@ export default function Step2FullName() {
           {userLawSubject !== 'legal_entity' && (
             <div className="role-switcher">
               <button 
-                className={`role-option ${userLawSubject === 'individual_entrepreneur' ? 'active' : ''}`} 
-                onClick={() => setUserLawSubject('individual_entrepreneur')}
+                className={`role-option ${userLawSubject === 'ENTREPRENEUR' ? 'active' : ''}`} 
+                onClick={() => setUserLawSubject('ENTREPRENEUR')}
               >
                 ИП
               </button>
               <button 
-                className={`role-option ${userLawSubject === 'self-employed' ? 'active' : ''}`} 
-                onClick={() => setUserLawSubject('self-employed')}
+                className={`role-option ${userLawSubject === 'SELF_EMPLOYED' ? 'active' : ''}`} 
+                onClick={() => setUserLawSubject('SELF_EMPLOYED')}
               >
                 Самозанятый
               </button>
@@ -281,7 +426,7 @@ export default function Step2FullName() {
             </div>
 
             {/* Поля ИП */}
-            {userLawSubject === 'individual_entrepreneur' && (
+            {userLawSubject === 'ENTREPRENEUR' && (
               <>
                 <div className='passport-row'>
                   <div className='passport-field full-width'>
@@ -348,7 +493,7 @@ export default function Step2FullName() {
             </div>
 
             {/* Файлы */}
-            {userLawSubject === 'individual_entrepreneur' && (
+            {userLawSubject === 'ENTREPRENEUR' && (
               <div className='passport-field'>
                 <h3>Выписка из ЕГРИП</h3>
                 <FileUpload 
@@ -359,7 +504,7 @@ export default function Step2FullName() {
               </div>
             )}
 
-            {userLawSubject === 'self-employed' && (
+            {userLawSubject === 'SELF_EMPLOYED' && (
               <div className='passport-field'>
                 <h3>Справка о постановке на учет (СЗ)</h3>
                 <FileUpload 

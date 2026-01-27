@@ -204,6 +204,8 @@ export default function Step1Activity() {
       })
 
       setStepNumber(stepNumber + 1)
+      const profile = await apiClient.get('/executors/me/profile')
+      console.log('Текущий профиль:', profile.data)
       navigate('/full_registration_step2')
     } catch (err) {
       let message = err.message || err.response?.data?.message || 'Ошибка сохранения данных'
@@ -231,7 +233,7 @@ export default function Step1Activity() {
       <Header hideElements={true} />
 
       <div className='reg-container'>
-        <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px', marginBottom: '175px'}}>
+        <div className='registr-container' style={{ height: 'auto', paddingBottom: '20px', marginBottom: '199px'}}>
 
           <div className='title'>
             <button className='btn-back' onClick={() => navigate('/full_registration_step0_1')}>
@@ -286,7 +288,7 @@ export default function Step1Activity() {
             )}
 
             <div className='passport-field full-width'>
-              <h3>Регионы работы</h3>
+              <h3>Города работы</h3>
               <div className="registr-selector-wrapper">
                 <RegistrSelector 
                   placeholder={'Выберите города'}
@@ -312,7 +314,7 @@ export default function Step1Activity() {
                 </svg>
               )}
             </div>
-            <span className="checkbox-text">Готов к выездам в другие регионы</span>
+            <span className="checkbox-text">Готов к выездам в другие города</span>
           </div>
 
           <button 

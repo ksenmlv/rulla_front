@@ -16,7 +16,7 @@
   display: none;
 }
 
-.tab-button {
+.tab-button_ {
   height: 78px;
   width: 100%;
   display: flex;
@@ -32,14 +32,14 @@
   position: relative;
   transition: all 0.2s ease;
   white-space: nowrap;
-}
+} 
 
-.tab-button:hover {
+ .tab-button_:hover {
   background: #f0f0f0;
 }
 
 
-.tab-button.active {
+.tab-button_.active {
   position: relative;
   display: inline-block;       
   height: 78px;          
@@ -77,14 +77,14 @@
 .profile-grid {
   display: grid;
   grid-template-columns: 68.5% 30%;
-  gap: 20px;
+  gap: 26px;
 }
 
 .left-column,
 .right-column {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
 }
 
 .right-column .card {

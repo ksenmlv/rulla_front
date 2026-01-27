@@ -253,10 +253,10 @@ export default function ExecutorProfile() {
             {/* Регионы работы */}
             <div className="regions-section">
               <h4 style={{ fontSize: '24px', fontWeight: '600', marginBottom: '15px', color: '#151515' }}>
-                Регионы работы
+                Города работы
               </h4>
               <p style={{ fontSize: '20px', color: '#656565' }}>
-                Название региона
+                Название города
               </p>
             </div>
 

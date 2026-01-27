@@ -55,7 +55,7 @@ export default function CreateOrderForm({ onClose, onCreate }) {
   const [startDateError, setStartDateError] = useState('')
   const [endDateError, setEndDateError] = useState('')
 
-  const [showSuccessModal, setShowSuccessModal] = useState(true)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   // автофокус на первое поле
   useEffect(() => {

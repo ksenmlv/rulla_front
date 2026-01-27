@@ -36,9 +36,20 @@ function Enter() {
   const [customerCode, setCustomerCode] = useState(['', '', '', ''])
   const [isLoading, setIsLoading] = useState(false)
 
-  // Для исполнителя (заглушка)
+  // Для исполнителя 
   const [executorContact, setExecutorContact] = useState('')
   const [isValidContact, setIsValidContact] = useState(false)
+  const [executorCode, setExecutorCode] = useState(['', '', '', ''])
+
+
+  const isEmail = executorContact.includes('@')
+
+  const executorPhoneE164 = () => {
+    const digits = executorContact.replace(/\D/g, '')
+    if (digits.startsWith('7')) return `+${digits}`
+    return `+7${digits}`
+  }
+
 
   // Модальное окно
   const [modalMessage, setModalMessage] = useState(null)
@@ -129,7 +140,7 @@ function Enter() {
       setLastName(profile.lastName || '')
       setRegStatus(profile.regStatus || '')
 
-      navigate('/')
+      navigate('/main_customer')
     } catch (err) {
       const message = err.response?.data?.message || 'Неверный код'
       openModal(message)
@@ -139,11 +150,75 @@ function Enter() {
     }
   }
 
-  // Заглушка для исполнителя
-  const handleExecutorLogin = () => {
-    alert('Вход как исполнитель (заглушка)')
-    navigate('/')
+
+  // Запрос кода для исполнителя
+  const requestExecutorCode = async () => {
+    if (!isValidContact || isLoading) return
+    setIsLoading(true)
+
+    try {
+      if (isEmail) {
+        const res = await apiClient.post('/executors/auth/email/code', {
+          email: executorContact,
+        })
+
+        if (res.data?.code && process.env.NODE_ENV === 'development') {
+          openModal(`Код: ${res.data.code}`)
+        }
+      } else {
+        const res = await apiClient.post('/executors/auth/phone/code', {
+          phone: executorPhoneE164(),
+        })
+
+        if (res.data?.code && process.env.NODE_ENV === 'development') {
+          openModal(`Код: ${res.data.code}`)
+        }
+      }
+
+      setStep(2)
+      setResendTimer(60)
+      setCanResend(false)
+    } catch (err) {
+      openModal(err.response?.data?.message || 'Ошибка отправки кода')
+    } finally {
+      setIsLoading(false)
+    }
   }
+
+
+  // Подтверждение кода исполнителя
+  const verifyExecutorCode = async () => {
+    const code = executorCode.join('')
+    if (code.length !== 4 || isLoading) return
+
+    setIsLoading(true)
+
+    try {
+      let res
+
+      if (isEmail) {
+        res = await apiClient.post('/executors/auth/email/verify', {
+          email: executorContact,
+          code,
+        })
+      } else {
+        res = await apiClient.post('/executors/auth/phone/verify', {
+          phone: executorPhoneE164(),
+          code,
+        })
+      }
+
+      localStorage.setItem('accessToken', res.data.accessToken)
+
+      navigate('/main_executor')
+    } catch (err) {
+      openModal(err.response?.data?.message || 'Неверный код')
+      setCustomerCode(['', '', '', ''])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -155,13 +230,14 @@ function Enter() {
         verifyCustomerCode()
       }
     } else {
-      if (step === 1 && isValidContact) {
-        setStep(2)
-      } else if (step === 2) {
-        handleExecutorLogin()
+      if (step === 1) {
+        requestExecutorCode()
+      } else {
+        verifyExecutorCode()
       }
     }
   }
+
 
   const handleBack = () => {
     if (step === 2) {
@@ -173,12 +249,18 @@ function Enter() {
     navigate('/')
   }
 
+  // Повторная отправка кода
   const handleResend = () => {
-    if (canResend && !isLoading) {
+    if (!canResend || isLoading) return
+
+    if (activeRole === 'customer') {
       requestCustomerCode()
+    } else {
+      requestExecutorCode()
     }
   }
 
+  // Доступность кнопки "продолжить"
   const isContinueDisabled =
     isLoading ||
     (activeRole === 'customer'
@@ -189,17 +271,6 @@ function Enter() {
       ? !isValidContact
       : false)
 
-  // Кастомная функция валидации для PhoneInput
-  const customPhoneValidation = (phone, { country }) => {
-    const nationalNumber = phone.replace(/\D/g, '').slice(country.dialCode.length)
-    const length = nationalNumber.length
-
-    if (country.iso2 === 'ru' || country.dialCode === '7') {
-      return length === 10 // строго 10 цифр для России/Казахстана
-    }
-
-    return length >= 7 && length <= 13 // для остальных стран
-  }
 
   // автофокус на 1ое поле смс кода
   useEffect(() => {
@@ -304,17 +375,20 @@ function Enter() {
                       id={`code-${i}`}
                       type="text"
                       maxLength="1"
-                      value={activeRole === 'customer' ? customerCode[i] : ''}
+                      value={activeRole === 'customer' ? customerCode[i] : executorCode[i]}
                       onChange={(e) => {
-                        if (activeRole === 'customer') {
-                          const val = e.target.value
-                          if (/^\d?$/.test(val)) {
+                        const val = e.target.value
+                        if (/^\d?$/.test(val)) {
+                          if (activeRole === 'customer') {
                             const newCode = [...customerCode]
                             newCode[i] = val
                             setCustomerCode(newCode)
-                            if (val && i < 3) {
-                              document.getElementById(`code-${i + 1}`)?.focus()
-                            }
+                            if (val && i < 3) document.getElementById(`code-${i + 1}`)?.focus()
+                          } else {
+                            const newCode = [...executorCode]
+                            newCode[i] = val
+                            setExecutorCode(newCode)
+                            if (val && i < 3) document.getElementById(`code-${i + 1}`)?.focus()
                           }
                         }
                       }}

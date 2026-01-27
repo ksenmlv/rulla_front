@@ -68,7 +68,7 @@ export default function ShortStep2Name() {
       await apiClient.put('/customers/me/personal-data', {
         firstName: localName.trim(),
         email: localEmail.trim().toLowerCase(),
-        acceptUserAgreement: true,                         // предполагаем, что принято ранее
+        acceptUserAgreement: true,                        
         acceptPrivacyPolicy: isCheckedPolicy,              // обязательно true
         acceptPersonalDataProcessing: isCheckedPolicy,     // обязательно
         acceptMarketing: isCheckedMarketing,               // опционально

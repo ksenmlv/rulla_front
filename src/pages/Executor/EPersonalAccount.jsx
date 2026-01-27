@@ -34,10 +34,16 @@ export default function EPersonalAccount() {
     { id: 'profile', label: 'Мой профиль', icon: <img src={tab_profile} alt="" /> },
     { id: 'services', label: 'Мои услуги', icon: <img src={tab_services} alt="" /> },
     { id: 'portfolio', label: 'Портфолио', icon: <img src={tab_portfolio} alt="" /> },
-    { id: 'suppoordersrt', label: 'Мои заказы', icon: <img src={tab_orders} alt="" /> },
+    { id: 'orders', label: 'Мои заказы', icon: <img src={tab_orders} alt="" /> },
     { id: 'support', label: 'Поддержка', icon: <img src={tab_chat} alt="" /> },
   ]
  
+  useEffect(() => {
+    if (activeTab === 'orders') {
+      navigate('/executor_my_orders');
+    }
+  }, [activeTab, navigate]);
+
 
 
   return (
@@ -81,7 +87,7 @@ export default function EPersonalAccount() {
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
-                  className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                  className={`tab-button_ ${activeTab === tab.id ? 'active' : ''}`}
                   onClick={() => handleTabChange(tab.id)}
                 >
                   <span className="tab-icon">{tab.icon}</span>

@@ -18,16 +18,17 @@ export default function Step0Phone() {
   // Локальные состояния
   const [registrationStep, setRegistrationStep] = useState(1) // 1 — ввод контакта, 2 — код
   const [role] = useState('executor') // всегда исполнитель на этом пути
+  const [contactType, setContactType] = useState('phone') // phone или email
 
-  // Контакт (телефон или email — только для UI пока)
+  // Контакт (телефон или email)
   const [contactInput, setContactInput] = useState('')
 
-  // Для авторизации по телефону
+  // Для телефона
   const [countryCode, setCountryCode] = useState('7')
   const [phoneNumberOnly, setPhoneNumberOnly] = useState('')
 
-  // Код SMS
-  const [smsCode, setSmsCode] = useState(['', '', '', ''])
+  // Код подтверждения
+  const [verificationCode, setVerificationCode] = useState(['', '', '', ''])
 
   // UI состояния
   const [isLoading, setIsLoading] = useState(false)
@@ -39,9 +40,11 @@ export default function Step0Phone() {
   const openModal = (msg) => setModalMessage(msg)
   const closeModal = () => {
     setModalMessage(null)
-    setTimeout(() => {
-      document.getElementById('code-input-0')?.focus()
-    }, 100)
+    if (registrationStep === 2) {
+      setTimeout(() => {
+        document.getElementById('code-input-0')?.focus()
+      }, 100)
+    }
   }
 
   // Реф для поля ввода юр.лица
@@ -81,22 +84,42 @@ export default function Step0Phone() {
     }
   }, [userLawSubject, setUserLawSubject])
 
-  // Валидация телефона для авторизации
-  const isPhoneValid = phoneNumberOnly.length >= 10
-
-  // Функция валидации контакта для юр.лица
-  const validateContact = (value) => {
-    if (!value) return false
-    const digits = value.replace(/\D/g, '')
-    const isPhone = digits.length > 10
-    const isEmail = /^[\w.-]+@[\w.-]+\.\w+$/.test(value.trim())
-    return isPhone || isEmail
+  // Определение типа контакта и валидация
+  const getContactTypeAndValidate = (value) => {
+    const trimmed = value.trim()
+    const digits = trimmed.replace(/\D/g, '')
+    
+    // Email проверка
+    const emailRegex = /^[\w.-]+@[\w.-]+\.\w+$/
+    if (emailRegex.test(trimmed)) {
+      return { type: 'email', isValid: true, value: trimmed }
+    }
+    
+    // Телефон проверка
+    if (digits.length >= 11) { // +7 + 10 цифр = минимум 11
+      // Форматируем телефон в E.164
+      let phone = trimmed
+      if (!phone.startsWith('+') && digits.length >= 11) {
+        phone = '+' + digits
+      }
+      return { type: 'phone', isValid: true, value: phone }
+    }
+    
+    return { type: 'unknown', isValid: false, value: trimmed }
   }
 
   // Валидация для UI (кнопка "Продолжить")
-  const isContactValidForUI = userLawSubject === 'individual'
-    ? isPhoneValid
-    : validateContact(contactInput)
+  const getIsContactValidForUI = () => {
+    if (userLawSubject === 'individual') {
+      // Для физлица только телефон
+      const digits = contactInput.replace(/\D/g, '')
+      return digits.length >= 11 // +7 + 10 цифр
+    } else {
+      // Для юрлица телефон или email
+      const validation = getContactTypeAndValidate(contactInput)
+      return validation.isValid
+    }
+  }
 
   // Обработчик переключения роли
   const handleRoleChange = (newRole) => {
@@ -108,9 +131,16 @@ export default function Step0Phone() {
   // Обработчик ввода контакта
   const handleContactChange = (value) => {
     setContactInput(value)
+    // Определяем тип контакта при вводе
+    if (userLawSubject === 'legal_entity') {
+      const validation = getContactTypeAndValidate(value)
+      if (validation.type !== 'unknown') {
+        setContactType(validation.type)
+      }
+    }
   }
 
-  // Специально для PhoneNumber
+  // Специально для PhoneNumber компонента
   const handlePhoneChange = (value, meta) => {
     setContactInput(value)
     const raw = value.replace(/\D/g, '')
@@ -118,65 +148,134 @@ export default function Step0Phone() {
     const numberWithoutCountry = raw.startsWith(dialCode) ? raw.slice(dialCode.length) : raw
     setPhoneNumberOnly(numberWithoutCountry)
     setCountryCode(dialCode)
+    setContactType('phone')
   }
 
-  // Запрос кода
-  const requestSmsCode = async () => {
-    if (!isPhoneValid || isLoading) return
+  // Запрос кода подтверждения
+  const requestVerificationCode = async () => {
+    if (!getIsContactValidForUI() || isLoading) return
     setIsLoading(true)
+    
     try {
-      const response = await apiClient.post('/executors/auth/phone/code', {
-        countryCode,
-        phoneNumber: phoneNumberOnly,
-      })
+      if (userLawSubject === 'individual' || contactType === 'phone') {
+        // Для телефона (физлица или юрлица)
+        const phone = contactInput.startsWith('+') 
+          ? contactInput 
+          : `+${contactInput.replace(/\D/g, '')}`
+        
+        const response = await apiClient.post('/executors/auth/phone/code', {
+          phone
+        })
 
-      if (response.data?.code && process.env.NODE_ENV === 'development') {
-        openModal(`Код для теста: ${response.data.code}`)
+        if (response.data?.code && process.env.NODE_ENV === 'development') {
+          openModal(`Код для теста: ${response.data.code}`)
+        }
+
+        setRegistrationStep(2)
+        setCanResend(false)
+        setResendTimer(60)
+      } else {
+        // Для email (только юрлица)
+        const validation = getContactTypeAndValidate(contactInput)
+        if (validation.type !== 'email') {
+          openModal('Пожалуйста, введите корректный email')
+          return
+        }
+
+        const response = await apiClient.post('/executors/auth/email/code', {
+          email: validation.value
+        })
+
+        if (response.data?.code && process.env.NODE_ENV === 'development') {
+          openModal(`Код для теста: ${response.data.code}`)
+        }
+
+        setRegistrationStep(2)
+        setCanResend(false)
+        setResendTimer(60)
       }
-
-      setRegistrationStep(2)
-      setCanResend(false)
-      setResendTimer(60)
     } catch (err) {
       const message = err.response?.data?.message || 'Не удалось отправить код'
-      openModal(err.response?.status === 429 ? 'Слишком много попыток. Подождите.' : message)
+      if (err.response?.status === 429) {
+        openModal('Слишком много попыток. Подождите 60 секунд.')
+        setCanResend(false)
+        setResendTimer(60)
+      } else {
+        openModal(message)
+      }
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Верификация + установка типа
-  const verifyAndSetType = async () => {
-    if (smsCode.some(d => d === '') || isLoading) return
+  // Верификация кода и установка типа исполнителя
+  const verifyCodeAndSetType = async () => {
+    if (verificationCode.some(d => d === '') || isLoading) return
     setIsLoading(true)
+    
     try {
-      // Верификация
-      const verifyRes = await apiClient.post('/executors/auth/phone/verify', {
-        countryCode,
-        phoneNumber: phoneNumberOnly,
-        code: smsCode.join(''),
-      })
+      const code = verificationCode.join('')
+      let accessToken
 
-      const { accessToken } = verifyRes.data
+      if (userLawSubject === 'individual' || contactType === 'phone') {
+        // Верификация телефона
+        const phone = contactInput.startsWith('+') 
+          ? contactInput 
+          : `+${contactInput.replace(/\D/g, '')}`
+        
+        const verifyRes = await apiClient.post('/executors/auth/phone/verify', {
+          phone,
+          code
+        })
+        
+        accessToken = verifyRes.data.accessToken
+      } else {
+        // Верификация email
+        const validation = getContactTypeAndValidate(contactInput)
+        const verifyRes = await apiClient.post('/executors/auth/email/verify', {
+          email: validation.value,
+          code
+        })
+        
+        accessToken = verifyRes.data.accessToken
+      }
+
+      // Сохраняем токен
       localStorage.setItem('accessToken', accessToken)
+      
+      // Устанавливаем заголовок авторизации для последующих запросов
+      apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 
-      // Установка типа
+      // Пытаемся установить тип, но игнорируем 409 ошибку
+      // (тип уже может быть установлен ранее)
       const typeEndpoint = userLawSubject === 'individual'
         ? '/executors/me/type/individual'
         : '/executors/me/type/company'
 
-      await apiClient.post(typeEndpoint)
+      await apiClient.post(typeEndpoint).catch(error => {
+        // Игнорируем только 409 ошибки (Conflict)
+        if (error.response?.status !== 409) {
+          throw error
+        }
+        // Для отладки можно залогировать
+        console.warn('Тип пользователя уже установлен, продолжаем регистрацию')
+      })
 
-      // Успех
+      // Успешная регистрация
       setStepNumber(stepNumber + 1)
-      alert('Успешное подтверждение номера телефона!')
       navigate('/full_registration_step0_1')
+      
     } catch (err) {
-      let message = err.response?.data?.message || 'Ошибка'
+      let message = err.response?.data?.message || 'Ошибка при подтверждении кода'
+      
       if (err.response?.status === 400) {
-        message = 'Неверный код'
-        setSmsCode(['', '', '', ''])
+        message = 'Неверный код подтверждения'
+        setVerificationCode(['', '', '', ''])
+        setTimeout(() => {
+          document.getElementById('code-input-0')?.focus()
+        }, 100)
       }
+      
       openModal(message)
     } finally {
       setIsLoading(false)
@@ -187,18 +286,18 @@ export default function Step0Phone() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (registrationStep === 1) {
-      requestSmsCode()
+      requestVerificationCode()
     } else {
-      verifyAndSetType()
+      verifyCodeAndSetType()
     }
   }
 
-  // Обработка кода
+  // Обработка кода подтверждения
   const handleCodeChange = (index, value) => {
     if (/^\d?$/.test(value)) {
-      const newCode = [...smsCode]
+      const newCode = [...verificationCode]
       newCode[index] = value
-      setSmsCode(newCode)
+      setVerificationCode(newCode)
       if (value && index < 3) {
         document.getElementById(`code-input-${index + 1}`)?.focus()
       }
@@ -206,21 +305,34 @@ export default function Step0Phone() {
   }
 
   const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !smsCode[index] && index > 0) {
+    if (e.key === 'Backspace' && !verificationCode[index] && index > 0) {
       document.getElementById(`code-input-${index - 1}`)?.focus()
     }
   }
 
   const handleBack = () => {
     if (registrationStep === 2) {
-      setSmsCode(['', '', '', ''])
+      setVerificationCode(['', '', '', ''])
       setRegistrationStep(1)
       return
     }
     navigate('/')
   }
 
-  const getDisplayContact = () => contactInput || ''
+  const getDisplayContact = () => {
+    if (userLawSubject === 'individual') {
+      return contactInput
+    }
+    
+    const validation = getContactTypeAndValidate(contactInput)
+    if (validation.type === 'email') {
+      return validation.value
+    } else if (validation.type === 'phone') {
+      return validation.value
+    }
+    
+    return contactInput
+  }
 
   // Рендер шага 1
   const renderStep1 = () => (
@@ -229,19 +341,23 @@ export default function Step0Phone() {
 
       <div className="role-switcher">
         <button
+          type="button"
           className={`role-option ${userLawSubject === 'individual' ? 'active' : ''}`}
           onClick={() => {
             setUserLawSubject('individual')
             setContactInput('')
+            setContactType('phone')
           }}
         >
           Физическое лицо
         </button>
         <button
+          type="button"
           className={`role-option ${userLawSubject === 'legal_entity' ? 'active' : ''}`}
           onClick={() => {
             setUserLawSubject('legal_entity')
             setContactInput('')
+            setContactType('phone') // сбрасываем на телефон по умолчанию
           }}
         >
           Юридическое лицо
@@ -250,7 +366,9 @@ export default function Step0Phone() {
 
       <div className='passport-field full-width' style={{ marginTop: '45px' }}>
         <h3>
-          {userLawSubject === 'individual' ? 'Номер телефона' : 'Номер телефона или почта'}
+          {userLawSubject === 'individual' 
+            ? 'Номер телефона' 
+            : 'Номер телефона или почта'}
         </h3>
         {userLawSubject === 'individual' ? (
           <PhoneNumber
@@ -270,9 +388,10 @@ export default function Step0Phone() {
       </div>
 
       <button
-        className={`continue-button ${!isContactValidForUI ? 'disabled' : ''}`}
-        disabled={!isContactValidForUI || isLoading}
-        onClick={requestSmsCode}
+        type="button"
+        className={`continue-button ${!getIsContactValidForUI() ? 'disabled' : ''}`}
+        disabled={!getIsContactValidForUI() || isLoading}
+        onClick={requestVerificationCode}
         style={{ marginTop: '10px' }}
       >
         {isLoading ? 'Отправка...' : 'Продолжить'}
@@ -281,52 +400,59 @@ export default function Step0Phone() {
   )
 
   // Рендер шага 2
-  const renderStep2 = () => (
-    <form className="login-form" onSubmit={handleSubmit}>
-      <div className="form-group">
-        <label className="form-label">
-          Код из SMS
-          <div className="phone-preview">
-            Код отправлен на номер: {getDisplayContact()}
+  const renderStep2 = () => {
+    const displayContact = getDisplayContact()
+    const contactTypeDisplay = userLawSubject === 'individual' || contactType === 'phone' ? 'SMS' : 'email'
+    
+    return (
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label className="form-label">
+            Код из {contactTypeDisplay}
+            <div className="phone-preview">
+              Код отправлен на: {displayContact}
+            </div>
+          </label>
+
+          <div className="code-inputs">
+            {[0, 1, 2, 3].map((index) => (
+              <input
+                key={index}
+                id={`code-input-${index}`}
+                type="text"
+                maxLength="1"
+                value={verificationCode[index]}
+                onChange={(e) => handleCodeChange(index, e.target.value)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                className="code-input"
+                autoComplete="off"
+                inputMode="numeric"
+              />
+            ))}
           </div>
-        </label>
 
-        <div className="code-inputs">
-          {[0, 1, 2, 3].map((index) => (
-            <input
-              key={index}
-              id={`code-input-${index}`}
-              type="text"
-              maxLength="1"
-              value={smsCode[index]}
-              onChange={(e) => handleCodeChange(index, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              className="code-input"
-            />
-          ))}
+          <div className="resend-code">
+            <button
+              type="button"
+              className="resend-link"
+              onClick={requestVerificationCode}
+              disabled={!canResend || isLoading}
+            >
+              {canResend ? 'Получить новый код' : `Повторная отправка через ${resendTimer} сек`}
+            </button>
+          </div>
         </div>
 
-        <div className="resend-code">
-          <button
-            type="button"
-            className="resend-link"
-            onClick={requestSmsCode}
-            disabled={!canResend || isLoading}
-          >
-            {canResend ? 'Получить новый код' : `Повторная отправка через ${resendTimer} сек`}
-          </button>
-        </div>
-      </div>
-
-      <button
-        type="submit"
-        className={`continue-button ${smsCode.some(d => d === '') ? 'disabled' : ''}`}
-        disabled={smsCode.some(d => d === '') || isLoading}
-      >
-        {isLoading ? 'Проверка...' : 'Продолжить'}
-      </button>
-    </form>
-  )
+        <button
+          type="submit"
+          className={`continue-button ${verificationCode.some(d => d === '') ? 'disabled' : ''}`}
+          disabled={verificationCode.some(d => d === '') || isLoading}
+        >
+          {isLoading ? 'Проверка...' : 'Продолжить'}
+        </button>
+      </form>
+    )
+  }
 
   return (
     <div>
@@ -335,7 +461,7 @@ export default function Step0Phone() {
       <div className='reg-container' style={{ marginBottom: '237px' }}>
         <div className='registr-container' style={{ height: registrationStep === 1 ? '660px' : '570px' }}>
           <div className='title'>
-            <button className='btn-back' onClick={handleBack}>
+            <button type="button" className='btn-back' onClick={handleBack}>
               <img src={arrow} alt='Назад' />
             </button>
             <h2 className="login-title">Регистрация</h2>
@@ -354,11 +480,11 @@ export default function Step0Phone() {
       {modalMessage && (
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-window" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close-btn" onClick={closeModal}>
+            <button type="button" className="modal-close-btn" onClick={closeModal}>
               <img src={icon_close_modal} alt="Закрыть" />
             </button>
             <div className="modal-text">{modalMessage}</div>
-            <button className="modal-action-btn" onClick={closeModal}>
+            <button type="button" className="modal-action-btn" onClick={closeModal}>
               Понятно
             </button>
           </div>

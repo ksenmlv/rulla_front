@@ -93,23 +93,23 @@ export default function ExMyOrders() {
                 {/* Вкладки */}
                 <div className="orders-tabs">
                     <button
-                        className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
+                        className={`tab-buttonn ${activeTab === 'all' ? 'active' : ''}`}
                         onClick={() => setActiveTab('all')}
                     > Все заказы </button>
                     <button
-                        className={`tab-button ${activeTab === 'executor_selected' ? 'active' : ''}`}
+                        className={`tab-buttonn ${activeTab === 'executor_selected' ? 'active' : ''}`}
                         onClick={() => setActiveTab('executor_selected')}
                     > Вас выбрали исполнителем </button>
                     <button
-                        className={`tab-button ${activeTab === 'no_executor' ? 'active' : ''}`}
+                        className={`tab-buttonn ${activeTab === 'no_executor' ? 'active' : ''}`}
                         onClick={() => setActiveTab('no_executor')}
                     > Исполнитель не определён </button>
                     <button
-                        className={`tab-button ${activeTab === 'executor_selected_other' ? 'active' : ''}`}
+                        className={`tab-buttonn ${activeTab === 'executor_selected_other' ? 'active' : ''}`}
                         onClick={() => setActiveTab('executor_selected_other')}
                     > Выбран другой исполнитель </button>
                     <button
-                        className={`tab-button ${activeTab === 'completed' ? 'active' : ''}`}
+                        className={`tab-buttonn ${activeTab === 'completed' ? 'active' : ''}`}
                         onClick={() => setActiveTab('completed')}
                     > Завершенные заказы </button>
                 </div>

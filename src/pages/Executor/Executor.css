@@ -22,7 +22,7 @@
   margin-bottom: 30px;
 }
 
-.tab-button {
+.tab-buttonn {
   height: 55px;
   padding: 0 20px;
   border: 2px solid transparent;
@@ -34,7 +34,7 @@
   cursor: pointer;
 }
 
-.tab-button.active {
+.tab-buttonn.active {
   background: #ffffff;        
   border: 2px solid #DE5A2B;
   font-weight: 600;               
