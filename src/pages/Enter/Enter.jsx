@@ -94,10 +94,10 @@ function Enter() {
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post('/customers/auth/phone/code', {
-        countryCode,
-        phoneNumber: phoneNumberOnly,
+      const response = await apiClient.post('/customer/auth/telephone/code', {
+        phone: customerPhone,
       })
+
 
       if (response.data && response.data.code && process.env.NODE_ENV === 'development') {
         openModal(`Код для входа: ${response.data.code}`)
@@ -122,11 +122,11 @@ function Enter() {
     setIsLoading(true)
 
     try {
-      const response = await apiClient.post('/customers/auth/phone/verify', {
-        countryCode,
-        phoneNumber: phoneNumberOnly,
+      const response = await apiClient.post('/customer/auth/telephone/verify', {
+        phone: customerPhone,
         code: fullCode,
       })
+
 
       const { accessToken } = response.data
       localStorage.setItem('accessToken', accessToken)
@@ -158,7 +158,7 @@ function Enter() {
 
     try {
       if (isEmail) {
-        const res = await apiClient.post('/executors/auth/email/code', {
+        const res = await apiClient.post('/executor/auth/email/code', {
           email: executorContact,
         })
 
@@ -166,9 +166,10 @@ function Enter() {
           openModal(`Код: ${res.data.code}`)
         }
       } else {
-        const res = await apiClient.post('/executors/auth/phone/code', {
-          phone: executorPhoneE164(),
+        const res = await await apiClient.post('/executor/auth/telephone/code', {
+          phone: executorContact,
         })
+
 
         if (res.data?.code && process.env.NODE_ENV === 'development') {
           openModal(`Код: ${res.data.code}`)
@@ -197,13 +198,13 @@ function Enter() {
       let res
 
       if (isEmail) {
-        res = await apiClient.post('/executors/auth/email/verify', {
+        res = await apiClient.post('/executor/auth/email/verify', {
           email: executorContact,
           code,
         })
       } else {
-        res = await apiClient.post('/executors/auth/phone/verify', {
-          phone: executorPhoneE164(),
+        res = await await apiClient.post('/executor/auth/telephone/verify', {
+          phone: executorContact,
           code,
         })
       }

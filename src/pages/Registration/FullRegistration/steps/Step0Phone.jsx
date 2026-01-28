@@ -159,11 +159,9 @@ export default function Step0Phone() {
     try {
       if (userLawSubject === 'individual' || contactType === 'phone') {
         // Для телефона (физлица или юрлица)
-        const phone = contactInput.startsWith('+') 
-          ? contactInput 
-          : `+${contactInput.replace(/\D/g, '')}`
+        const phone = contactInput.startsWith('+') ? contactInput : `+${contactInput.replace(/\D/g, '')}`
         
-        const response = await apiClient.post('/executors/auth/phone/code', {
+        const response = await apiClient.post('/executor/registration/telephone/code', {
           phone
         })
 
@@ -182,7 +180,7 @@ export default function Step0Phone() {
           return
         }
 
-        const response = await apiClient.post('/executors/auth/email/code', {
+        const response = await apiClient.post('/executor/registration/email/code', {
           email: validation.value
         })
 
@@ -209,78 +207,137 @@ export default function Step0Phone() {
   }
 
   // Верификация кода и установка типа исполнителя
-  const verifyCodeAndSetType = async () => {
-    if (verificationCode.some(d => d === '') || isLoading) return
-    setIsLoading(true)
-    
-    try {
-      const code = verificationCode.join('')
-      let accessToken
+// Верификация кода и установка типа исполнителя
+const verifyCodeAndSetType = async () => {
+  if (verificationCode.some(d => d === '') || isLoading) return
+  setIsLoading(true)
+  
+  try {
+    const code = verificationCode.join('')
+    let accessToken
+    let verifyRes
 
-      if (userLawSubject === 'individual' || contactType === 'phone') {
-        // Верификация телефона
-        const phone = contactInput.startsWith('+') 
-          ? contactInput 
-          : `+${contactInput.replace(/\D/g, '')}`
-        
-        const verifyRes = await apiClient.post('/executors/auth/phone/verify', {
-          phone,
-          code
-        })
-        
-        accessToken = verifyRes.data.accessToken
-      } else {
-        // Верификация email
-        const validation = getContactTypeAndValidate(contactInput)
-        const verifyRes = await apiClient.post('/executors/auth/email/verify', {
-          email: validation.value,
-          code
-        })
-        
-        accessToken = verifyRes.data.accessToken
-      }
-
-      // Сохраняем токен
-      localStorage.setItem('accessToken', accessToken)
+    if (userLawSubject === 'individual' || contactType === 'phone') {
+      // Верификация телефона
+      const phone = contactInput.startsWith('+') ? contactInput : `+${contactInput.replace(/\D/g, '')}`
       
-      // Устанавливаем заголовок авторизации для последующих запросов
-      apiClient.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-
-      // Пытаемся установить тип, но игнорируем 409 ошибку
-      // (тип уже может быть установлен ранее)
-      const typeEndpoint = userLawSubject === 'individual'
-        ? '/executors/me/type/individual'
-        : '/executors/me/type/company'
-
-      await apiClient.post(typeEndpoint).catch(error => {
-        // Игнорируем только 409 ошибки (Conflict)
-        if (error.response?.status !== 409) {
-          throw error
-        }
-        // Для отладки можно залогировать
-        console.warn('Тип пользователя уже установлен, продолжаем регистрацию')
+      console.log('📞 Верификация телефона:', { phone, code })
+      verifyRes = await apiClient.post('/executor/registration/telephone/verify', {
+        phone,
+        code
       })
-
-      // Успешная регистрация
-      setStepNumber(stepNumber + 1)
-      navigate('/full_registration_step0_1')
       
-    } catch (err) {
-      let message = err.response?.data?.message || 'Ошибка при подтверждении кода'
+      accessToken = verifyRes.data.accessToken
+    } else {
+      // Верификация email
+      const validation = getContactTypeAndValidate(contactInput)
+      console.log('📧 Верификация email:', { email: validation.value, code })
+      verifyRes = await apiClient.post('/executor/registration/email/verify', {
+        email: validation.value,
+        code
+      })
       
-      if (err.response?.status === 400) {
-        message = 'Неверный код подтверждения'
-        setVerificationCode(['', '', '', ''])
-        setTimeout(() => {
-          document.getElementById('code-input-0')?.focus()
-        }, 100)
-      }
-      
-      openModal(message)
-    } finally {
-      setIsLoading(false)
+      accessToken = verifyRes.data.accessToken
     }
+
+    console.log('✅ Код подтвержден. Токен получен:', {
+      accessToken: accessToken ? `${accessToken.substring(0, 20)}...` : 'пустой',
+      length: accessToken?.length
+    })
+
+    // Сохраняем токен
+    localStorage.setItem('accessToken', accessToken)
+    console.log('💾 Токен сохранен в localStorage')
+    
+    // Проверяем, что токен действительно сохранен
+    const savedToken = localStorage.getItem('accessToken')
+    console.log('🔍 Проверка токена из localStorage:', {
+      saved: savedToken ? `${savedToken.substring(0, 20)}...` : 'не найден',
+      length: savedToken?.length
+    })
+
+    const typeEndpoint = userLawSubject === 'individual'
+      ? '/executors/me/type/individual'
+      : '/executors/me/type/company'
+
+    console.log('🔄 Устанавливаем тип пользователя:', {
+      userLawSubject,
+      typeEndpoint,
+      tokenToSend: accessToken ? `${accessToken.substring(0, 20)}...` : 'нет'
+    })
+
+    // Делаем запрос с явным указанием токена
+    const response = await apiClient.post(typeEndpoint, {}, {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      }
+    }).catch(error => {
+      console.error('❌ Ошибка установки типа:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        config: {
+          url: error.config?.url,
+          headers: error.config?.headers?.Authorization ? 
+            `${error.config.headers.Authorization.substring(0, 30)}...` : 'нет заголовка'
+        }
+      })
+      
+      // Игнорируем только 409 ошибки (Conflict)
+      if (error.response?.status !== 409) {
+        throw error
+      }
+      console.warn('⚠️ Тип пользователя уже установлен, продолжаем регистрацию')
+      return null // Возвращаем null вместо throw
+    })
+
+    if (response) {
+      console.log('✅ Тип пользователя успешно установлен:', response.data)
+    }
+
+    // Успешная регистрация
+    console.log('🎉 Регистрация успешна, переход к следующему шагу')
+    setStepNumber(stepNumber + 1)
+    navigate('/full_registration_step0_1')
+    
+  } catch (err) {
+    console.error('🔥 Критическая ошибка:', {
+      name: err.name,
+      message: err.message,
+      response: err.response ? {
+        status: err.response.status,
+        statusText: err.response.statusText,
+        data: err.response.data
+      } : 'Нет ответа',
+      config: err.config ? {
+        url: err.config.url,
+        method: err.config.method,
+        headers: err.config.headers
+      } : 'Нет конфига'
+    })
+    
+    let message = err.response?.data?.message || 'Ошибка при подтверждении кода'
+    
+    if (err.response?.status === 400) {
+      message = 'Неверный код подтверждения'
+      setVerificationCode(['', '', '', ''])
+      setTimeout(() => {
+        document.getElementById('code-input-0')?.focus()
+      }, 100)
+    }
+    
+    if (err.response?.status === 401) {
+      message = `Ошибка авторизации: ${err.response.data?.message || 'Сессия истекла'}`
+      // Очищаем невалидный токен
+      localStorage.removeItem('accessToken')
+      setRegistrationStep(1)
+    }
+    
+    openModal(message)
+  } finally {
+    setIsLoading(false)
   }
+}
 
   // Обработка формы
   const handleSubmit = (e) => {

@@ -159,7 +159,6 @@ export default function Step3Passport() {
 
     try {
       if (userLawSubject === 'legal_entity') {
-        console.log('Отправка юрлица:', { directorFullName: directorData.FIO.trim(), directorPhone: directorData.phone })
         await apiClient.patch('/executors/companies/me/data', {
           directorFullName: directorData.FIO.trim(),
           directorPhone: directorData.phone
@@ -188,10 +187,6 @@ export default function Step3Passport() {
 
 
 
-
-        // Отладка
-        console.log('Отправляемые паспортные данные:', passportPayload)
-
         // Проверка перед отправкой
         if (!citizenshipIso2) throw new Error('Не указан код страны')
         if (!documentNumber) throw new Error('Не указан номер документа')
@@ -206,7 +201,6 @@ export default function Step3Passport() {
           if (passportData.scanPages?.length > 0) fd.append('mainPage', passportData.scanPages[0])
           if (passportData.scanRegistration?.length > 0) fd.append('registrationPage', passportData.scanRegistration[0])
 
-          console.log('Отправка сканов с citizenshipIso2:', citizenshipIso2)
           await apiClient.post('/executors/individuals/me/passport/scans', fd, {
             headers: { 'Content-Type': 'multipart/form-data' },
             params: { citizenshipIso2 }
@@ -223,8 +217,6 @@ export default function Step3Passport() {
         // Сервер вернул ответ с ошибкой
         const status = err.response.status
         const serverMsg = err.response.data?.message || err.response.data?.error || 'Нет сообщения от сервера'
-
-        console.log('Сервер ответил ошибкой:', { status, message: serverMsg, data: err.response.data })
 
         if (status === 400) msg = `Неверные данные: ${serverMsg}`
         else if (status === 403) msg = 'Доступ запрещён (403). Пользователь не является физлицом?'

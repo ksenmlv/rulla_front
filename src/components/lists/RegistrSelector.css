@@ -1,3 +1,4 @@
+/* Убрать полосы между элементами и уменьшить отступы */
 .activity-input-container {
   position: relative;
   width: 100%;
@@ -73,48 +74,18 @@
   color: #000;
   border: 1px solid #919191;
   border-radius: 10px;
-  /* height: auto; */
-  height: 190px !important;
+  height: 220px !important;
   position: relative;
-  overflow: hidden; 
-  padding-right: 10px;
+  overflow: hidden;
 }
 
-/* Фиксированная высота, когда элементов 5 и больше */
-.activity-dropdown:has(.dropdown-content > *:nth-child(5)) {
-  height: 210px;
-}
-
-/* Автоматическая высота, когда меньше 5 элементов */
-.activity-dropdown:not(:has(.dropdown-content > *:nth-child(5))) {
-  height: auto;
-  min-height: 60px;    
-}
-
+/* Убираем правый паддинг чтобы не было полосы справа */
 .dropdown-content {
   height: 100%;
   overflow-y: scroll;
   box-sizing: border-box;
-  padding: 5px;
-}
-
-.group-header {
-  position: sticky;
-  top: 0;
-  left: 15px;
-  right: 15px;
-  z-index: 10;
-  background-color: #02283D;         
-  color: white;
-  padding: 10px 16px;
-  margin: 10px 10px;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.4;
-  border: none;
-  border-radius: 7px;
-  cursor: default;
-  user-select: none;
+  padding: 10px 0; /* Убираем горизонтальные паддинги */
+  position: relative;
 }
 
 /* Скрываем стандартный скроллбар */
@@ -127,14 +98,14 @@
   scrollbar-width: none;
 }
 
-/* Кастомный скроллбар */
+/* Кастомный скроллбар - убираем правый отступ */
 .custom-scrollbar {
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 5px; /* Уменьшаем отступ справа */
   bottom: 10px;
-  width: 8px;
-  z-index: 10;
+  width: 6px; /* Уменьшаем ширину */
+  z-index: 30;
 }
 
 .scroll-track {
@@ -166,23 +137,64 @@
   cursor: grabbing;
 }
 
+/* Стики-заголовок (фиксированный сверху) */
+.sticky-group-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #F4F5F5;
+  padding: 0;
+  margin: 0;
+}
+
+/* Заголовки групп */
+.group-header {
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  position: relative;
+  z-index: 10;
+}
+
+/* Выбранная категория (синий фон, белый текст) */
+.group-header.selected-group {
+  background-color: #02283D !important;
+  color: white !important;
+  border: 1px solid #02283D !important;
+}
+
+/* Невыбранные категории (только обводка) */
+.group-header:not(.selected-group) {
+  background-color: transparent !important;
+  color: #02283D !important;
+  border: 1px solid #02283D !important;
+}
+
+/* Убираем фон у стрелочки */
+.group-header span:last-child {
+  background-color: transparent !important;
+}
+
+/* Элементы списка услуг - убираем разделители и уменьшаем отступы */
 .activity-option {
-  padding: 10px 12px;
-  margin: 4px 4px;
-  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.2s ease;
   color: #000;
+  display: flex;
+  align-items: center;
+  padding: 8px 15px !important; /* Уменьшаем вертикальный padding */
+  margin: 0 15px !important; /* Добавляем отступы слева и справа */
+  border-bottom: none !important; /* Убираем полосы */
 }
 
 .activity-option:hover {
-  background-color: #a6a6a61b;
+  background-color: rgba(2, 40, 61, 0.05) !important;
 }
 
 .activity-option.selected {
   color: #02283D;
   font-weight: 600;
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .activity-option.disabled {
@@ -191,6 +203,7 @@
   opacity: 0.6;
 }
 
+/* Чекбоксы для множественного выбора */
 .custom-checkbox-wrapper {
   display: flex;
   align-items: center;
@@ -199,22 +212,22 @@
 .custom-checkbox {
   width: 21px;
   height: 21px;
-  /* border: 2px solid #DE5A2B; */
+  border: 2px solid #DE5A2B;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: white;
 }
 
-/* .custom-checkbox.checked {
+.custom-checkbox.checked {
   border-color: #DE5A2B;
-  background-color: #DE5A2B; 
-} */
+  background-color: #DE5A2B;
+}
 
-
-/* Ховер эффекты */
+/* Ховер эффекты для чекбоксов */
 .activity-option:hover .custom-checkbox:not(.checked) {
-  border-color: #DE5A2B;
+  border-color: #02283D;
 }
 
 .activity-option:hover .custom-checkbox.checked {
@@ -222,20 +235,24 @@
   border-color: #b84924;
 }
 
-
-.inner-square {
-  width: 10px;
-  height: 10px;
-  background-color: white;
+/* Уменьшаем высоту dropdown */
+.activity-dropdown:not(:has(.dropdown-content > *:nth-child(5))) {
+  height: auto;
+  min-height: 60px;
+  max-height: 180px;
 }
 
-
-/* если хотите, чтобы при скролле был небольшой отступ сверху от края dropdown */
-.dropdown-content {
-  padding-top: 3px;          
+/* Уменьшаем вертикальные отступы между элементами */
+.activity-option + .activity-option {
+  margin-top: 2px !important;
 }
 
-/* чтобы первый заголовок не имел лишнего отступа сверху */
-.dropdown-content > .group-header:first-child {
-  margin-top: 0;
+/* Для заголовков групп тоже уменьшаем отступы */
+.group-header + .activity-option:first-of-type {
+  margin-top: 4px !important;
+}
+
+/* Убираем лишние отступы */
+.activity-dropdown {
+  padding-right: 0 !important;
 }

@@ -77,6 +77,8 @@ export const AppProvider = ({ children }) => {
   // 5 этап регистрации
   const [userService, setUserService] = useState([{ name: '', price: '', unit: '' }])
   const [otherTeamsInteraction, setOtherTeamsInteraction] = useState({ status: '', text: '' })
+  const [readyToContract, setReadyToContract] = useState(false)
+  const [readyToGiveWarranty, setReadyToGiveWarranty] = useState(false)
   const [userProjects, setUserProjects] = useState([{ files: [], text: '' }])
   const [reviews, setReviews] = useState({ files: [] })
   const [certificates, setCertificates] = useState({ files: [] })
@@ -158,6 +160,10 @@ export const AppProvider = ({ children }) => {
     setUserService,
     otherTeamsInteraction, 
     setOtherTeamsInteraction,
+    readyToContract, 
+    setReadyToContract,
+    readyToGiveWarranty,
+    setReadyToGiveWarranty,
     userProjects, 
     setUserProjects,
     reviews, 
@@ -204,6 +210,8 @@ export const AppProvider = ({ children }) => {
     contractWork,
     userService,
     otherTeamsInteraction, 
+    readyToContract, 
+    readyToGiveWarranty,
     userProjects, 
     reviews, 
     certificates, 

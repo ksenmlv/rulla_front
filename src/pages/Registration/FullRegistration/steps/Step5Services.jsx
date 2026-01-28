@@ -17,6 +17,8 @@ export default function Step5Services() {
     stepNumber, setStepNumber,
     userService, setUserService,
     otherTeamsInteraction, setOtherTeamsInteraction,
+    readyToContract, 
+    readyToGiveWarranty, 
     userProjects, setUserProjects,
     reviews, setReviews,
     certificates, setCertificates,
@@ -27,11 +29,20 @@ export default function Step5Services() {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [showFileSizeModal, setShowFileSizeModal] = useState(false)
-  const [badFileName, setBadFileName] = useState('')
+  const [badFileName, setBadFileName] = useState('') 
+  const [units, setUnits] = useState([])                  // единицы измерения
+
 
   // Каталог услуг (для выбора в RegistrSelector)
   const [catalog, setCatalog] = useState([])
   const [loadingCatalog, setLoadingCatalog] = useState(true)
+
+  const unitOptions = useMemo(
+    () => units.map(u => u.name).filter(name => name && name.trim() !== ''),
+    [units]
+  )
+
+
 
   const groupedServices = useMemo(() => {
     const groups = [];
@@ -64,8 +75,14 @@ export default function Step5Services() {
       catalog.forEach(node => collectGroups(node));
     }
 
+    // Добавляем группу "Другое" в конец
+    groups.push({ 
+      title: 'Другое', 
+      items: ['Другое'] 
+    });
+
     return groups;
-}, [catalog]);
+  }, [catalog]);
 
 
   const allServices = useMemo(() => {
@@ -86,8 +103,11 @@ export default function Step5Services() {
           services.push({
             id: s.id,
             name: s.name.trim(),
-            priceFromRub: Number(s.priceFromRub) || 0,
+            priceFromRub: s.priceFromRub || 0, 
             unitName: defaultUnit.unitName || "",
+            unitSymbol: defaultUnit.unitSymbol || "",
+            unitId: defaultUnit.unitId || null,
+            unitCode: defaultUnit.unitCode || null,
             unitOptionId: defaultUnit.unitId || null
           });
         });
@@ -110,12 +130,27 @@ export default function Step5Services() {
     setTimeout(() => firstServiceSelectorRef.current?.focus(), 100)
   }, [])
 
-  // Загрузка только каталога услуг (без GET профиля и услуг)
+  // Загрузка единиц измерения
+  useEffect(() => {
+    const fetchUnits = async () => {
+      try {
+        const res = await apiClient.get('/public/services/units')
+        setUnits(res.data || [])
+      } catch (e) {
+        console.error('Ошибка загрузки единиц измерения', e)
+      }
+    }
+    fetchUnits()
+  }, [])
+
+
+  // Загрузка каталога услуг с ценами и единицами измерения
   useEffect(() => {
     const fetchCatalog = async () => {
       try {
         setLoadingCatalog(true)
-        const res = await apiClient.get('/public/services/catalog')
+        // Загружаем каталог с ценами и единицами измерения
+        const res = await apiClient.get('/public/services/catalog?includeUnits=true&includeServices=true')
         setCatalog(res.data || [])
       } catch (err) {
         console.error('Ошибка загрузки каталога услуг:', err)
@@ -131,13 +166,14 @@ export default function Step5Services() {
     if (!userService || userService.length === 0) {
       setUserService([
         {
-            serviceId: null,
-            name: '',
-            price: '',
-            unitName: '',
-            unitOptionId: null
+          serviceId: null,
+          name: '',
+          customName: '',
+          price: '',
+          unitName: '',
+          unitId: null
         }
-        ])
+      ])
     }
   }, [userService, setUserService])
 
@@ -146,25 +182,66 @@ export default function Step5Services() {
   const updateItem = (setter, index, field, value) => 
     setter(prev => prev.map((item, i) => i === index ? { ...item, [field]: value } : item))
 
-    const handleServiceSelect = (index, serviceName) => {
-        const selected = allServices.find(s => s.name === serviceName)
-        if (!selected) return
-
-        setUserService(prev =>
-            prev.map((item, i) =>
-            i === index
-                ? {
-                    ...item,
-                    serviceId: selected.id,
-                    name: selected.name,
-                    price: String(selected.priceFromRub || ''),
-                    unitName: selected.unitName,
-                    unitOptionId: selected.unitOptionId
-                }
-                : item
-            )
+  const handleServiceSelect = (index, serviceName) => {
+    // Проверяем, если выбрано "Другое"
+    if (serviceName === 'Другое') {
+      setUserService(prev =>
+        prev.map((item, i) =>
+          i === index
+            ? {
+                ...item,
+                serviceId: null,
+                name: 'Другое',
+                customName: '',
+                price: '',
+                unitName: '',
+                unitId: null
+              }
+            : item
         )
+      )
+      return;
     }
+
+    const selected = allServices.find(s => s.name === serviceName)
+    if (!selected) return
+
+    setUserService(prev =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              serviceId: selected.id,
+              name: selected.name,
+              customName: '',
+              price: '',
+              unitName: selected.unitName || "",
+              unitId: selected.unitId || null
+            }
+          : item
+      )
+    )
+  }
+
+
+  // Обработчик выбора единицы измерения
+  const handleUnitSelect = (index, unitName) => {
+    const unit = units.find(u => u.name === unitName)
+    if (!unit) return
+
+    setUserService(prev =>
+      prev.map((item, i) =>
+        i === index
+          ? {
+              ...item,
+              unitId: unit.id,
+              unitName: unit.name
+            }
+          : item
+      )
+    )
+  }
+
 
 
   const handleFileUploadWithCheck = (setter, files) => {
@@ -180,135 +257,132 @@ export default function Step5Services() {
 
   // Валидация формы
   useEffect(() => {
-    const allServicesFilled = userService.every(s =>
-    s.name.trim().length >= 3 &&
-    s.price.trim() &&
-    s.unitName.trim()
-    )
-    
-    const interactionValid = otherTeamsInteraction.status === 'yes' || 
-                            otherTeamsInteraction.status === 'no'
-    
-    setIsFormValid(allServicesFilled && interactionValid)
+    const allServicesFilled = userService.every(s => {
+      // Проверяем цену (должно быть число больше 0)
+      const priceNum = parseFloat(s.price);
+      const hasPrice = !isNaN(priceNum) && priceNum > 0;
+      
+      // Проверяем единицу измерения
+      const hasUnit = !!s.unitId;
+      
+      // Проверяем название услуги
+      let hasValidName = false;
+      if (s.name === 'Другое') {
+        hasValidName = s.customName && s.customName.trim().length >= 3;
+      } else {
+        hasValidName = s.name && s.name.trim().length >= 3;
+      }
+
+      return hasPrice && hasUnit && hasValidName;
+    });
+
+    const interactionValid =
+      otherTeamsInteraction.status === 'yes' ||
+      otherTeamsInteraction.status === 'no'
+
+    setIsFormValid(allServicesFilled && interactionValid);
+
   }, [userService, otherTeamsInteraction])
+
 
   const handleBack = () => navigate('/full_registration_step4')
 
 
-    const handleForward = async () => {
+  const handleForward = async () => {
     if (!isFormValid || isLoading) return
 
     setIsLoading(true)
     setErrorMessage(null)
 
     try {
-        // Готовности — отправляем только изменённые поля
-        const readinessData = {}
-        if (otherTeamsInteraction.status === 'yes' || otherTeamsInteraction.status === 'no') {
-            readinessData.readyToCollaborate = otherTeamsInteraction.status === 'yes'
-        }
-        if (otherTeamsInteraction.readyToContract !== undefined) {
-            readinessData.readyToContract = !!otherTeamsInteraction.readyToContract
-        }
-        if (otherTeamsInteraction.readyToGiveWarranty !== undefined) {
-            readinessData.readyToGiveWarranty = !!otherTeamsInteraction.readyToGiveWarranty
-        }
+      // === 1. Готовности ===
+      const readinessData = {}
 
-        if (Object.keys(readinessData).length > 0) {
+      if (otherTeamsInteraction.status === 'yes' || otherTeamsInteraction.status === 'no') {
+        readinessData.readyToCollaborate = otherTeamsInteraction.status === 'yes'
+      }
+
+      if (typeof readyToContract !== 'undefined') {
+        readinessData.readyToContract = !!readyToContract
+      }
+
+      if (typeof readyToGiveWarranty !== 'undefined') {
+        readinessData.readyToGiveWarranty = !!readyToGiveWarranty
+      }
+
+      if (Object.keys(readinessData).length > 0) {
         await apiClient.patch('/executors/me/readiness', readinessData)
-        }
+      }
 
-        // Услуги — полная замена одним PUT-запросом
-        console.group('=== Отправка услуг (PUT /executors/me/services) ===');
-
-        const servicesToSend = userService
-        .filter(s => {
-            const isValid = s.name.trim().length >= 3 && s.price.trim() && s.unitName.trim();
-            return isValid;
-        })
+      // === 2. Услуги ===
+      const servicesToSend = userService
+        .filter(s => s.price && s.unitId)
         .map(s => {
-            const found = allServices.find(svc => svc.name === s.name);
-            const serviceData = {
-                serviceId: found?.id || null,
-                unitOptionId:  s.unitOptionId,
-                priceType: 'FIXED',
-                priceFromRub: parseInt(s.price) || 0,
-                note: '',
-                active: true
-            };
-            return serviceData;
-        });
+          const isCustom = s.name === 'Другое'
 
-        console.log('Итоговый массив для отправки:', servicesToSend);
-
-        if (servicesToSend.length === 0) {
-        console.warn('Нет валидных услуг — PUT не отправляется');
-        } else {
-        console.log('Отправляем PUT-запрос...');
-        try {
-            const response = await apiClient.put('/executors/me/services', {
-            services: servicesToSend
-            });
-            console.log('Успешный ответ от сервера:', response.data);
-        } catch (err) {
-            console.error('Ошибка PUT-запроса:', {
-            status: err.response?.status,
-            statusText: err.response?.statusText,
-            data: err.response?.data,
-            message: err.message
-            });
-            throw err; // чтобы дальше обработать в catch
-        }
-        }
-
-        console.groupEnd();
+          return {
+            serviceId: isCustom ? null : s.serviceId,
+            unitId: s.unitId,
+            priceType: 'FROM',
+            priceFromRub: Number(s.price),
+            priceToRub: null,
+            note: isCustom ? s.customName?.trim() : null,
+            active: true
+          }
+        })
 
 
-        // Проекты — только новые
-        for (const p of userProjects) {
-        if (!p.files?.length && !p.text?.trim()) continue
+      if (servicesToSend.length > 0) {
+        await apiClient.put('/executors/me/services', { services: servicesToSend })
+      }
+
+      // === 3. Проекты ===
+      for (const p of userProjects) {
+        if ((!p.files || p.files.length === 0) && (!p.text || !p.text.trim())) continue
 
         const fd = new FormData()
         p.files?.forEach(f => fd.append('file', f))
         if (p.text?.trim()) fd.append('projectDescription', p.text.trim())
 
         await apiClient.post('/executors/me/projects', fd)
-        }
+      }
 
-        // Отзывы — только новые
-        for (const f of reviews.files || []) {
+      // === 4. Отзывы ===
+      for (const f of reviews.files || []) {
         const fd = new FormData()
         fd.append('file', f)
         await apiClient.post('/executors/me/reviews', fd)
-        }
+      }
 
-        // Сертификаты — только новые (если не юрлицо)
-        if (userLawSubject !== 'legal_entity') {
+      // === 5. Сертификаты (только для физлиц) ===
+      if (userLawSubject !== 'legal_entity') {
         for (const f of certificates.files || []) {
-            const fd = new FormData()
-            fd.append('file', f)
-            await apiClient.post('/executors/me/certificates', fd)
+          const fd = new FormData()
+          fd.append('file', f)
+          await apiClient.post('/executors/me/certificates', fd)
         }
-        }
+      }
 
-        setStepNumber(stepNumber + 1)
-        navigate('/full_registration_step6')
+      // === 6. Переход на следующий шаг ===
+      setStepNumber(stepNumber + 1)
+      navigate('/full_registration_step6')
 
     } catch (err) {
-        console.error('Ошибка сохранения шага 5:', err)
+      console.error('Ошибка сохранения шага 5:', err)
 
-        let msg = 'Не удалось сохранить данные'
-        if (err.response?.status === 413) {
+      let msg = 'Не удалось сохранить данные'
+      if (err.response?.status === 413) {
         msg = 'Один или несколько файлов слишком большие (макс. 10 МБ)'
-        } else if (err.response) {
+      } else if (err.response) {
         msg = err.response.data?.message || `Ошибка сервера (${err.response.status})`
-        }
+      }
 
-        setErrorMessage(msg)
+      setErrorMessage(msg)
     } finally {
-        setIsLoading(false)
+      setIsLoading(false)
     }
-    }
+  }
+
 
   return (
     <div>
@@ -362,16 +436,31 @@ export default function Step5Services() {
                 </div>
               </div>
 
+              {s.name === 'Другое' && (
+                <div className='passport-row'>
+                  <div className='passport-field full-width'>
+                    <input
+                      style={{ marginTop: '10px', width: '100%' }}
+                      placeholder="Введите название услуги"
+                      value={s.customName}
+                      onChange={(e) =>
+                        updateItem(setUserService, i, 'customName', e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+
               <div className='passport-row' style={{ marginTop: '15px', position: 'relative', width: '100%' }}>
                 <div className='passport-field'>
                   <input
+                    type='number'
                     placeholder='от'
                     value={s.price || ''}
-                    readOnly
+                    onChange={(e) => updateItem(setUserService, i, 'price', e.target.value)}
                     style={{ 
                       paddingRight: '50px',
-                      background: '#f5f5f5',
-                      cursor: 'not-allowed'
                     }}
                   />
                   <span style={{
@@ -385,15 +474,14 @@ export default function Step5Services() {
                   }}>₽</span>
                 </div>
                 <div className='passport-field'>
-                  <input
-                    placeholder='за'
-                    value={s.unitName || ''}
-                    readOnly
-                    style={{ 
-                      background: '#f5f5f5',
-                      cursor: 'not-allowed'
-                    }}
-                  />
+                  <div className="registr-selector-wrapper">
+                    <RegistrSelector
+                      placeholder='за'
+                      subject={unitOptions}
+                      selected={s.unitName}
+                      onSelect={(val) => handleUnitSelect(i, val)}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -402,16 +490,16 @@ export default function Step5Services() {
 
           <div className='btn-plus'>
             <button
-                onClick={() =>
-                    addItem(setUserService, {
-                    serviceId: null,
-                    name: '',
-                    price: '',
-                    unitName: '',
-                    unitOptionId: null
-                    })
-                }
-                style={{marginTop: '-5px'}}>
+              onClick={() =>
+                addItem(setUserService, {
+                  serviceId: null,
+                  name: '',
+                  price: '',
+                  unitName: '',
+                  unitOptionId: null
+                })
+              }
+              style={{marginTop: '-5px'}}>
               <img src={plus} alt='Add more' />Добавить еще
             </button>
           </div>

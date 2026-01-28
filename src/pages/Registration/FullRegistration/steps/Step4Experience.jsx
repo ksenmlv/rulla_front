@@ -59,6 +59,24 @@ export default function Step4Experience() {
     return mapping[displayValue] || null;
   }
 
+  // маппинг колва специалистов
+  const mapSpecialistsToCode = (displayValue) => {
+    if (!displayValue) return null
+
+    const mapping = {
+      '1': '1',
+      'до 5': '5',
+      'до 10': '10',
+      'до 20': '20',
+      'до 30': '30',
+      'более 30': '>30',
+    }
+
+    return mapping[displayValue] || null
+  }
+
+
+
   const isFormValid =
     !!userExperience &&
     (userLawSubject === 'self-employed' ? true : !!specialistsNumber) &&
@@ -75,29 +93,12 @@ export default function Step4Experience() {
     setIsLoading(true)
     setErrorMessage(null)
 
-    // Отладочная информация
-    console.group('Шаг 4 — данные перед отправкой')
-    console.log('Тип субъекта:', userLawSubject)
-    console.log('Опыт:', userExperience, '→', mapExperienceToCode(userExperience))
-    console.log('Количество специалистов:', specialistsNumber)
-    console.log('Лицензия:', userLicense?.status, userLicense?.files?.length ? `(${userLicense.files.length} файл)` : '')
-    console.log('Диплом:', userEducationalDiplom?.status, userEducationalDiplom?.files?.length ? `(${userEducationalDiplom.files.length} файл)` : '')
-    console.log('Судимости:', userCriminalRecord?.status, userCriminalRecord?.text?.trim() || '')
-    console.log('Готов работать по договору:', contractWork)
-    console.groupEnd()
-
     try {
       const requests = [];
 
       // 1. Опыт работы — для всех исполнителей, если значение выбрано
       if (userExperience) {
         const experienceCode = mapExperienceToCode(userExperience);
-
-        console.group('Отправка опыта — шаг 4');
-        console.log('Выбранный текст:', userExperience);
-        console.log('Отправляемый код:', mapExperienceToCode(userExperience) || 'НЕ ОПРЕДЕЛЁН!');
-        console.log('Тип исполнителя:', userLawSubject);
-        console.groupEnd();
         
         if (experienceCode) {
           requests.push(
@@ -105,9 +106,7 @@ export default function Step4Experience() {
               experienceYearsCode: experienceCode,
             })
           );
-        } else {
-          console.warn('Не удалось преобразовать опыт в код:', userExperience);
-        }
+        } 
       }
 
       // 2. Количество специалистов (остаётся с условием)
@@ -118,13 +117,17 @@ export default function Step4Experience() {
               employeesCountCode: specialistsNumber,
             })
           );
-        } else if (userLawSubject === 'legal_entity') {
+        } 
+        if (userLawSubject === 'legal_entity' && specialistsNumber) {
+          const specialistsCode = mapSpecialistsToCode(specialistsNumber)
+
           requests.push(
             apiClient.patch('/executors/companies/me/data', {
-              specialistsCount: specialistsNumber,
+              specialistsCount: specialistsCode,
             })
-          );
+          )
         }
+
       }
 
       // 3. Судимости
@@ -165,8 +168,6 @@ export default function Step4Experience() {
       setStepNumber(stepNumber + 1)
       navigate('/full_registration_step5')
     } catch (err) {
-      console.error('Ошибка сохранения шага 4:', err)
-
       let message = 'Не удалось сохранить данные'
 
       if (err.response) {
